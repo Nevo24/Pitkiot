@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<animation-list xmlns:android="http://schemas.android.com/apk/res/android"
+                android:oneshot="false">
+    <item android:drawable="@mipmap/basic_figure" android:duration="1000" />
+    <item android:drawable="@mipmap/breathe_1" android:duration="200" />
+    <item android:drawable="@mipmap/breathe_2" android:duration="200" />
+    <item android:drawable="@mipmap/breathe_3" android:duration="200" />
+    <item android:drawable="@mipmap/breathe_4" android:duration="200" />
+    <item android:drawable="@mipmap/breathe_5" android:duration="200" />
+    <item android:drawable="@mipmap/breathe_6" android:duration="200" />
+    <item android:drawable="@mipmap/breathe_7" android:duration="200" />
+    <item android:drawable="@mipmap/breathe_8" android:duration="200" />
+    <item android:drawable="@mipmap/breathe_9" android:duration="200" />
+    <item android:drawable="@mipmap/breathe_10" android:duration="200" />
+</animation-list>

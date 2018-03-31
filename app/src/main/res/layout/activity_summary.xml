@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.percent.PercentRelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_summary"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="nevo_mashiach.pitkiot.Summary"
+    android:background="@mipmap/cool_background">
+
+    <nevo_mashiach.pitkiot.NotActivities.MyTextView
+        android:textColor="@color/common_google_signin_btn_text_dark_default"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/summaryHeadline"
+        android:textSize="36sp"
+        android:textStyle="normal|bold"
+        tools:text="Headline"/>
+
+    <nevo_mashiach.pitkiot.NotActivities.MyTextView
+        android:textColor="@color/common_google_signin_btn_text_dark_default"
+        android:text="קבוצה 1:"
+        android:layout_marginTop="-10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/team1Headline"
+        android:textStyle="normal|bold"
+        android:textSize="25sp"
+        android:gravity="right"
+        android:layout_below="@+id/t1Plus"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"/>
+
+    <nevo_mashiach.pitkiot.NotActivities.MyTextView
+        android:textColor="@color/common_google_signin_btn_text_dark_default"
+        android:text="מספר סיבובים: "
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/t1Round"
+        android:layout_marginTop="15dp"
+        android:textSize="18sp"
+        android:gravity="right"
+        android:layout_below="@+id/t1Total"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"/>
+
+    <nevo_mashiach.pitkiot.NotActivities.MyTextView
+        android:textColor="@color/common_google_signin_btn_text_dark_default"
+        android:text="קבוצה 2:"
+        android:layout_marginTop="-10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/team2Headline"
+        android:textStyle="normal|bold"
+        android:textSize="25sp"
+        android:gravity="right"
+        android:layout_below="@+id/t2Plus"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"/>
+
+    <nevo_mashiach.pitkiot.NotActivities.MyTextView
+        android:textColor="@color/common_google_signin_btn_text_dark_default"
+        android:text="מספר סיבובים:"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="17dp"
+        android:id="@+id/t2Round"
+        android:textSize="18sp"
+        android:gravity="right"
+        android:layout_below="@+id/t2Total"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"/>
+
+    <nevo_mashiach.pitkiot.NotActivities.MyTextView
+        android:textColor="@color/common_google_signin_btn_text_dark_default"
+        android:text="ניקוד כולל:"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/t2Total"
+        android:textSize="18sp"
+        android:gravity="right"
+        android:layout_below="@+id/team2Headline"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="17dp"/>
+
+    <nevo_mashiach.pitkiot.NotActivities.MyTextView
+        android:textColor="@color/common_google_signin_btn_text_dark_default"
+        android:text="ניקוד כולל:"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="17dp"
+        android:id="@+id/t1Total"
+        android:layout_below="@+id/team1Headline"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:textSize="18sp"
+        android:gravity="right"/>
+
+    <nevo_mashiach.pitkiot.NotActivities.MyTextView
+        android:text="מספר פתקים כולל: "
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/editScoreHeadline"
+        android:textSize="17sp"
+        android:gravity="center"
+        android:textColor="#ffffff"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"/>
+
+    <nevo_mashiach.pitkiot.NotActivities.MyTextView
+        android:layout_marginTop="10dp"
+        android:layout_below="@+id/t1Round"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/t2Plus"
+        tools:text="+7"
+        android:textSize="30sp"
+        android:textColor="#B70004"
+        android:gravity="right"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"/>
+
+    <nevo_mashiach.pitkiot.NotActivities.MyButton
+        android:text="יאללה סמאללה"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/ready"
+        android:background="@drawable/button_green"
+        android:minHeight="30dip"
+        android:layout_marginTop="12dp"
+        android:textColor="#ffffff"
+        android:layout_below="@+id/roundModeSummary"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"/>
+
+    <ImageView
+        app:layout_widthPercent="45%"
+        app:layout_heightPercent="40%"
+        app:srcCompat="@mipmap/press_here"
+        android:id="@+id/pressHereFigure"
+        android:layout_below="@+id/ready"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"/>
+
+    <nevo_mashiach.pitkiot.NotActivities.MyTextView
+        android:text="הסבר בלי שימוש במילה"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/roundModeSummary"
+        android:gravity="center"
+        android:textSize="29sp"
+        android:textStyle="normal|bold"
+        android:layout_below="@+id/summaryHeadline"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="11dp"/>
+
+    <nevo_mashiach.pitkiot.NotActivities.MyTextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/t1Plus"
+        tools:text="+8"
+        android:textSize="30sp"
+        android:textColor="#B70004"
+        android:gravity="right"
+        android:layout_below="@+id/ready"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"/>
+
+    <!--Summary for more than 2 teams-->
+
+    <nevo_mashiach.pitkiot.NotActivities.MyTextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/multiTeamsPlus"
+        tools:text="+X"
+        android:textSize="30sp"
+        android:textColor="#B70004"
+        android:gravity="right"
+        android:layout_below="@+id/ready"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="50dp"/>
+
+    <Spinner
+        android:textColor="@color/common_google_signin_btn_text_dark_default"
+        android:text="קבוצה X:"
+        android:layout_marginTop="40dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/summarySpinner"
+        android:textStyle="normal|bold"
+        android:textSize="25sp"
+        android:gravity="right"
+        android:layout_below="@+id/t1Plus"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"/>
+
+    <nevo_mashiach.pitkiot.NotActivities.MyTextView
+        android:textColor="@color/common_google_signin_btn_text_dark_default"
+        android:text="ניקוד כולל: X"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="67dp"
+        android:id="@+id/multiTeamTotalScore"
+        android:layout_below="@+id/team1Headline"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:textSize="18sp"
+        android:gravity="right"/>
+
+    <nevo_mashiach.pitkiot.NotActivities.MyTextView
+        android:textColor="@color/common_google_signin_btn_text_dark_default"
+        android:text="Xמספר סיבובים: "
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/multiTeamRound"
+        android:layout_marginTop="65dp"
+        android:textSize="18sp"
+        android:gravity="right"
+        android:layout_below="@+id/t1Total"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"/>
+
+</android.support.percent.PercentRelativeLayout>
