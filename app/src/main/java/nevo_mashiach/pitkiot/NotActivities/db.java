@@ -77,6 +77,7 @@ public class db {
         mMillisUntilFinished = db.timePerRound * 1000;
         gamePlayIsPaused = false;
         summaryIsPaused = false;
+        totalRoundNumber = 0;
     }
 
 
