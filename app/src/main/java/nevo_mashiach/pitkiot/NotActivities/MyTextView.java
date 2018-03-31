@@ -3,7 +3,6 @@ package nevo_mashiach.pitkiot.NotActivities;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
-import android.widget.TextView;
 
 /**
  * Created by Nevo2 on 10/19/2016.

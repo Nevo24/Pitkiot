@@ -9,8 +9,8 @@ android {
         applicationId "nevo_mashiach.pitkiot"
         minSdkVersion 14
         targetSdkVersion 24
-        versionCode 18
-        versionName "3.1.0"
+        versionCode 19
+        versionName "3.1.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         lintOptions {
             checkReleaseBuilds false
