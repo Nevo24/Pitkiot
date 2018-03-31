@@ -28,7 +28,7 @@ public class db {
     public static int[] teamsRoundNum;
     public static int[] scores;
     public static int currentSuccessNum = 0;
-    public static int currentPlaying = 1;
+    public static int currentPlaying = 0;
     public static long mMillisUntilFinished = 60 * 1000;
     public static CountDownTimer timer;
     public static double team2AverageAnswersPerSecond;

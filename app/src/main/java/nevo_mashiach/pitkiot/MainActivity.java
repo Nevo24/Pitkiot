@@ -5,20 +5,21 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.graphics.drawable.AnimationDrawable;
+import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -157,7 +158,7 @@ public class MainActivity extends AppCompatActivity {
         } catch (Exception e) {
         }
         try {
-            db.currentPlaying = prefs.getInt("currentPlaying", 1);
+            db.currentPlaying = prefs.getInt("currentPlaying", 0);
         } catch (Exception e) {
         }
         try {
@@ -197,7 +198,6 @@ public class MainActivity extends AppCompatActivity {
             dialogBag.resumeGame(task);
         } else {
             Collections.shuffle(db.defs);
-            db.resetGame();
             Intent intent = new Intent(context, GamePlay.class);
             startActivity(intent);
         }
@@ -226,7 +226,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 spEditor.putInt("totalRoundNumber", 0);
                 spEditor.putInt("currentSuccessNum", 0);
-                spEditor.putInt("currentPlaying", 1);
+                spEditor.putInt("currentPlaying", 0);
                 spEditor.putLong("mMillisUntilFinished", db.timePerRound * 1000);
                 spEditor.putBoolean("summaryIsPaused", false);
                 spEditor.putBoolean("gamePlayIsPaused", false);
