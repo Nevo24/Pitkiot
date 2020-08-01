@@ -2,13 +2,13 @@ apply plugin: 'com.android.application'
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion 29
     defaultConfig {
         applicationId "nevo_mashiach.pitkiot"
         minSdkVersion 16
-        targetSdkVersion 28
-        versionCode 25
-        versionName "3.1.7"
+        targetSdkVersion 29
+        versionCode 26
+        versionName "3.1.8"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         lintOptions {
             checkReleaseBuilds false
