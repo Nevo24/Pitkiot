@@ -4,10 +4,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.graphics.Typeface;
 import android.graphics.drawable.AnimationDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.LocaleList;
 import android.os.SystemClock;
 import android.os.Vibrator;
 import android.preference.PreferenceManager;
@@ -17,6 +21,8 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
+
+import java.util.Locale;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -72,6 +78,37 @@ public class GamePlay extends AppCompatActivity {
     private final long minimumInterval = 150;
     private long previousClickTimestamp = 0;
 
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(updateBaseContextLocale(base));
+    }
+
+    private Context updateBaseContextLocale(Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        String language = prefs.getString("app_language", "he");
+        Locale locale = new Locale(language);
+        Locale.setDefault(locale);
+
+        Resources resources = context.getResources();
+        Configuration config = new Configuration(resources.getConfiguration());
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            config.setLocale(locale);
+            LocaleList localeList = new LocaleList(locale);
+            LocaleList.setDefault(localeList);
+            config.setLocales(localeList);
+        } else {
+            config.locale = locale;
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            config.setLayoutDirection(locale);
+            return context.createConfigurationContext(config);
+        } else {
+            resources.updateConfiguration(config, resources.getDisplayMetrics());
+            return context;
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -161,6 +198,9 @@ public class GamePlay extends AppCompatActivity {
             setDef();
         } else {
             db.gamePlayIsPaused = false;
+            // Refresh localized strings in case language was changed
+            mTeamNum.setText(getString(R.string.game_team_label) + (db.currentPlaying + 1));
+            mRoundModeGame.setText(db.getRoundMode(context));
             mTotalNotes.setText(getString(R.string.game_notes_remaining) + db.roundNoteAmount());
             if(!db.noteExists((String)mCurrentDef.getText())) setDef();
         }

@@ -101,16 +101,16 @@
     <string name="dialog_cannot_edit_teams_msg">יש משחק שמתנהל ברקע. על מנת לערוך מספר קבוצות יש לסיים או לאפס את המשחק.</string>
 
     <!-- Game play strings -->
-    <string name="game_team_label">קבוצה </string>
-    <string name="game_notes_remaining">מספר פתקים נותרים לסבב: </string>
-    <string name="game_successes_this_round">מספר הצלחות בסיבוב זה: </string>
+    <string name="game_team_label">"קבוצה "</string>
+    <string name="game_notes_remaining">"מספר פתקים נותרים לסבב: "</string>
+    <string name="game_successes_this_round">"מספר הצלחות בסיבוב זה: "</string>
     <string name="game_notes_finished">נגמרו הפתקים!</string>
-    <string name="game_continue_team_turn">המשך! תור קבוצה </string>
-    <string name="game_time_remaining">זמן נותר: </string>
+    <string name="game_continue_team_turn">" המשך! תור קבוצה "</string>
+    <string name="game_time_remaining">"זמן נותר: "</string>
     <string name="game_time_up">נגמר הזמן!</string>
-    <string name="game_start_team_turn">התחל! תור קבוצה </string>
-    <string name="game_number_of_rounds">מספר סיבובים: </string>
-    <string name="game_total_score">ניקוד כולל: </string>
+    <string name="game_start_team_turn">"התחל! תור קבוצה "</string>
+    <string name="game_number_of_rounds">"מספר סיבובים: "</string>
+    <string name="game_total_score">"ניקוד כולל: "</string>
 
     <!-- Game modes -->
     <string name="mode_explain_without_word">הסבר בלי שימוש במילה</string>

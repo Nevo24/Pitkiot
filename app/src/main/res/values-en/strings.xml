@@ -101,16 +101,16 @@
     <string name="dialog_cannot_edit_teams_msg">There is a game running in the background. To edit the number of teams, you must finish or reset the game.</string>
 
     <!-- Game play strings -->
-    <string name="game_team_label">Team </string>
-    <string name="game_notes_remaining">Notes remaining in round: </string>
-    <string name="game_successes_this_round">Successes this round: </string>
+    <string name="game_team_label">"Team "</string>
+    <string name="game_notes_remaining">"Notes remaining in round: "</string>
+    <string name="game_successes_this_round">"Successes this round: "</string>
     <string name="game_notes_finished">Notes finished!</string>
-    <string name="game_continue_team_turn">Continue! Team\'s turn </string>
-    <string name="game_time_remaining">Time remaining: </string>
+    <string name="game_continue_team_turn">"Continue! Team "</string>
+    <string name="game_time_remaining">"Time remaining: "</string>
     <string name="game_time_up">Time\'s up!</string>
-    <string name="game_start_team_turn">Start! Team\'s turn </string>
-    <string name="game_number_of_rounds">Number of rounds: </string>
-    <string name="game_total_score">Total score: </string>
+    <string name="game_start_team_turn">"Start! Team "</string>
+    <string name="game_number_of_rounds">"Number of rounds: "</string>
+    <string name="game_total_score">"Total score: "</string>
 
     <!-- Game modes -->
     <string name="mode_explain_without_word">Explain without using the word</string>

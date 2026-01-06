@@ -4,8 +4,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.graphics.Typeface;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.LocaleList;
 import android.preference.PreferenceManager;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -17,6 +21,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
+
+import java.util.Locale;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -79,6 +85,38 @@ public class Summary extends AppCompatActivity {
     SharedPreferences.Editor spEditor;
     int selectedSpinner = 1;
 
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(updateBaseContextLocale(base));
+    }
+
+    private Context updateBaseContextLocale(Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        String language = prefs.getString("app_language", "he");
+        Locale locale = new Locale(language);
+        Locale.setDefault(locale);
+
+        Resources resources = context.getResources();
+        Configuration config = new Configuration(resources.getConfiguration());
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            config.setLocale(locale);
+            LocaleList localeList = new LocaleList(locale);
+            LocaleList.setDefault(localeList);
+            config.setLocales(localeList);
+        } else {
+            config.locale = locale;
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            config.setLayoutDirection(locale);
+            return context.createConfigurationContext(config);
+        } else {
+            resources.updateConfiguration(config, resources.getDisplayMetrics());
+            return context;
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -144,6 +182,8 @@ public class Summary extends AppCompatActivity {
             }
         } else {
             db.summaryIsPaused = false;
+            // Refresh localized strings in case language was changed
+            mRoundModeSummary.setText(db.getRoundMode(context));
         }
         if (db.amountOfTeams == 2) {
             multiTeamsVisibility(false);
@@ -295,6 +335,7 @@ public class Summary extends AppCompatActivity {
                 ((TextView) v).setTypeface(externalFont);
                 ((TextView) v).setTextColor(0x88000000);
                 ((TextView) v).setTextSize(25);
+                ((TextView) v).setGravity(android.view.Gravity.RIGHT);
                 return v;
             }
 
