@@ -109,14 +109,14 @@ public class db {
         if (totalRoundNumber == 3) totalRoundNumber = 0;
     }
 
-    public static String getRoundMode() {
+    public static String getRoundMode(Context context) {
         switch (totalRoundNumber) {
             case 0:
-                return "הסבר בלי שימוש במילה";
+                return context.getString(R.string.mode_explain_without_word);
             case 1:
-                return "הסבר במילה אחת";
+                return context.getString(R.string.mode_explain_one_word);
             case 2:
-                return "פנטומימה";
+                return context.getString(R.string.mode_pantomime);
         }
         return null;
     }

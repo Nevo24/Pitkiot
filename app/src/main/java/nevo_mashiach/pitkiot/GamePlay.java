@@ -155,25 +155,25 @@ public class GamePlay extends AppCompatActivity {
         mSuccess.setEnabled(true);
         mNext.setEnabled(true);
         if (!db.gamePlayIsPaused) {
-            mTeamNum.setText("קבוצה " + (db.currentPlaying + 1));
-            mRoundModeGame.setText(db.getRoundMode());
+            mTeamNum.setText(getString(R.string.game_team_label) + (db.currentPlaying + 1));
+            mRoundModeGame.setText(db.getRoundMode(context));
             db.resetTemp();
             setDef();
         } else {
             db.gamePlayIsPaused = false;
-            mTotalNotes.setText("מספר פתקים נותרים לסבב: " + db.roundNoteAmount());
+            mTotalNotes.setText(getString(R.string.game_notes_remaining) + db.roundNoteAmount());
             if(!db.noteExists((String)mCurrentDef.getText())) setDef();
         }
         timeGenerate("regular");
-        mCurrentSuccess.setText("מספר הצלחות בסיבוב זה: " + db.currentSuccessNum);
+        mCurrentSuccess.setText(getString(R.string.game_successes_this_round) + db.currentSuccessNum);
     }
 
     public void setDef() {
-        mTotalNotes.setText("מספר פתקים נותרים לסבב: " + db.roundNoteAmount());
+        mTotalNotes.setText(getString(R.string.game_notes_remaining) + db.roundNoteAmount());
         if (db.roundNoteAmount() == 0) {
             db.timer.cancel();
             db.increaseRoundMode();
-            summaryDisplay("נגמרו הפתקים!", "המשך! תור קבוצה " + (db.currentPlaying + 1));
+            summaryDisplay(getString(R.string.game_notes_finished), getString(R.string.game_continue_team_turn) + (db.currentPlaying + 1));
             return;
         }
         if (db.defs.size() == 0 && db.temp.size() > 0) {
@@ -198,7 +198,7 @@ public class GamePlay extends AppCompatActivity {
                 db.mMillisUntilFinished = millisUntilFinished;
                 if (millisUntilFinished / 1000 == oldMillis / 1000) return;
                 sec = (int) millisUntilFinished / 1000 + 1;
-                mTime.setText("זמן נותר: " + sec);
+                mTime.setText(getString(R.string.game_time_remaining) + sec);
                 if ((sec <= 10) && (sec > 0)) db.makeSound(context, R.raw.tick_sound);
             }
 
@@ -206,17 +206,17 @@ public class GamePlay extends AppCompatActivity {
                 if (db.defs.size() > 0) {
                     mSuccess.setEnabled(false);
                     mNext.setEnabled(false);
-                    mTime.setText("זמן נותר: 0");
+                    mTime.setText(getString(R.string.game_time_remaining) + "0");
                     db.makeSound(context, R.raw.time_is_up_sound);
                     vibrate();
                     int turn = ((db.currentPlaying + 2)%(db.amountOfTeams + 1));
                     if (turn == 0) turn = 1;
-                    summaryDisplay("נגמר הזמן!", "התחל! תור קבוצה " + turn);
+                    summaryDisplay(getString(R.string.game_time_up), getString(R.string.game_start_team_turn) + turn);
                 }
             }
         }.start();
         sec = (int) fixedMillisUntilFinished / 1000;
-        mTime.setText("זמן נותר: " + sec);
+        mTime.setText(getString(R.string.game_time_remaining) + sec);
     }
 
     public void summaryDisplay(String headline, String buttonText) {
@@ -283,7 +283,7 @@ public class GamePlay extends AppCompatActivity {
         happyAanim.start();
         db.currentSuccessNum++;
         db.increseScore();
-        mCurrentSuccess.setText("מספר הצלחות בסיבוב זה: " + db.currentSuccessNum);
+        mCurrentSuccess.setText(getString(R.string.game_successes_this_round) + db.currentSuccessNum);
 
         db.defTransfer("success", currentDef);
         setDef();

@@ -17,7 +17,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/teamNum"
-        android:text="ניהול פתקים"
+        android:text="@string/title_note_management"
         android:textSize="33sp"
         android:gravity="center"
         android:textColor="#ffffffff"
@@ -32,7 +32,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/linearLayout"
         android:gravity="center"
-        android:text="* לא לשכוח שכולם צריכים להכיר את הדמות"
+        android:text="@string/reminder_text"
         android:textColor="#ffffffff"
         android:textSize="20sp"
         android:layout_alignParentLeft="true"
@@ -60,11 +60,11 @@
         android:background="@drawable/button_green"
         android:minWidth="100dp"
         android:minHeight="55dp"
-        android:text="איסוף מקוון"
+        android:text="@string/button_online_collection"
         android:textColor="#ffffff" />
 
     <nevo_mashiach.pitkiot.NotActivities.MyButton
-        android:text="מחיקת פתקים"
+        android:text="@string/button_delete_notes"
         android:textColor="#ffffff"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -84,7 +84,7 @@
         app:layout_widthPercent="30%"
         android:textColor="#ffffffff"
         android:background="@drawable/button_grey"
-        android:text="הוספה"
+        android:text="@string/button_add"
         android:layout_marginTop="10dp"
         android:layout_below="@+id/reminder"
         android:layout_alignParentRight="true"
@@ -93,7 +93,7 @@
     <nevo_mashiach.pitkiot.NotActivities.MyEditText
         android:id="@+id/typeDef"
         android:background="@android:color/transparent"
-        android:hint="הזן דמות"
+        android:hint="@string/hint_enter_character"
         android:inputType="textPersonName"
         android:textColor="@color/common_google_signin_btn_text_dark_default"
         android:textColorHint="#88000000"
@@ -106,7 +106,7 @@
 
     <nevo_mashiach.pitkiot.NotActivities.MyTextView
         android:textSize="17sp"
-        android:text="מספר הפתקים: 0"
+        android:text=""
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"

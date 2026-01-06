@@ -279,6 +279,54 @@
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
         import { getFirestore, collection, addDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
+        // Translations
+        const translations = {
+            he: {
+                title: 'Pitkiot - הוסף פתק',
+                header: 'Pitkiot - פיתקיות',
+                logo: '📝',
+                labelName: 'שם / כינוי',
+                placeholderName: 'השם שלך',
+                helperName: 'כדי לזהות מי שלח את הפתק',
+                labelNotes: 'הפתקים שלך',
+                placeholderNotes: 'כתוב פה את הפתקים שלך...',
+                helperNotes: 'אפשר לכתוב כמה פתקים מופרדים בפסיקים או שורות',
+                buttonSubmit: 'שלח פתק',
+                buttonSubmitAnother: 'שלח פתק נוסף',
+                loading: 'טוען...',
+                error: 'שגיאה',
+                errorNoSession: 'קוד משחק חסר. אנא השתמש בקישור המלא שקיבלת מהמארח.',
+                errorNoName: 'אנא הזן שם או כינוי',
+                errorNoContent: 'אנא כתוב פתק לפני השליחה',
+                sending: 'שולח...',
+                success: 'הפתק נשלח בהצלחה! 🎉',
+                errorSubmit: 'שגיאה בשליחת הפתק. אנא נסה שוב.',
+                sessionCode: 'קוד: '
+            },
+            en: {
+                title: 'Pitkiot - Add Note',
+                header: 'Pitkiot - Notes',
+                logo: '📝',
+                labelName: 'Name / Nickname',
+                placeholderName: 'Your name',
+                helperName: 'To identify who sent the note',
+                labelNotes: 'Your Notes',
+                placeholderNotes: 'Write your notes here...',
+                helperNotes: 'You can write multiple notes separated by commas or lines',
+                buttonSubmit: 'Send Note',
+                buttonSubmitAnother: 'Send Another Note',
+                loading: 'Loading...',
+                error: 'Error',
+                errorNoSession: 'Game code missing. Please use the full link you received from the host.',
+                errorNoName: 'Please enter a name or nickname',
+                errorNoContent: 'Please write a note before submitting',
+                sending: 'Sending...',
+                success: 'Note sent successfully! 🎉',
+                errorSubmit: 'Error sending note. Please try again.',
+                sessionCode: 'Code: '
+            }
+        };
+
         // Firebase configuration for Pitkiot
         const firebaseConfig = {
             apiKey: "AIzaSyCIZrgUkUn1I4fmkDIW7FRGuXTpnhVr1h4",
@@ -293,9 +341,17 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // Get session ID from URL
+        // Get session ID and language from URL
         const urlParams = new URLSearchParams(window.location.search);
         const sessionId = urlParams.get('session') || urlParams.get('s');
+        const lang = urlParams.get('lang') || 'he'; // Default to Hebrew
+        const t = translations[lang] || translations.he;
+
+        // Apply language settings
+        document.documentElement.lang = lang;
+        document.documentElement.dir = lang === 'he' ? 'rtl' : 'ltr';
+        document.body.dir = lang === 'he' ? 'rtl' : 'ltr';
+        document.title = t.title;
 
         const loadingScreen = document.getElementById('loadingScreen');
         const mainContent = document.getElementById('mainContent');
@@ -306,11 +362,23 @@
         const message = document.getElementById('message');
         const errorMessage = document.getElementById('errorMessage');
 
+        // Update all text content with translations
+        document.querySelector('.logo').textContent = t.logo;
+        document.querySelector('h1').textContent = t.header;
+        document.querySelector('label[for="noteName"]').textContent = t.labelName;
+        document.getElementById('noteName').placeholder = t.placeholderName;
+        document.querySelectorAll('.helper-text')[0].textContent = t.helperName;
+        document.querySelector('label[for="noteContent"]').textContent = t.labelNotes;
+        document.getElementById('noteContent').placeholder = t.placeholderNotes;
+        document.querySelectorAll('.helper-text')[1].textContent = t.helperNotes;
+        submitBtn.textContent = t.buttonSubmit;
+        document.querySelector('#loadingScreen p').textContent = t.loading;
+
         // Validate session ID
         if (!sessionId) {
-            showError('קוד משחק חסר. אנא השתמש בקישור המלא שקיבלת מהמארח.');
+            showError(t.errorNoSession);
         } else {
-            sessionDisplay.textContent = `קוד: ${sessionId}`;
+            sessionDisplay.textContent = t.sessionCode + sessionId;
             loadingScreen.style.display = 'none';
             mainContent.style.display = 'block';
         }
@@ -338,17 +406,17 @@
             const noteContent = document.getElementById('noteContent').value.trim();
 
             if (!noteName) {
-                showMessage('אנא הזן שם', 'error');
+                showMessage(t.errorNoName, 'error');
                 return;
             }
 
             if (!noteContent) {
-                showMessage('אנא כתוב פתק לפני השליחה', 'error');
+                showMessage(t.errorNoContent, 'error');
                 return;
             }
 
             submitBtn.disabled = true;
-            submitBtn.textContent = 'שולח...';
+            submitBtn.textContent = t.sending;
 
             try {
                 // Add submission to Firestore
@@ -359,21 +427,21 @@
                 });
 
                 // Success!
-                showMessage('הפתק נשלח בהצלחה! 🎉', 'success');
+                showMessage(t.success, 'success');
                 document.getElementById('noteContent').value = '';
                 // Don't clear name - user can submit multiple times with same name
 
                 // Reset button after a delay
                 setTimeout(() => {
-                    submitBtn.textContent = 'שלח פתק נוסף';
+                    submitBtn.textContent = t.buttonSubmitAnother;
                     submitBtn.disabled = false;
                 }, 1500);
 
             } catch (error) {
                 console.error('Error submitting note:', error);
-                showMessage('שגיאה בשליחת הפתק. אנא נסה שוב.', 'error');
+                showMessage(t.errorSubmit, 'error');
                 submitBtn.disabled = false;
-                submitBtn.textContent = 'שלח פתק';
+                submitBtn.textContent = t.buttonSubmit;
             }
         });
     </script>

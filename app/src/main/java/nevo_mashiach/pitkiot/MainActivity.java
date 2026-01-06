@@ -4,9 +4,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.LocaleList;
 import android.preference.PreferenceManager;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -18,6 +21,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Set;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -46,6 +50,8 @@ public class MainActivity extends AppCompatActivity {
     ImageView mAnimationFigure;
     @BindView(R.id.gamePlayFigureHappy)
     ImageView mGamePlayFigureHappy;
+    @BindView(R.id.languageToggle)
+    TextView mLanguageToggle;
     static AppCompatActivity thisActivity;
     AnimationDrawable happyAanim;
     CountDownTimer animationTimer;
@@ -61,20 +67,28 @@ public class MainActivity extends AppCompatActivity {
             System.exit(0);
         }
         super.onCreate(savedInstanceState);
+
+        // Initialize preferences and load language first
+        context = this;
+        prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        spEditor = prefs.edit();
+        loadLanguagePreference();
+
         setContentView(R.layout.activity_main);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         ButterKnife.bind(this);
-        context = this;
         dialogBag = new DialogBag(getFragmentManager(), this);
         thisActivity = this;
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         db.getInstance();
-        prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        spEditor = prefs.edit();
+
+        // Update flag icon based on current language
+        updateLanguageFlag();
+
         if (firstLaunch) {
             loadDb();
-            mNoteCount.setText("מספר הפתקים במאגר: " + db.totalNoteAmount());
+            mNoteCount.setText(String.format(getString(R.string.note_count_database), db.totalNoteAmount()));
             firstLaunch = false;
         }
         mGamePlayFigureHappy.setVisibility(View.INVISIBLE);
@@ -84,9 +98,9 @@ public class MainActivity extends AppCompatActivity {
 
     protected void onResume() {
         super.onResume();
-        mNoteCount.setText("מספר הפתקים במאגר: " + db.totalNoteAmount());
-        if (db.gamePlayIsPaused || db.summaryIsPaused) mPlayGame.setText("חזרה למשחק");
-        else mPlayGame.setText("התחל משחק חדש");
+        mNoteCount.setText(String.format(getString(R.string.note_count_database), db.totalNoteAmount()));
+        if (db.gamePlayIsPaused || db.summaryIsPaused) mPlayGame.setText(getString(R.string.button_return_to_game));
+        else mPlayGame.setText(getString(R.string.button_start_new_game));
 
         mAnimationFigure.setBackgroundResource(R.drawable.animation_breathe);
         AnimationDrawable anim = (AnimationDrawable) mAnimationFigure.getBackground();
@@ -214,7 +228,7 @@ public class MainActivity extends AppCompatActivity {
         Runnable task = new Runnable() {
             public void run() {
                 db.resetGame();
-                mPlayGame.setText("התחל משחק חדש");
+                mPlayGame.setText(getString(R.string.button_start_new_game));
 
                 //reset game state:
                 Set<String> set = new HashSet<String>();
@@ -279,5 +293,56 @@ public class MainActivity extends AppCompatActivity {
     @OnTouch({R.id.playGame, R.id.addNote, R.id.reset, R.id.settings})
     boolean onTouch(View view, MotionEvent motion) {
         return db.onTouch(context, view, motion);
+    }
+
+    @OnClick(R.id.languageToggle)
+    public void toggleLanguage(View view) {
+        String currentLang = prefs.getString("app_language", "he");
+        String newLang = currentLang.equals("he") ? "en" : "he";
+
+        // Save new language preference
+        spEditor.putString("app_language", newLang);
+        spEditor.commit();
+
+        // Apply new language and recreate activity
+        setLocale(newLang);
+        recreate();
+    }
+
+    private void loadLanguagePreference() {
+        String language = prefs.getString("app_language", "he");
+        setLocale(language);
+    }
+
+    private void setLocale(String languageCode) {
+        Locale locale = new Locale(languageCode);
+        Locale.setDefault(locale);
+
+        Resources resources = getResources();
+        Configuration config = resources.getConfiguration();
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+            config.setLocale(locale);
+            LocaleList localeList = new LocaleList(locale);
+            LocaleList.setDefault(localeList);
+            config.setLocales(localeList);
+        } else {
+            config.locale = locale;
+        }
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            config.setLayoutDirection(locale);
+        }
+
+        resources.updateConfiguration(config, resources.getDisplayMetrics());
+    }
+
+    private void updateLanguageFlag() {
+        String currentLang = prefs.getString("app_language", "he");
+        if (currentLang.equals("he")) {
+            mLanguageToggle.setText("🇺🇸"); // Show US flag when in Hebrew (to switch to English)
+        } else {
+            mLanguageToggle.setText("🇮🇱"); // Show Israel flag when in English (to switch to Hebrew)
+        }
     }
 }

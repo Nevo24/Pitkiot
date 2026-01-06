@@ -56,7 +56,7 @@
         <nevo_mashiach.pitkiot.NotActivities.MyTextView
             android:id="@+id/team1Text"
             android:gravity="right|center"
-            android:text="בחירת מספר קבוצות:"
+            android:text="@string/settings_select_teams"
             android:textSize="18sp"
             android:layout_height="match_parent"
             app:layout_widthPercent="40%"
@@ -124,7 +124,7 @@
         android:textColor="@color/common_google_signin_btn_text_dark_default"
         android:button="@null"
         android:drawableRight="?android:attr/listChoiceIndicatorMultiple"
-        android:text="איזון ניקוד בסיום משחק"
+        android:text="@string/settings_auto_balance"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/autoBalaceCheckBox"
@@ -137,7 +137,7 @@
         android:layout_alignParentEnd="true"/>
 
     <nevo_mashiach.pitkiot.NotActivities.MyTextView
-        android:text="* הזן שניות בין 1 ל- 300"
+        android:text="@string/settings_input_instruction"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/timeHeadline"
@@ -149,7 +149,7 @@
 
     <nevo_mashiach.pitkiot.NotActivities.MyTextView
         android:textColor="@color/common_google_signin_btn_text_dark_default"
-        android:text='מספר שניות שיורדות כשלוחצים על "עבור":'
+        android:text="@string/settings_seconds_reduced_pass"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/team1Headline"
@@ -176,7 +176,7 @@
 
     <nevo_mashiach.pitkiot.NotActivities.MyTextView
         android:textColor="@color/common_google_signin_btn_text_dark_default"
-        android:text="מספר שניות לסיבוב:"
+        android:text="@string/settings_seconds_per_round"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/textView1"
@@ -191,7 +191,7 @@
         android:textColor="@color/common_google_signin_btn_text_dark_default"
         android:button="@null"
         android:drawableRight="?android:attr/listChoiceIndicatorMultiple"
-        android:text="סאונד"
+        android:text="@string/settings_sound"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/soundCheckBox"
@@ -236,7 +236,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/headline"
-        android:text="הגדרות"
+        android:text="@string/settings_title"
         android:textSize="33sp"
         android:gravity="center"
         android:textColor="#ffffffff"
@@ -249,14 +249,14 @@
         android:id="@+id/editScoreHeadline"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="* עריכת ניקוד קבוצות:"
+        android:text="@string/settings_edit_team_scores"
         android:textSize="19sp"
         android:layout_below="@+id/topLayout"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"/>
 
     <nevo_mashiach.pitkiot.NotActivities.MyButton
-        android:text="איפוס הגדרות"
+        android:text="@string/settings_reset_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/resetSettings"

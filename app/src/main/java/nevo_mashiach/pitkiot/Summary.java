@@ -103,13 +103,13 @@ public class Summary extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         if (!onCreate) return; //preventing round++ when minimizing the app
-        mTotalNotes.setText("מספר פתקים נותרים לסבב: " + db.roundNoteAmount());
+        mTotalNotes.setText(getString(R.string.game_notes_remaining) + db.roundNoteAmount());
         if (!db.summaryIsPaused) {
-            mRoundModeSummary.setText(db.getRoundMode());
+            mRoundModeSummary.setText(db.getRoundMode(context));
             mReady.setText(getIntent().getExtras().getString("readyText"));
 
             mSummaryHeadline.setText(getIntent().getExtras().getString("summaryHeadline"));
-            if (mSummaryHeadline.getText().equals("נגמר הזמן!")) { //If we are here because of time out
+            if (mSummaryHeadline.getText().equals(getString(R.string.game_time_up))) { //If we are here because of time out
                 if(db.amountOfTeams == 2){
                     if (db.currentPlaying == 0) mT1Plus.setText("+" + db.currentSuccessNum);
                     else mT2Plus.setText("+" + db.currentSuccessNum);
@@ -128,19 +128,19 @@ public class Summary extends AppCompatActivity {
                     gameOverDialogCall();
                 } else {
                     dialogBag.modeChanged();
-                    mTotalNotes.setText("מספר פתקים נותרים לסבב: " + db.totalNoteAmount());
+                    mTotalNotes.setText(getString(R.string.game_notes_remaining) + db.totalNoteAmount());
                 }
             }
             if (db.amountOfTeams == 2) {
                 multiTeamsVisibility(false);
                 twoTeamsVisibility(true);
-                mT1Round.setText("מספר סיבובים: " + db.teamsRoundNum[0]);
-                mT2Round.setText("מספר סיבובים: " + db.teamsRoundNum[1]);
+                mT1Round.setText(getString(R.string.game_number_of_rounds) + db.teamsRoundNum[0]);
+                mT2Round.setText(getString(R.string.game_number_of_rounds) + db.teamsRoundNum[1]);
             } else {
                 multiTeamsVisibility(true);
                 twoTeamsVisibility(false);
                 createGroupSpinner();
-                mMultiTeamRound.setText("מספר סיבובים: " + db.teamsRoundNum[db.currentPlaying]);
+                mMultiTeamRound.setText(getString(R.string.game_number_of_rounds) + db.teamsRoundNum[db.currentPlaying]);
             }
         } else {
             db.summaryIsPaused = false;
@@ -148,13 +148,13 @@ public class Summary extends AppCompatActivity {
         if (db.amountOfTeams == 2) {
             multiTeamsVisibility(false);
             twoTeamsVisibility(true);
-            mT1Total.setText("ניקוד כולל: " + db.scores[0]);
-            mT2Total.setText("ניקוד כולל: " + db.scores[1]);
+            mT1Total.setText(getString(R.string.game_total_score) + db.scores[0]);
+            mT2Total.setText(getString(R.string.game_total_score) + db.scores[1]);
         } else {
             multiTeamsVisibility(true);
             twoTeamsVisibility(false);
             createGroupSpinner();
-            mMultiTeamTotalScore.setText("ניקוד כולל: " + db.scores[db.currentPlaying]);
+            mMultiTeamTotalScore.setText(getString(R.string.game_total_score) + db.scores[db.currentPlaying]);
         }
         onCreate = false;
     }
@@ -283,7 +283,7 @@ public class Summary extends AppCompatActivity {
 
         String[] items = new String[db.amountOfTeams];
         for (int i = 0; i < db.amountOfTeams; i++) {
-            items[i] = "קבוצה " + (i + 1);
+            items[i] = getString(R.string.game_team_label) + (i + 1);
         }
 
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
@@ -319,8 +319,8 @@ public class Summary extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
                 selectedSpinner = position;
-                mMultiTeamTotalScore.setText("ניקוד כולל: " + db.scores[selectedSpinner]);
-                mMultiTeamRound.setText("מספר סיבובים: " + db.teamsRoundNum[selectedSpinner]);
+                mMultiTeamTotalScore.setText(getString(R.string.game_total_score) + db.scores[selectedSpinner]);
+                mMultiTeamRound.setText(getString(R.string.game_number_of_rounds) + db.teamsRoundNum[selectedSpinner]);
             }
 
             @Override
@@ -335,7 +335,7 @@ public class Summary extends AppCompatActivity {
     //*********************** ON CLICKS ********************************
     @OnClick(R.id.ready)
     public void backToGamePlay(View view) {
-        if (mSummaryHeadline.getText().equals("נגמר הזמן!")) {
+        if (mSummaryHeadline.getText().equals(getString(R.string.game_time_up))) {
             db.mMillisUntilFinished = db.timePerRound * 1000;
             db.currentPlaying = (db.currentPlaying + 1)%db.amountOfTeams;
         } else db.resetRound();

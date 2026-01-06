@@ -1,3 +1,161 @@
 <resources>
     <string name="app_name">Pitkiot</string>
+
+    <!-- Main Screen -->
+    <string name="title_note_management">ניהול פתקים</string>
+    <string name="reminder_text">* לא לשכוח שכולם צריכים להכיר את הדמות</string>
+    <string name="button_online_collection">איסוף מקוון</string>
+    <string name="button_delete_notes">מחיקת פתקים</string>
+    <string name="button_add">הוספה</string>
+    <string name="hint_enter_character">הזן דמות</string>
+    <string name="note_count">מספר הפתקים: %d</string>
+    <string name="note_count_database">מספר הפתקים במאגר: %d</string>
+
+    <!-- MainActivity buttons -->
+    <string name="button_play_game">שחק</string>
+    <string name="button_manage_notes">ניהול פתקים</string>
+    <string name="button_reset">איפוס משחק</string>
+    <string name="button_settings">הגדרות</string>
+    <string name="button_return_to_game">חזרה למשחק</string>
+    <string name="button_start_new_game">התחל משחק חדש</string>
+
+    <!-- Collection Dialog -->
+    <string name="dialog_title_collection">איסוף פתקים מהשחקנים</string>
+    <string name="dialog_subtitle_share">שתף את הקישור הזה עם השחקנים:</string>
+    <string name="button_copy_link">העתק קישור</string>
+    <string name="button_finish_save">סיים ושמור פתקים</string>
+    <string name="section_received_notes">פתקים שהתקבלו:</string>
+    <string name="received_notes_count">%1$d פתקים התקבלו מ-%2$d אנשים</string>
+    <string name="waiting_for_notes">ממתין לפתקים...</string>
+    <string name="submitter_item">✓ %1$s: %2$d פתקים</string>
+
+    <!-- Toast Messages -->
+    <string name="toast_new_note_received">פתק חדש התקבל מ%s</string>
+    <string name="toast_error">שגיאה: %s</string>
+    <string name="toast_qr_error">שגיאה ביצירת QR</string>
+    <string name="toast_link_copied">הקישור הועתק!</string>
+    <string name="toast_notes_added">%d פתקים נוספו למאגר</string>
+
+    <!-- Web Form (for reference) -->
+    <string name="web_title">Pitkiot - הוסף פתק</string>
+    <string name="web_header">📝 Pitkiot - פיתקיות</string>
+    <string name="web_label_name">שם / כינוי</string>
+    <string name="web_placeholder_name">השם שלך</string>
+    <string name="web_helper_name">כדי לזהות מי שלח את הפתק</string>
+    <string name="web_label_notes">הפתקים שלך</string>
+    <string name="web_placeholder_notes">כתוב פה את הפתקים שלך...</string>
+    <string name="web_helper_notes">אפשר לכתוב כמה פתקים מופרדים בפסיקים או שורות</string>
+    <string name="web_button_submit">שלח פתק</string>
+    <string name="web_button_submit_another">שלח פתק נוסף</string>
+    <string name="web_loading">טוען...</string>
+    <string name="web_error">שגיאה</string>
+    <string name="web_error_no_session">קוד משחק חסר. אנא השתמש בקישור המלא שקיבלת מהמארח.</string>
+    <string name="web_error_no_name">אנא הזן שם או כינוי</string>
+    <string name="web_error_no_content">אנא כתוב פתק לפני השליחה</string>
+    <string name="web_sending">שולח...</string>
+    <string name="web_success">הפתק נשלח בהצלחה! 🎉</string>
+    <string name="web_error_submit">שגיאה בשליחת הפתק. אנא נסה שוב.</string>
+    <string name="web_session_code">קוד: %s</string>
+
+    <!-- Dialog messages -->
+    <string name="dialog_mode_changed_title">שימו לב משנים מוד משחק!</string>
+    <string name="dialog_mode_changed_msg">מעכשיו %s</string>
+    <string name="dialog_understood">הבנתי</string>
+    <string name="dialog_no_notes_title">אין פתקים</string>
+    <string name="dialog_no_notes_msg">אוי לא</string>
+    <string name="dialog_return_main">חזרה לתפריט הראשי</string>
+    <string name="dialog_game_over_title">נגמר המשחק!</string>
+    <string name="dialog_team_won">קבוצה %1$d ניצחה %2$d : %3$d</string>
+    <string name="dialog_draw">תיקו %1$d : %2$d</string>
+    <string name="dialog_view_final_score">צפייה בניקוד הסופי</string>
+    <string name="dialog_final_score_title">ניקוד סופי</string>
+    <string name="dialog_team_score">קבוצה %1$d: %2$d\n</string>
+    <string name="dialog_uneven_title">הסבר האפשרות</string>
+    <string name="dialog_uneven_msg">לפעמים המשחק נגמר כך שחלק מהקבוצות שיחקו סיבוב אחד פחות מקבוצות אחרות (או קיבלו פחות זמן בסיבוב האחרון שלהן). על מנת להימנע מאי צדק נבזי שכזה, בסיום המשחק, אפשרות זו תוסיף לקבוצות המקופחות נקודות בהתאם לביצועיהן.\nבקיצור אם אתם רוצים משחק הוגן סמנו את האופציה בווי.</string>
+    <string name="dialog_invalid_input_title">קלט לא תקין!</string>
+    <string name="dialog_invalid_input_msg">נא להזין מספר שלם בין 1 ל 300</string>
+    <string name="dialog_ok">בסדר</string>
+    <string name="dialog_back_main_title">חזרה לתפריט הראשי</string>
+    <string name="dialog_back_main_msg">האם אתה בטוח שברצונך לחזור לתפריט הראשי? (תוכל לבצע שינויים ולשוב לאותו מצב משחק).</string>
+    <string name="dialog_continue_play">המשך לשחק</string>
+    <string name="dialog_exit_game_title">יציאה מהמשחק</string>
+    <string name="dialog_exit_game_msg">האם אתה בטוח שברצונך לצאת מהמשחק?</string>
+    <string name="dialog_exit">יציאה</string>
+    <string name="dialog_delete_char_title">הסרת דמות</string>
+    <string name="dialog_delete_char_msg">האם אתה בטוח שברצונך למחוק את הדמות?</string>
+    <string name="dialog_yes">כן</string>
+    <string name="dialog_no">לא</string>
+    <string name="dialog_delete_all_title">ריקון מאגר פתקים</string>
+    <string name="dialog_delete_all_msg">האם אתה בטוח שברצונך למחוק את כל הפתקים מהמאגר?</string>
+    <string name="dialog_reset_game_title">איפוס משחק</string>
+    <string name="dialog_reset_game_msg">האם אתה בטוח שברצונך לאפס את המשחק? שים לב כי המשחק יתחיל מההתחלה אך הפתקים ישארו.\nלמחיקת הפתקים עבור ל\"ניהול פתקים\".</string>
+    <string name="dialog_reset_settings_title">איפוס הגדרות</string>
+    <string name="dialog_reset_settings_msg">האם אתה בטוח שברצונך לאפס את ההגדרות? שים לב כי ניקוד הקבוצות יאופס רק בעת איפוס המשחק.</string>
+    <string name="dialog_resume_game_title">חזרה למשחק מתנהל</string>
+    <string name="dialog_resume_game_msg">שים לב, אתה עומד לחזור למשחק שמתנהל. אם ברצונך להתחיל משחק חדש הישאר בעמוד הראשי ולחץ על \"איפוס משחק\".</string>
+    <string name="dialog_resume_game_btn">חזור למשחק מתנהל</string>
+    <string name="dialog_stay_main">הישאר בעמוד ראשי</string>
+    <string name="dialog_cannot_edit_score_title">לא ניתן לערוך נקודות</string>
+    <string name="dialog_cannot_edit_score_msg">אין משחק שמתנהל ברקע. על מנת לערוך ניקוד קבוצות ראשית התחל משחק חדש ולאחר מכן חזור לחלון ההגדרות.</string>
+    <string name="dialog_cannot_edit_teams_title">לא ניתן לערוך מספר קבוצות</string>
+    <string name="dialog_cannot_edit_teams_msg">יש משחק שמתנהל ברקע. על מנת לערוך מספר קבוצות יש לסיים או לאפס את המשחק.</string>
+
+    <!-- Game play strings -->
+    <string name="game_team_label">קבוצה </string>
+    <string name="game_notes_remaining">מספר פתקים נותרים לסבב: </string>
+    <string name="game_successes_this_round">מספר הצלחות בסיבוב זה: </string>
+    <string name="game_notes_finished">נגמרו הפתקים!</string>
+    <string name="game_continue_team_turn">המשך! תור קבוצה </string>
+    <string name="game_time_remaining">זמן נותר: </string>
+    <string name="game_time_up">נגמר הזמן!</string>
+    <string name="game_start_team_turn">התחל! תור קבוצה </string>
+    <string name="game_number_of_rounds">מספר סיבובים: </string>
+    <string name="game_total_score">ניקוד כולל: </string>
+
+    <!-- Game modes -->
+    <string name="mode_explain_without_word">הסבר בלי שימוש במילה</string>
+    <string name="mode_explain_one_word">הסבר במילה אחת</string>
+    <string name="mode_pantomime">פנטומימה</string>
+
+    <!-- SMS dialogs (legacy feature) -->
+    <string name="dialog_sms_explanation_title">סרוק סמסים</string>
+    <string name="dialog_sms_explanation_msg">בעת הלחיצה על הכפתור יסרקו כל הסמסים שהתקבלו מאז הזמן המפורט. סמס בפורמט המתאים ישמש כמקור הוספת פתקים למאגר. לצורך כך יש לשלוח סמס בתבנית הבאה:\n\"פתקיות: דמות1, דמות2, דמות3....\"\nאין משמעות לרווחים בסמס אך חשוב שבתחילתו יהיה רשום \"פיתקיות\"\nאו \"פתקיות\", לאחר מכן נקודותיים ולבסוף שמות הדמויות מופרדים בפסיקים.</string>
+    <string name="dialog_sms_scanned_title">סמסים נסרקו</string>
+    <string name="dialog_sms_scanned_msg">מספר הודעות מתאימות שהתקבלו: %d</string>
+    <string name="dialog_click_again_title">נא ללחוץ שוב על הכפתור</string>
+    <string name="dialog_click_again_msg">במידה ואישרת יש ללחוץ שוב על הכפתור \"סרוק סמסים\" על מנת להתחיל בתהליך הסריקה.</string>
+    <string name="dialog_sms_access_title">בקשת גישה לסמסים</string>
+    <string name="dialog_sms_access_msg">על מנת שהאפליקציה תוכל לסרוק את הסמסים שעל מכשירך, עליה לקבל אישור גישה חד פעמי. אנא לחץ על \'התר\' בחלון הבא. אל תהיה פרנואיד, אין לי באמת מה לעשות עם הסמסים שלך.</string>
+    <string name="dialog_button_understood_alt">הבנתי</string>
+    <string name="dialog_button_okay">אוקיי</string>
+
+    <!-- Collection session -->
+    <string name="submitter_anonymous">אנונימי</string>
+
+    <!-- Settings screen -->
+    <string name="settings_title">הגדרות</string>
+    <string name="settings_select_teams">בחירת מספר קבוצות:</string>
+    <string name="settings_auto_balance">איזון ניקוד בסיום משחק</string>
+    <string name="settings_sound">סאונד</string>
+    <string name="settings_seconds_per_round">מספר שניות לסיבוב:</string>
+    <string name="settings_seconds_reduced_pass">מספר שניות שיורדות כשלוחצים על \"עבור\":</string>
+    <string name="settings_input_instruction">* הזן שניות בין 1 ל- 300</string>
+    <string name="settings_edit_team_scores">* עריכת ניקוד קבוצות:</string>
+    <string name="settings_reset_button">איפוס הגדרות</string>
+
+    <!-- Game play screen -->
+    <string name="gameplay_pass_button">עבור</string>
+    <string name="gameplay_success_button">הצלחתי!</string>
+    <string name="gameplay_no_more_notes">אין יותר פתקים</string>
+
+    <!-- Summary screen -->
+    <string name="summary_team_1">קבוצה 1:</string>
+    <string name="summary_team_2">קבוצה 2:</string>
+    <string name="summary_team_x">קבוצה X:</string>
+    <string name="summary_ready_button">יאללה סמאללה</string>
+    <string name="summary_total_notes">מספר פתקים כולל: </string>
+
+    <!-- Sample/legacy strings -->
+    <string name="sample_notes">פתקים</string>
+    <string name="sample_delete_all">מחק הכל</string>
 </resources>

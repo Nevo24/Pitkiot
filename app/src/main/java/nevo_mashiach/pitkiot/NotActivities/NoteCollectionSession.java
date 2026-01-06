@@ -1,5 +1,6 @@
 package nevo_mashiach.pitkiot.NotActivities;
 
+import android.content.Context;
 import android.util.Log;
 
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -8,6 +9,8 @@ import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.Query;
 
 import java.util.Random;
+
+import nevo_mashiach.pitkiot.R;
 
 /**
  * Manages note collection sessions using Firebase Firestore.
@@ -20,6 +23,7 @@ public class NoteCollectionSession {
     private static final String COLLECTION_SUBMISSIONS = "submissions";
 
     private FirebaseFirestore firestore;
+    private Context context;
     private String sessionId;
     private ListenerRegistration listenerRegistration;
     private OnNoteReceivedListener noteReceivedListener;
@@ -29,7 +33,8 @@ public class NoteCollectionSession {
         void onError(String error);
     }
 
-    public NoteCollectionSession() {
+    public NoteCollectionSession(Context context) {
+        this.context = context;
         firestore = FirebaseFirestore.getInstance();
     }
 
@@ -111,7 +116,7 @@ public class NoteCollectionSession {
                                 Log.d(TAG, "New note from " + submitterName + ": " + noteContent);
                                 if (noteReceivedListener != null) {
                                     noteReceivedListener.onNoteReceived(
-                                            submitterName != null ? submitterName : "אנונימי",
+                                            submitterName != null ? submitterName : context.getString(R.string.submitter_anonymous),
                                             noteContent
                                     );
                                 }

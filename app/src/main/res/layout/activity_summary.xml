@@ -26,7 +26,7 @@
 
     <nevo_mashiach.pitkiot.NotActivities.MyTextView
         android:textColor="@color/common_google_signin_btn_text_dark_default"
-        android:text="קבוצה 1:"
+        android:text="@string/summary_team_1"
         android:layout_marginTop="-10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -40,7 +40,7 @@
 
     <nevo_mashiach.pitkiot.NotActivities.MyTextView
         android:textColor="@color/common_google_signin_btn_text_dark_default"
-        android:text="מספר סיבובים: "
+        android:text="@string/game_number_of_rounds"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/t1Round"
@@ -53,7 +53,7 @@
 
     <nevo_mashiach.pitkiot.NotActivities.MyTextView
         android:textColor="@color/common_google_signin_btn_text_dark_default"
-        android:text="קבוצה 2:"
+        android:text="@string/summary_team_2"
         android:layout_marginTop="-10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -67,7 +67,7 @@
 
     <nevo_mashiach.pitkiot.NotActivities.MyTextView
         android:textColor="@color/common_google_signin_btn_text_dark_default"
-        android:text="מספר סיבובים:"
+        android:text="@string/game_number_of_rounds"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="17dp"
@@ -80,7 +80,7 @@
 
     <nevo_mashiach.pitkiot.NotActivities.MyTextView
         android:textColor="@color/common_google_signin_btn_text_dark_default"
-        android:text="ניקוד כולל:"
+        android:text="@string/game_total_score"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/t2Total"
@@ -93,7 +93,7 @@
 
     <nevo_mashiach.pitkiot.NotActivities.MyTextView
         android:textColor="@color/common_google_signin_btn_text_dark_default"
-        android:text="ניקוד כולל:"
+        android:text="@string/game_total_score"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="17dp"
@@ -105,7 +105,7 @@
         android:gravity="right"/>
 
     <nevo_mashiach.pitkiot.NotActivities.MyTextView
-        android:text="מספר פתקים כולל: "
+        android:text="@string/summary_total_notes"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/editScoreHeadline"
@@ -130,7 +130,7 @@
         android:layout_alignParentStart="true"/>
 
     <nevo_mashiach.pitkiot.NotActivities.MyButton
-        android:text="יאללה סמאללה"
+        android:text="@string/summary_ready_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/ready"
@@ -152,7 +152,7 @@
         android:layout_alignParentStart="true"/>
 
     <nevo_mashiach.pitkiot.NotActivities.MyTextView
-        android:text="הסבר בלי שימוש במילה"
+        android:text="@string/mode_explain_without_word"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/roundModeSummary"
@@ -193,7 +193,7 @@
 
     <Spinner
         android:textColor="@color/common_google_signin_btn_text_dark_default"
-        android:text="קבוצה X:"
+        android:text="@string/summary_team_x"
         android:layout_marginTop="40dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -207,7 +207,7 @@
 
     <nevo_mashiach.pitkiot.NotActivities.MyTextView
         android:textColor="@color/common_google_signin_btn_text_dark_default"
-        android:text="ניקוד כולל: X"
+        android:text="@string/game_total_score"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="67dp"
@@ -220,7 +220,7 @@
 
     <nevo_mashiach.pitkiot.NotActivities.MyTextView
         android:textColor="@color/common_google_signin_btn_text_dark_default"
-        android:text="Xמספר סיבובים: "
+        android:text="@string/game_number_of_rounds"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/multiTeamRound"

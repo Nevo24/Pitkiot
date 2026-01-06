@@ -7,9 +7,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.LocaleList;
 import android.preference.PreferenceManager;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -33,6 +36,7 @@ import com.google.zxing.qrcode.QRCodeWriter;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -71,14 +75,18 @@ public class NoteManagement extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Initialize preferences and load saved language
+        context = this;
+        prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        spEditor = prefs.edit();
+        loadLanguagePreference();
+
         setContentView(R.layout.activity_note_management);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         ButterKnife.bind(this);
-        context = this;
         thisActivity = this;
         dialogBag = new DialogBag(getFragmentManager(), this);
-        prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        spEditor = prefs.edit();
 
         mTypeDef.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -99,7 +107,7 @@ public class NoteManagement extends AppCompatActivity {
 
     protected void onResume() {
         super.onResume();
-        mNoteCount.setText("מספר הפתקים במאגר: " + db.totalNoteAmount());
+        mNoteCount.setText(String.format(getString(R.string.note_count_database), db.totalNoteAmount()));
     }
 
 
@@ -120,7 +128,7 @@ public class NoteManagement extends AppCompatActivity {
         if (!db.noteExists(name) && !name.equals("")) {
             defs.add(name);
             saveNotes();
-            mNoteCount.setText("מספר הפתקים במאגר: " + db.totalNoteAmount());
+            mNoteCount.setText(String.format(getString(R.string.note_count_database), db.totalNoteAmount()));
         }
     }
 
@@ -163,9 +171,10 @@ public class NoteManagement extends AppCompatActivity {
         submitterNoteCounts.clear();
 
         // Create a new collection session
-        noteCollectionSession = new NoteCollectionSession();
+        noteCollectionSession = new NoteCollectionSession(context);
         String sessionId = noteCollectionSession.createSession();
-        String url = noteCollectionSession.getSubmissionUrl(FIREBASE_HOSTING_URL);
+        String currentLang = prefs.getString("app_language", "he");
+        String url = noteCollectionSession.getSubmissionUrl(FIREBASE_HOSTING_URL) + "&lang=" + currentLang;
 
         // Show the collection dialog
         showNoteCollectionDialog(sessionId, url);
@@ -184,14 +193,14 @@ public class NoteManagement extends AppCompatActivity {
                     // Update the dialog UI
                     receivedNotesCount++;
                     updateCollectionDialogUI(submitterName, noteContent);
-                    Toast.makeText(context, "פתק חדש התקבל מ" + submitterName, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, String.format(getString(R.string.toast_new_note_received), submitterName), Toast.LENGTH_SHORT).show();
                 });
             }
 
             @Override
             public void onError(String error) {
                 runOnUiThread(() -> {
-                    Toast.makeText(context, "שגיאה: " + error, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, String.format(getString(R.string.toast_error), error), Toast.LENGTH_SHORT).show();
                 });
             }
         });
@@ -213,7 +222,7 @@ public class NoteManagement extends AppCompatActivity {
 
         // Set values
         sessionUrlText.setText(url);
-        receivedNotesCountText.setText("0 פתקים התקבלו מ-0 אנשים");
+        receivedNotesCountText.setText(String.format(getString(R.string.received_notes_count), 0, 0));
 
         // Make URL clickable
         sessionUrlText.setOnClickListener(v -> {
@@ -226,7 +235,7 @@ public class NoteManagement extends AppCompatActivity {
             Bitmap qrBitmap = generateQRCode(url, 500, 500);
             qrCodeImage.setImageBitmap(qrBitmap);
         } catch (WriterException e) {
-            Toast.makeText(context, "שגיאה ביצירת QR", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, getString(R.string.toast_qr_error), Toast.LENGTH_SHORT).show();
         }
 
         // Copy URL button
@@ -234,7 +243,7 @@ public class NoteManagement extends AppCompatActivity {
             ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
             ClipData clip = ClipData.newPlainText("Pitkiot URL", url);
             clipboard.setPrimaryClip(clip);
-            Toast.makeText(context, "הקישור הועתק!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, getString(R.string.toast_link_copied), Toast.LENGTH_SHORT).show();
         });
 
         // Close button
@@ -243,7 +252,7 @@ public class NoteManagement extends AppCompatActivity {
                 noteCollectionSession.endSession();
             }
             collectionDialog.dismiss();
-            Toast.makeText(context, receivedNotesCount + " פתקים נוספו למאגר", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, String.format(getString(R.string.toast_notes_added), receivedNotesCount), Toast.LENGTH_SHORT).show();
             receivedNotesCount = 0;
             submitterNoteCounts.clear();
         });
@@ -269,7 +278,7 @@ public class NoteManagement extends AppCompatActivity {
 
             // Update total count display (total notes and total people)
             int totalPeople = submitterNoteCounts.size();
-            countText.setText(receivedNotesCount + " פתקים התקבלו מ-" + totalPeople + " אנשים");
+            countText.setText(String.format(getString(R.string.received_notes_count), receivedNotesCount, totalPeople));
 
             // Rebuild the submitters list
             if (dialogView instanceof LinearLayout) {
@@ -284,7 +293,7 @@ public class NoteManagement extends AppCompatActivity {
                     int count = entry.getValue();
 
                     TextView submitterItem = new TextView(context);
-                    submitterItem.setText("✓ " + name + ": " + count + " פתקים");
+                    submitterItem.setText(String.format(getString(R.string.submitter_item), name, count));
                     submitterItem.setTextSize(16);
                     submitterItem.setTextColor(Color.parseColor("#406D3C"));
                     submitterItem.setBackgroundResource(R.drawable.note_item_background);
@@ -333,5 +342,33 @@ public class NoteManagement extends AppCompatActivity {
     @OnTouch(R.id.collectNotesOnline)
     boolean onTouchCollectOnline(View view, MotionEvent motion) {
         return db.onTouch(context, view, motion);
+    }
+
+    private void loadLanguagePreference() {
+        String language = prefs.getString("app_language", "he");
+        setLocale(language);
+    }
+
+    private void setLocale(String languageCode) {
+        Locale locale = new Locale(languageCode);
+        Locale.setDefault(locale);
+
+        Resources resources = getResources();
+        Configuration config = resources.getConfiguration();
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+            config.setLocale(locale);
+            LocaleList localeList = new LocaleList(locale);
+            LocaleList.setDefault(localeList);
+            config.setLocales(localeList);
+        } else {
+            config.locale = locale;
+        }
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            config.setLayoutDirection(locale);
+        }
+
+        resources.updateConfiguration(config, resources.getDisplayMetrics());
     }
 }

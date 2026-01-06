@@ -9,7 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/teamNum"
-        android:text="פתקים"
+        android:text="@string/sample_notes"
         android:textSize="33sp"
         android:gravity="center"
         android:textStyle="normal|bold"
@@ -33,7 +33,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="מחק הכל"/>
+            android:text="@string/sample_delete_all"/>
 
     </LinearLayout>
 

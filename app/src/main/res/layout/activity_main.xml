@@ -13,8 +13,24 @@
     tools:context="nevo_mashiach.pitkiot.MainActivity"
     android:background="@mipmap/cool_background">
 
+    <TextView
+        android:id="@+id/languageToggle"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:text="🇺🇸"
+        android:textSize="32sp"
+        android:gravity="center"
+        android:background="@drawable/flag_button"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_margin="10dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:elevation="8dp"/>
+
     <nevo_mashiach.pitkiot.NotActivities.MyButton
-        android:text="ניהול פתקים"
+        android:text="@string/button_manage_notes"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/addNote"
@@ -25,7 +41,7 @@
         android:textColor="#ffffffff"/>
 
     <nevo_mashiach.pitkiot.NotActivities.MyButton
-        android:text="איפוס משחק"
+        android:text="@string/button_reset"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/reset"
@@ -38,7 +54,7 @@
 
     <nevo_mashiach.pitkiot.NotActivities.MyTextView
         android:textSize="17sp"
-        android:text="מספר הפתקים: 0"
+        android:text=""
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
@@ -49,7 +65,7 @@
         android:layout_alignParentStart="true"/>
 
     <nevo_mashiach.pitkiot.NotActivities.MyButton
-        android:text="שחק"
+        android:text="@string/button_play_game"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/playGame"
@@ -79,7 +95,7 @@
         android:layout_above="@+id/reset"/>
 
     <nevo_mashiach.pitkiot.NotActivities.MyButton
-        android:text="הגדרות"
+        android:text="@string/button_settings"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"

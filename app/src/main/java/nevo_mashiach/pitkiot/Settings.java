@@ -118,7 +118,7 @@ public class Settings extends AppCompatActivity {
 
         String [] items = new String[db.amountOfTeams];
         for(int i = 0; i < db.amountOfTeams; i++){
-            items[i]= "קבוצה " + (i + 1);
+            items[i]= getString(R.string.game_team_label) + (i + 1);
         }
 
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
