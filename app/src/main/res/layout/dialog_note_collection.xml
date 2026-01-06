@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/dialog_background"
+    android:padding="0dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:padding="20dp">
+
+        <!-- Header -->
+        <nevo_mashiach.pitkiot.NotActivities.MyTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="איסוף פתקים מהשחקנים"
+            android:textSize="26sp"
+            android:textStyle="bold"
+            android:textColor="#406D3C"
+            android:layout_gravity="center"
+            android:layout_marginBottom="20dp"/>
+
+        <nevo_mashiach.pitkiot.NotActivities.MyTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="שתף את הקישור הזה עם השחקנים:"
+            android:textSize="16sp"
+            android:textColor="#666666"
+            android:layout_gravity="center"
+            android:layout_marginBottom="20dp"/>
+
+        <!-- QR Code with frame -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:background="@drawable/qr_frame"
+            android:padding="15dp"
+            android:layout_marginBottom="20dp">
+
+            <ImageView
+                android:id="@+id/qrCodeImage"
+                android:layout_width="220dp"
+                android:layout_height="220dp"
+                android:background="#ffffff"
+                android:padding="10dp"
+                android:contentDescription="QR Code"/>
+        </LinearLayout>
+
+        <!-- URL Display -->
+        <nevo_mashiach.pitkiot.NotActivities.MyTextView
+            android:id="@+id/sessionUrlText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="https://pitkiot.web.app/submit?s=1234"
+            android:textSize="13sp"
+            android:textColor="#406D3C"
+            android:gravity="center"
+            android:padding="12dp"
+            android:background="#E8F5E9"
+            android:layout_marginBottom="15dp"
+            android:textStyle="bold"/>
+
+        <!-- Copy URL Button -->
+        <nevo_mashiach.pitkiot.NotActivities.MyButton
+            android:id="@+id/copyUrlButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="העתק קישור"
+            android:textColor="#ffffff"
+            android:background="@drawable/button_blue"
+            android:minWidth="180dp"
+            android:minHeight="55dp"
+            android:layout_marginBottom="10dp"/>
+
+        <!-- Close Button -->
+        <nevo_mashiach.pitkiot.NotActivities.MyButton
+            android:id="@+id/closeSessionButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="סיים ושמור פתקים"
+            android:textColor="#ffffff"
+            android:background="@drawable/button_green"
+            android:minHeight="55dp"
+            android:layout_marginBottom="20dp"
+            android:textSize="16sp"
+            android:textStyle="bold"/>
+
+        <!-- Divider -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="3dp"
+            android:background="#999ebc"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="20dp"/>
+
+        <!-- Received Notes Section -->
+        <nevo_mashiach.pitkiot.NotActivities.MyTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="פתקים שהתקבלו:"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="#406D3C"
+            android:layout_marginBottom="10dp"/>
+
+        <nevo_mashiach.pitkiot.NotActivities.MyTextView
+            android:id="@+id/receivedNotesCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0 פתקים התקבלו מ-0 אנשים"
+            android:textSize="15sp"
+            android:textColor="#666666"
+            android:layout_marginBottom="15dp"
+            android:textStyle="bold"/>
+
+        <!-- List of received notes -->
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:background="#E8F5E9"
+            android:padding="5dp">
+
+            <LinearLayout
+                android:id="@+id/receivedNotesList"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="10dp">
+
+                <nevo_mashiach.pitkiot.NotActivities.MyTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="ממתין לפתקים..."
+                    android:textSize="15sp"
+                    android:textColor="#999999"
+                    android:gravity="center"
+                    android:padding="20dp"/>
+
+            </LinearLayout>
+        </ScrollView>
+
+    </LinearLayout>
+</ScrollView>

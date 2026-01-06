@@ -1,0 +1,15 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Allow anyone to read and write to collection sessions
+    // Sessions are temporary and contain no sensitive data
+    match /sessions/{sessionId} {
+      allow read, write: if true;
+
+      // Allow anyone to submit notes to a session
+      match /submissions/{submissionId} {
+        allow read, write: if true;
+      }
+    }
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "127435583210",
+    "project_id": "pitkiot-29650",
+    "storage_bucket": "pitkiot-29650.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:127435583210:android:dea847625e2d9438a87193",
+        "android_client_info": {
+          "package_name": "nevo_mashiach.pitkiot"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCShtxBO0QnsQocMHcRSHfbh_crHpowL2Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,49 +1,47 @@
 package nevo_mashiach.pitkiot;
 
-import android.app.DatePickerDialog;
-import android.app.TimePickerDialog;
-import android.content.ContentResolver;
+import android.app.Dialog;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
-import android.content.pm.PackageManager;
-import android.database.Cursor;
-import android.net.Uri;
+import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.DatePicker;
+import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.TimePicker;
+import android.widget.Toast;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.WriterException;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.qrcode.QRCodeWriter;
+
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Set;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnTouch;
 import nevo_mashiach.pitkiot.NotActivities.DialogBag;
-import nevo_mashiach.pitkiot.NotActivities.Sms;
+import nevo_mashiach.pitkiot.NotActivities.NoteCollectionSession;
 import nevo_mashiach.pitkiot.NotActivities.db;
 
 import static nevo_mashiach.pitkiot.NotActivities.db.defs;
@@ -52,29 +50,22 @@ public class NoteManagement extends AppCompatActivity {
 
     @BindView(R.id.typeDef)
     EditText mTypeDef;
-    @BindView(R.id.lastScanDate)
-    TextView mLastScanDate;
-    @BindView(R.id.lastScanTime)
-    TextView mLastScanTime;
     @BindView(R.id.noteCount)
     TextView mNoteCount;
-    @BindView(R.id.smsExplanation)
-    TextView mSmsExplanation;
-    @BindView(R.id.editDateIcon)
-    ImageButton mEditDateIcon;
-    @BindView(R.id.editTimeIcon)
-    ImageButton mEditTimeIcon;
 
     Context context;
     AppCompatActivity thisActivity;
     DialogBag dialogBag;
-    int currentColonIndex, scannedAmount;
-    List<Integer> colonsIndex;
-    Cursor c;
 
     SharedPreferences prefs;
     SharedPreferences.Editor spEditor;
-    SimpleDateFormat fullDateAndTimeFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+
+    // Firebase note collection
+    private NoteCollectionSession noteCollectionSession;
+    private Dialog collectionDialog;
+    private int receivedNotesCount = 0;
+    private java.util.HashMap<String, Integer> submitterNoteCounts = new java.util.HashMap<>();
+    private static final String FIREBASE_HOSTING_URL = "https://pitkiot-29650.web.app";
 
 
     @Override
@@ -108,75 +99,21 @@ public class NoteManagement extends AppCompatActivity {
 
     protected void onResume() {
         super.onResume();
-        updatePresentedDateAndTime();
         mNoteCount.setText("מספר הפתקים במאגר: " + db.totalNoteAmount());
-        mSmsExplanation.setPadding(17, 0, 0, 0);
-        mEditDateIcon.setPadding(18, 0, 0, 18);
-        mEditTimeIcon.setPadding(18, 0, 0, 18);
     }
 
 
     public void onDestroy() {
         super.onDestroy();
-        if (c != null) {
-            c.close();
+        // Clean up Firebase session
+        if (noteCollectionSession != null) {
+            noteCollectionSession.endSession();
+        }
+        if (collectionDialog != null && collectionDialog.isShowing()) {
+            collectionDialog.dismiss();
         }
     }
 
-    private void updatePresentedDateAndTime() {
-        Date currentDate = new Date(db.smsTime);
-        String dateString = new SimpleDateFormat("dd/MM/yyyy").format(currentDate);
-        String timeString = new SimpleDateFormat("HH:mm").format(currentDate);
-        mLastScanDate.setText(dateString);
-        mLastScanTime.setText(timeString);
-    }
-
-
-    public List<Sms> getAllSms() {
-        List<Sms> lstSms = new ArrayList<>();
-        Sms objSms;
-        Uri message = Uri.parse("content://sms/");
-        ContentResolver cr = this.getContentResolver();
-
-        c = cr.query(message, null, null, null, null);
-        int totalSMS = c.getCount();
-
-        if (c.moveToFirst()) {
-            for (int i = 0; i < totalSMS; i++) {
-                if (smsValid(c.getString(c.getColumnIndexOrThrow("body")),
-                        Long.parseLong(c.getString(c.getColumnIndexOrThrow("date"))))) {
-                    scannedAmount++;
-                    objSms = new Sms();
-                    objSms.setId(c.getString(c.getColumnIndexOrThrow("_id")));
-                    objSms.setAddress(c.getString(c
-                            .getColumnIndexOrThrow("address")));
-                    objSms.setMsg(c.getString(c.getColumnIndexOrThrow("body")));
-                    objSms.setReadState(c.getString(c.getColumnIndex("read")));
-                    objSms.setTime(c.getString(c.getColumnIndexOrThrow("date")));
-                    if (c.getString(c.getColumnIndexOrThrow("type")).contains("1")) {
-                        objSms.setFolderName("inbox");
-                    } else {
-                        objSms.setFolderName("sent");
-                    }
-                    lstSms.add(objSms);
-                }
-                c.moveToNext();
-            }
-        }
-        // else {
-        // throw new RuntimeException("You have no SMS");
-        // }
-        return lstSms;
-    }
-
-    private boolean smsValid(String str, long receiveTime) {
-        if (receiveTime < db.smsTime) return false;
-        if (!str.startsWith("פיתקיות:") && !str.startsWith("פתקיות:"))
-            return false;
-        currentColonIndex = str.indexOf(':');
-        colonsIndex.add(currentColonIndex);
-        return true;
-    }
 
     private void add(String name) {
         name = name.trim();
@@ -196,97 +133,17 @@ public class NoteManagement extends AppCompatActivity {
     }
 
 
-    public void updateSharedPreferencesDate(String currentDateString){
-        try {
-            Date d = fullDateAndTimeFormat.parse(currentDateString);
-            db.smsTime = d.getTime();
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        spEditor.putLong("smsTime", db.smsTime );
-        spEditor.commit();
-    }
-
-
     //*********************** ON CLICKS ********************************
     @OnClick(R.id.addDef)
     public void addingDefToDb(View view) {
-        add(mTypeDef.getText().toString());
+        String input = mTypeDef.getText().toString();
+        List<String> notes = parseNotes(input);
+        for (String note : notes) {
+            add(note);
+        }
         mTypeDef.setText("");
     }
 
-    @OnClick(R.id.addDefsFromSms)
-    public void addDefsFromSms(View view) {
-        scannedAmount = 0;
-        if (ContextCompat.checkSelfPermission(getBaseContext(), "android.permission.READ_SMS") == PackageManager.PERMISSION_GRANTED) {
-            colonsIndex = new ArrayList<>();
-            List<Sms> smsList = getAllSms();
-            List<String> defsFromSms;
-            for (int i = 0; i < smsList.size(); i++) {
-                defsFromSms = Arrays.asList(smsList.get(i).getMsg().substring(colonsIndex.get(i) + 1).replace("\n", ",").split(","));
-                for (int j = 0; j < defsFromSms.size(); j++) {
-                    add(defsFromSms.get(j).toString());
-                }
-            }
-            dialogBag.smsScaned(scannedAmount);
-        } else {
-            Runnable task = new Runnable() {
-                public void run() {
-                    final int REQUEST_CODE_ASK_PERMISSIONS = 123;
-                    ActivityCompat.requestPermissions(thisActivity, new String[]{"android.permission.READ_SMS"}, REQUEST_CODE_ASK_PERMISSIONS);
-                    dialogBag.clickAgainPlease();
-                }
-            };
-            dialogBag.allowingAccessToSms(task);
-        }
-    }
-
-    @OnClick(R.id.smsExplanation)
-    public void smsExplanation(View view) {
-        dialogBag.smsExplanation();
-    }
-
-    @OnClick({R.id.editDateIcon, R.id.lastScanDate})
-    public void datePicker(View view) {
-
-        final Calendar myCalendar = Calendar.getInstance();
-        DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
-            @Override
-            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                // TODO Auto-generated method stub
-                myCalendar.set(Calendar.YEAR, year);
-                myCalendar.set(Calendar.MONTH, monthOfYear);
-                myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-                String myFormat = "dd/MM/yyyy"; // your format
-                SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.getDefault());
-
-                String selectedDate = sdf.format(myCalendar.getTime());
-                mLastScanDate.setText(selectedDate);
-                updateSharedPreferencesDate(selectedDate + " " + mLastScanTime.getText());
-            }
-        };
-        new DatePickerDialog(context, date, myCalendar.get(Calendar.YEAR), myCalendar.get(Calendar.MONTH), myCalendar.get(Calendar.DAY_OF_MONTH)).show();
-
-    }
-
-    @OnClick({R.id.editTimeIcon, R.id.lastScanTime})
-    public void timePicker(View view) {
-
-        Calendar mcurrentTime = Calendar.getInstance();
-        int hour = mcurrentTime.get(Calendar.HOUR_OF_DAY);
-        int minute = mcurrentTime.get(Calendar.MINUTE);
-        TimePickerDialog mTimePicker;
-        mTimePicker = new TimePickerDialog(context, new TimePickerDialog.OnTimeSetListener() {
-            @Override
-            public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
-                String selectedTime = selectedHour + ":" + selectedMinute;
-                mLastScanTime.setText(selectedTime);
-                updateSharedPreferencesDate(mLastScanDate.getText() + " " + selectedTime);
-            }
-        }, hour, minute, true);//Yes 24 hour time
-        mTimePicker.setTitle("בחר שעה");
-        mTimePicker.show();
-    }
 
     @OnClick(R.id.deleteNotes)
     public void deleteNodesButton(View view) {
@@ -294,22 +151,187 @@ public class NoteManagement extends AppCompatActivity {
         startActivity(intent);
     }
 
-    @OnClick(R.id.updateToCurrentTime)
-    public void updateToCurrentDateAndTime(View view) {
-        db.smsTime = System.currentTimeMillis();
-        spEditor.putLong("smsTime", db.smsTime );
-        spEditor.commit();
-        updatePresentedDateAndTime();
-    }
-
-    @OnTouch({R.id.addDefsFromSms, R.id.addDef, R.id.deleteNotes, R.id.updateToCurrentTime})
+    @OnTouch({R.id.addDef, R.id.deleteNotes})
     boolean onTouch(View view, MotionEvent motion) {
         return db.onTouch(context, view, motion);
     }
 
-    @OnTouch(R.id.smsExplanation)
-    boolean onTouchExplanation(View view, MotionEvent motion) {return db.onTouchExplanation(context, view, motion);}
+    @OnClick(R.id.collectNotesOnline)
+    public void startOnlineNoteCollection(View view) {
+        // Reset counters for new session
+        receivedNotesCount = 0;
+        submitterNoteCounts.clear();
 
-    @OnTouch({R.id.editDateIcon, R.id.editTimeIcon})
-    boolean onTouchEditIcon(View view, MotionEvent motion) {return db.onTouchEditIcon(context, view, motion);}
+        // Create a new collection session
+        noteCollectionSession = new NoteCollectionSession();
+        String sessionId = noteCollectionSession.createSession();
+        String url = noteCollectionSession.getSubmissionUrl(FIREBASE_HOSTING_URL);
+
+        // Show the collection dialog
+        showNoteCollectionDialog(sessionId, url);
+
+        // Start listening for incoming notes
+        noteCollectionSession.startListening(new NoteCollectionSession.OnNoteReceivedListener() {
+            @Override
+            public void onNoteReceived(String submitterName, String noteContent) {
+                runOnUiThread(() -> {
+                    // Parse and add notes (same logic as SMS)
+                    List<String> notes = parseNotes(noteContent);
+                    for (String note : notes) {
+                        add(note);
+                    }
+
+                    // Update the dialog UI
+                    receivedNotesCount++;
+                    updateCollectionDialogUI(submitterName, noteContent);
+                    Toast.makeText(context, "פתק חדש התקבל מ" + submitterName, Toast.LENGTH_SHORT).show();
+                });
+            }
+
+            @Override
+            public void onError(String error) {
+                runOnUiThread(() -> {
+                    Toast.makeText(context, "שגיאה: " + error, Toast.LENGTH_SHORT).show();
+                });
+            }
+        });
+    }
+
+    private void showNoteCollectionDialog(String sessionId, String url) {
+        // Create dialog
+        collectionDialog = new Dialog(context);
+        View dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_note_collection, null);
+        collectionDialog.setContentView(dialogView);
+        collectionDialog.setCancelable(false);
+
+        // Setup dialog views
+        TextView sessionUrlText = dialogView.findViewById(R.id.sessionUrlText);
+        ImageView qrCodeImage = dialogView.findViewById(R.id.qrCodeImage);
+        Button copyUrlButton = dialogView.findViewById(R.id.copyUrlButton);
+        Button closeSessionButton = dialogView.findViewById(R.id.closeSessionButton);
+        TextView receivedNotesCountText = dialogView.findViewById(R.id.receivedNotesCount);
+
+        // Set values
+        sessionUrlText.setText(url);
+        receivedNotesCountText.setText("0 פתקים התקבלו מ-0 אנשים");
+
+        // Make URL clickable
+        sessionUrlText.setOnClickListener(v -> {
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW, android.net.Uri.parse(url));
+            startActivity(browserIntent);
+        });
+
+        // Generate QR code
+        try {
+            Bitmap qrBitmap = generateQRCode(url, 500, 500);
+            qrCodeImage.setImageBitmap(qrBitmap);
+        } catch (WriterException e) {
+            Toast.makeText(context, "שגיאה ביצירת QR", Toast.LENGTH_SHORT).show();
+        }
+
+        // Copy URL button
+        copyUrlButton.setOnClickListener(v -> {
+            ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+            ClipData clip = ClipData.newPlainText("Pitkiot URL", url);
+            clipboard.setPrimaryClip(clip);
+            Toast.makeText(context, "הקישור הועתק!", Toast.LENGTH_SHORT).show();
+        });
+
+        // Close button
+        closeSessionButton.setOnClickListener(v -> {
+            if (noteCollectionSession != null) {
+                noteCollectionSession.endSession();
+            }
+            collectionDialog.dismiss();
+            Toast.makeText(context, receivedNotesCount + " פתקים נוספו למאגר", Toast.LENGTH_SHORT).show();
+            receivedNotesCount = 0;
+            submitterNoteCounts.clear();
+        });
+
+        collectionDialog.show();
+    }
+
+    private void updateCollectionDialogUI(String submitterName, String noteContent) {
+        if (collectionDialog != null && collectionDialog.isShowing()) {
+            View dialogView = collectionDialog.findViewById(R.id.receivedNotesList);
+            TextView countText = collectionDialog.findViewById(R.id.receivedNotesCount);
+
+            // Count notes in this submission
+            List<String> notes = parseNotes(noteContent);
+            int notesInSubmission = notes.size();
+
+            // Update total count for this submitter
+            Integer currentCount = submitterNoteCounts.get(submitterName);
+            if (currentCount == null) {
+                currentCount = 0;
+            }
+            submitterNoteCounts.put(submitterName, currentCount + notesInSubmission);
+
+            // Update total count display (total notes and total people)
+            int totalPeople = submitterNoteCounts.size();
+            countText.setText(receivedNotesCount + " פתקים התקבלו מ-" + totalPeople + " אנשים");
+
+            // Rebuild the submitters list
+            if (dialogView instanceof LinearLayout) {
+                LinearLayout notesList = (LinearLayout) dialogView;
+
+                // Clear all views
+                notesList.removeAllViews();
+
+                // Add a TextView for each submitter with styled appearance
+                for (java.util.Map.Entry<String, Integer> entry : submitterNoteCounts.entrySet()) {
+                    String name = entry.getKey();
+                    int count = entry.getValue();
+
+                    TextView submitterItem = new TextView(context);
+                    submitterItem.setText("✓ " + name + ": " + count + " פתקים");
+                    submitterItem.setTextSize(16);
+                    submitterItem.setTextColor(Color.parseColor("#406D3C"));
+                    submitterItem.setBackgroundResource(R.drawable.note_item_background);
+                    submitterItem.setPadding(30, 20, 30, 20);
+                    submitterItem.setGravity(android.view.Gravity.CENTER);
+                    submitterItem.setTextAlignment(TextView.TEXT_ALIGNMENT_CENTER);
+                    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                            LinearLayout.LayoutParams.MATCH_PARENT,
+                            LinearLayout.LayoutParams.WRAP_CONTENT
+                    );
+                    params.setMargins(0, 0, 0, 15);
+                    submitterItem.setLayoutParams(params);
+
+                    notesList.addView(submitterItem);
+                }
+            }
+        }
+    }
+
+    private Bitmap generateQRCode(String text, int width, int height) throws WriterException {
+        QRCodeWriter qrCodeWriter = new QRCodeWriter();
+        BitMatrix bitMatrix = qrCodeWriter.encode(text, BarcodeFormat.QR_CODE, width, height);
+
+        Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                bitmap.setPixel(x, y, bitMatrix.get(x, y) ? Color.BLACK : Color.WHITE);
+            }
+        }
+        return bitmap;
+    }
+
+    private List<String> parseNotes(String content) {
+        // Parse notes separated by commas or newlines (same as SMS logic)
+        List<String> notes = new ArrayList<>();
+        String[] parts = content.replace("\n", ",").split(",");
+        for (String part : parts) {
+            String trimmed = part.trim();
+            if (!trimmed.isEmpty()) {
+                notes.add(trimmed);
+            }
+        }
+        return notes;
+    }
+
+    @OnTouch(R.id.collectNotesOnline)
+    boolean onTouchCollectOnline(View view, MotionEvent motion) {
+        return db.onTouch(context, view, motion);
+    }
 }

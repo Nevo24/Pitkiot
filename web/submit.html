@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pitkiot - הוסף פתק</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Tahoma', 'Arial', 'Helvetica', sans-serif;
+            background: linear-gradient(135deg, #999ebc 0%, #7b82c4 50%, #C8E57B 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            direction: rtl;
+        }
+
+        .container {
+            background: #F5F5F5;
+            border-radius: 20px;
+            border: 4px solid #999ebc;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.3), 0 4px 12px rgba(17, 53, 61, 0.4);
+            padding: 0;
+            max-width: 500px;
+            width: 100%;
+            animation: slideIn 0.4s ease-out;
+            overflow: hidden;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-30px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .header {
+            background: linear-gradient(180deg, #C8E57B 0%, #51894C 100%);
+            padding: 30px 20px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(17, 53, 61, 0.7);
+            position: relative;
+        }
+
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: rgba(17, 53, 61, 0.7);
+        }
+
+        .logo {
+            font-size: 48px;
+            margin-bottom: 10px;
+            filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.3));
+        }
+
+        h1 {
+            color: #ffffff;
+            font-size: 28px;
+            margin-bottom: 8px;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .session-code {
+            background: rgba(255, 255, 255, 0.3);
+            padding: 8px 16px;
+            border-radius: 10px;
+            display: inline-block;
+            font-family: 'Courier New', monospace;
+            font-size: 18px;
+            font-weight: bold;
+            color: #11353D;
+            margin-top: 10px;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+        }
+
+        .subtitle {
+            color: #ffffff;
+            margin-bottom: 0;
+            font-size: 15px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+
+        .form-content {
+            padding: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 22px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #406D3C;
+            font-weight: bold;
+            font-size: 17px;
+        }
+
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 14px;
+            border: 3px solid #CCCCCC;
+            border-radius: 12px;
+            font-size: 16px;
+            font-family: 'Tahoma', Arial, sans-serif;
+            transition: border-color 0.3s, box-shadow 0.3s;
+            direction: rtl;
+            background: white;
+        }
+
+        input[type="text"]:focus, textarea:focus {
+            outline: none;
+            border-color: #C8E57B;
+            box-shadow: 0 0 0 3px rgba(200, 229, 123, 0.3);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .submit-btn {
+            background: linear-gradient(180deg, #C8E57B 0%, #51894C 100%);
+            color: white;
+            border: none;
+            padding: 18px 40px;
+            font-size: 19px;
+            font-weight: bold;
+            border-radius: 14px;
+            cursor: pointer;
+            width: 100%;
+            transition: transform 0.1s, box-shadow 0.2s;
+            box-shadow: 0 5px 0 #11353D, 0 8px 15px rgba(0,0,0,0.3);
+            position: relative;
+            top: 0;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+
+        .submit-btn:hover {
+            box-shadow: 0 4px 0 #11353D, 0 6px 12px rgba(0,0,0,0.3);
+            top: 1px;
+        }
+
+        .submit-btn:active {
+            box-shadow: 0 2px 0 #11353D, 0 4px 8px rgba(0,0,0,0.3);
+            top: 3px;
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            box-shadow: 0 3px 0 #888, 0 5px 10px rgba(0,0,0,0.2);
+        }
+
+        .message {
+            margin-top: 20px;
+            padding: 16px;
+            border-radius: 12px;
+            text-align: center;
+            font-weight: bold;
+            display: none;
+            border: 3px solid;
+        }
+
+        .message.success {
+            background: linear-gradient(135deg, #C8E57B 0%, #A0B762 100%);
+            color: #11353D;
+            border-color: #51894C;
+        }
+
+        .message.error {
+            background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+            color: #721c24;
+            border-color: #f5c6cb;
+        }
+
+        .message.info {
+            background: linear-gradient(135deg, #d1ecf1 0%, #bee5eb 100%);
+            color: #0c5460;
+            border-color: #bee5eb;
+        }
+
+        .loading {
+            text-align: center;
+            color: #406D3C;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .spinner {
+            border: 4px solid #CCCCCC;
+            border-top: 4px solid #C8E57B;
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .helper-text {
+            font-size: 13px;
+            color: #888;
+            margin-top: 6px;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">📝</div>
+            <h1>Pitkiot - פיתקיות</h1>
+            <div class="session-code" id="sessionDisplay"></div>
+        </div>
+
+        <div id="loadingScreen" class="loading">
+            <div class="spinner"></div>
+            <p>טוען...</p>
+        </div>
+
+        <div id="mainContent" style="display: none;">
+            <div class="form-content">
+                <form id="noteForm">
+                <div class="form-group">
+                    <label for="noteName">שם</label>
+                    <input type="text" id="noteName" placeholder="השם שלך" required>
+                    <div class="helper-text">כדי לזהות מי שלח את הפתק</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="noteContent">הפתקים שלך</label>
+                    <textarea id="noteContent" placeholder="כתוב פה את הפתקים שלך..." required></textarea>
+                    <div class="helper-text">אפשר לכתוב כמה פתקים מופרדים בפסיקים או שורות</div>
+                </div>
+
+                    <button type="submit" class="submit-btn" id="submitBtn">שלח פתק</button>
+                </form>
+
+                <div class="message" id="message"></div>
+            </div>
+        </div>
+
+        <div id="errorScreen" style="display: none;">
+            <div class="form-content">
+                <div class="message error" style="display: block;">
+                    <h3 style="margin-bottom: 10px;">שגיאה</h3>
+                    <p id="errorMessage"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script type="module">
+        // Import Firebase modules
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getFirestore, collection, addDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+        // Firebase configuration for Pitkiot
+        const firebaseConfig = {
+            apiKey: "AIzaSyCIZrgUkUn1I4fmkDIW7FRGuXTpnhVr1h4",
+            authDomain: "pitkiot-29650.firebaseapp.com",
+            projectId: "pitkiot-29650",
+            storageBucket: "pitkiot-29650.firebasestorage.app",
+            messagingSenderId: "127435583210",
+            appId: "1:127435583210:web:ad8d49324fb72a37a87193"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Get session ID from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const sessionId = urlParams.get('session') || urlParams.get('s');
+
+        const loadingScreen = document.getElementById('loadingScreen');
+        const mainContent = document.getElementById('mainContent');
+        const errorScreen = document.getElementById('errorScreen');
+        const sessionDisplay = document.getElementById('sessionDisplay');
+        const noteForm = document.getElementById('noteForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const message = document.getElementById('message');
+        const errorMessage = document.getElementById('errorMessage');
+
+        // Validate session ID
+        if (!sessionId) {
+            showError('קוד משחק חסר. אנא השתמש בקישור המלא שקיבלת מהמארח.');
+        } else {
+            sessionDisplay.textContent = `קוד: ${sessionId}`;
+            loadingScreen.style.display = 'none';
+            mainContent.style.display = 'block';
+        }
+
+        function showError(msg) {
+            loadingScreen.style.display = 'none';
+            errorScreen.style.display = 'block';
+            errorMessage.textContent = msg;
+        }
+
+        function showMessage(msg, type) {
+            message.textContent = msg;
+            message.className = `message ${type}`;
+            message.style.display = 'block';
+            setTimeout(() => {
+                message.style.display = 'none';
+            }, 5000);
+        }
+
+        // Handle form submission
+        noteForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const noteName = document.getElementById('noteName').value.trim();
+            const noteContent = document.getElementById('noteContent').value.trim();
+
+            if (!noteName) {
+                showMessage('אנא הזן שם', 'error');
+                return;
+            }
+
+            if (!noteContent) {
+                showMessage('אנא כתוב פתק לפני השליחה', 'error');
+                return;
+            }
+
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'שולח...';
+
+            try {
+                // Add submission to Firestore
+                await addDoc(collection(db, 'sessions', sessionId, 'submissions'), {
+                    submitterName: noteName,
+                    noteContent: noteContent,
+                    timestamp: serverTimestamp()
+                });
+
+                // Success!
+                showMessage('הפתק נשלח בהצלחה! 🎉', 'success');
+                document.getElementById('noteContent').value = '';
+                // Don't clear name - user can submit multiple times with same name
+
+                // Reset button after a delay
+                setTimeout(() => {
+                    submitBtn.textContent = 'שלח פתק נוסף';
+                    submitBtn.disabled = false;
+                }, 1500);
+
+            } catch (error) {
+                console.error('Error submitting note:', error);
+                showMessage('שגיאה בשליחת הפתק. אנא נסה שוב.', 'error');
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'שלח פתק';
+            }
+        });
+    </script>
+</body>
+</html>

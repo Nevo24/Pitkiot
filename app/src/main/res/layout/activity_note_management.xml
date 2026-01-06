@@ -25,18 +25,6 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"/>
 
-    <nevo_mashiach.pitkiot.NotActivities.MyTextView
-        android:text="זמן ממנו ואילך נסרקים הסמסים:"
-        android:layout_marginTop="13dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/timeAndDateHeadline"
-        android:textSize="20sp"
-        android:textColor="#ffffffff"
-        android:gravity="center"
-        android:layout_below="@+id/addDef"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"/>
 
     <nevo_mashiach.pitkiot.NotActivities.MyTextView
         android:id="@+id/reminder"
@@ -50,61 +38,6 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"/>
 
-    <nevo_mashiach.pitkiot.NotActivities.MyTextView
-        android:id="@+id/lastScanTime"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/lastScanDate"
-        android:layout_marginTop="24dp"
-        android:gravity="left"
-        android:text="Last Scan Time"
-        android:textColor="#88000000"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        app:layout_widthPercent="40%"/>
-
-    <nevo_mashiach.pitkiot.NotActivities.MyTextView
-
-        android:layout_marginTop="11dp"
-        android:id="@+id/lastScanDate"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="left"
-        android:text="Last Scan Dateg"
-        android:textColor="#88000000"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        app:layout_widthPercent="40%"
-        android:layout_below="@+id/timeAndDateHeadline"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_toLeftOf="@+id/editDateIcon"
-        android:layout_toStartOf="@+id/editDateIcon"/>
-
-
-    <ImageButton
-
-        android:layout_width="35dp"
-        android:layout_height="35dp"
-        android:background="@drawable/button_grey"
-        app:srcCompat="@mipmap/edit_icon"
-        android:id="@+id/editDateIcon"
-        android:layout_above="@+id/lastScanTime"
-        android:layout_alignLeft="@+id/editTimeIcon"
-        android:layout_alignStart="@+id/editTimeIcon"/>
-
-    <ImageButton
-        android:layout_marginLeft="24dp"
-        android:background="@drawable/button_grey"
-        android:layout_width="35dp"
-        android:layout_height="35dp"
-        android:src="@mipmap/edit_icon"
-        android:id="@+id/editTimeIcon"
-        android:layout_above="@+id/addDefsFromSms"
-        android:layout_toRightOf="@+id/lastScanTime"
-        android:layout_toEndOf="@+id/lastScanTime"/>
 
     <LinearLayout
         android:orientation="horizontal"
@@ -118,16 +51,16 @@
     </LinearLayout>
 
     <nevo_mashiach.pitkiot.NotActivities.MyButton
-        android:id="@+id/addDefsFromSms"
+        android:id="@+id/collectNotesOnline"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/lastScanTime"
+        android:layout_below="@+id/addDef"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="77dp"
+        android:layout_marginTop="50dp"
         android:background="@drawable/button_green"
         android:minWidth="100dp"
         android:minHeight="55dp"
-        android:text="סרוק סמסים"
+        android:text="איסוף מקוון"
         android:textColor="#ffffff" />
 
     <nevo_mashiach.pitkiot.NotActivities.MyButton
@@ -144,32 +77,6 @@
         android:layout_centerHorizontal="true"
         android:layout_alignParentStart="true"/>
 
-    <nevo_mashiach.pitkiot.NotActivities.MyButton
-        android:text="עדכון לזמן נוכחי"
-        app:layout_heightPercent="13%"
-        app:layout_widthPercent="30%"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/updateToCurrentTime"
-        android:textColor="#ffffffff"
-        android:minWidth="100dp"
-        android:minHeight="55dp"
-        android:background="@drawable/button_grey"
-        android:layout_alignTop="@+id/lastScanDate"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"/>
-
-    <nevo_mashiach.pitkiot.NotActivities.MyButton
-        android:background="@drawable/button_grey"
-        android:text=" ? "
-        android:textColor="#ffffffff"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:textStyle="bold"
-        android:id="@+id/smsExplanation"
-        android:textSize="14sp"
-        android:layout_below="@+id/addDefsFromSms"
-        android:layout_centerHorizontal="true"/>
 
     <nevo_mashiach.pitkiot.NotActivities.MyButton
         android:id="@+id/addDef"
