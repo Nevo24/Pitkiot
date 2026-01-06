@@ -171,12 +171,8 @@ public class NoteManagement extends AppCompatActivity {
 
     private boolean smsValid(String str, long receiveTime) {
         if (receiveTime < db.smsTime) return false;
-        try {
-            if (!str.substring(0, 8).equals("פיתקיות:") && !str.substring(0, 7).equals("פתקיות:"))
-                return false;
-        } catch (StringIndexOutOfBoundsException e) {
+        if (!str.startsWith("פיתקיות:") && !str.startsWith("פתקיות:"))
             return false;
-        }
         currentColonIndex = str.indexOf(':');
         colonsIndex.add(currentColonIndex);
         return true;
