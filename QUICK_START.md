@@ -83,7 +83,7 @@ Your app now supports **online note collection** via Firebase! Players can submi
 ### Host (Android App):
 
 1. Open **Pitkiot** app
-2. Go to **"ניהול פתקים"** (Note Management)
+2. Go to **"ניהול פתקים"** (NOTES MANAGEMENT)
 3. Tap **"איסוף מקוון"** (Online Collection)
 4. A dialog shows:
    - 4-digit code

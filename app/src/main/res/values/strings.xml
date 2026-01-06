@@ -4,20 +4,20 @@
     <!-- Main Screen -->
     <string name="title_note_management">ניהול פתקים</string>
     <string name="reminder_text">* לא לשכוח שכולם צריכים להכיר את הדמות</string>
-    <string name="button_online_collection">איסוף מקוון</string>
-    <string name="button_delete_notes">מחיקת פתקים</string>
+    <string name="button_online_collection">איסוף מקוון  🌐</string>
+    <string name="button_delete_notes">מחיקת פתקים  🗑️</string>
     <string name="button_add">הוספה</string>
     <string name="hint_enter_character">הזן דמות</string>
     <string name="note_count">מספר הפתקים: %d</string>
     <string name="note_count_database">מספר הפתקים במאגר: %d</string>
 
     <!-- MainActivity buttons -->
-    <string name="button_play_game">שחק</string>
-    <string name="button_manage_notes">ניהול פתקים</string>
-    <string name="button_reset">איפוס משחק</string>
+    <string name="button_play_game">שחק  ▶️</string>
+    <string name="button_manage_notes">ניהול פתקים  📝</string>
+    <string name="button_reset">איפוס משחק  🔄</string>
     <string name="button_settings">הגדרות</string>
-    <string name="button_return_to_game">חזרה למשחק</string>
-    <string name="button_start_new_game">התחל משחק חדש</string>
+    <string name="button_return_to_game">חזרה למשחק  ⏯️</string>
+    <string name="button_start_new_game">התחל משחק חדש  ▶️</string>
 
     <!-- Collection Dialog -->
     <string name="dialog_title_collection">איסוף פתקים מהשחקנים</string>
@@ -45,16 +45,16 @@
     <string name="web_label_notes">הפתקים שלך</string>
     <string name="web_placeholder_notes">כתוב פה את הפתקים שלך...</string>
     <string name="web_helper_notes">אפשר לכתוב כמה פתקים מופרדים בפסיקים או שורות</string>
-    <string name="web_button_submit">שלח פתק</string>
-    <string name="web_button_submit_another">שלח פתק נוסף</string>
+    <string name="web_button_submit">שלח</string>
+    <string name="web_button_submit_another">שלח נוסף</string>
     <string name="web_loading">טוען...</string>
     <string name="web_error">שגיאה</string>
     <string name="web_error_no_session">קוד משחק חסר. אנא השתמש בקישור המלא שקיבלת מהמארח.</string>
     <string name="web_error_no_name">אנא הזן שם או כינוי</string>
-    <string name="web_error_no_content">אנא כתוב פתק לפני השליחה</string>
+    <string name="web_error_no_content">אנא כתוב פתקים לפני השליחה</string>
     <string name="web_sending">שולח...</string>
-    <string name="web_success">הפתק נשלח בהצלחה! 🎉</string>
-    <string name="web_error_submit">שגיאה בשליחת הפתק. אנא נסה שוב.</string>
+    <string name="web_success">הפתקים נשלחו בהצלחה! 🎉</string>
+    <string name="web_error_submit">שגיאה בשליחת הפתקים. אנא נסה שוב.</string>
     <string name="web_session_code">קוד: %s</string>
 
     <!-- Dialog messages -->

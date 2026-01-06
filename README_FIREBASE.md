@@ -45,7 +45,7 @@ Your Pitkiot app now supports **online note collection** using Firebase! This al
 
 ### For the Host:
 
-1. Open app → "ניהול פתקים" (Note Management)
+1. Open app → "ניהול פתקים" (NOTES MANAGEMENT)
 2. Tap **"איסוף מקוון"** (green button)
 3. Dialog appears with:
    - **4-digit code** (e.g., 5739)

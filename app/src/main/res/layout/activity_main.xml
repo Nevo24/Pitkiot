@@ -14,20 +14,39 @@
     android:background="@mipmap/cool_background">
 
     <TextView
-        android:id="@+id/languageToggle"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:text="🇺🇸"
-        android:textSize="32sp"
+        android:id="@+id/settingsIcon"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:text="⚙️"
+        android:textSize="42sp"
         android:gravity="center"
-        android:background="@drawable/flag_button"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="5dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginStart="5dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:contentDescription="@string/button_settings"/>
+
+    <TextView
+        android:id="@+id/languageToggle"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:text="🇺🇸"
+        android:textSize="42sp"
+        android:gravity="center"
+        android:background="?attr/selectableItemBackgroundBorderless"
         android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
-        android:layout_margin="10dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginEnd="5dp"
         android:clickable="true"
-        android:focusable="true"
-        android:elevation="8dp"/>
+        android:focusable="true"/>
 
     <nevo_mashiach.pitkiot.NotActivities.MyButton
         android:text="@string/button_manage_notes"
@@ -47,13 +66,12 @@
         android:id="@+id/reset"
         android:background="@drawable/button_green"
         android:layout_marginBottom="16dp"
-        android:layout_above="@+id/settings"
-        android:layout_alignLeft="@+id/settings"
-        android:layout_alignStart="@+id/settings"
+        android:layout_above="@+id/noteCount"
+        android:layout_centerHorizontal="true"
         android:textColor="#ffffffff"/>
 
     <nevo_mashiach.pitkiot.NotActivities.MyTextView
-        android:textSize="17sp"
+        android:textSize="20sp"
         android:text=""
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -71,7 +89,7 @@
         android:id="@+id/playGame"
         android:background="@drawable/button_green"
         android:textColor="#ffffffff"
-        android:layout_marginTop="18dp"
+        android:layout_marginTop="75dp"
         android:layout_alignParentTop="true"
         android:layout_alignLeft="@+id/addNote"
         android:layout_alignStart="@+id/addNote"/>
@@ -94,16 +112,5 @@
         android:layout_centerHorizontal="true"
         android:layout_above="@+id/reset"/>
 
-    <nevo_mashiach.pitkiot.NotActivities.MyButton
-        android:text="@string/button_settings"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:id="@+id/settings"
-        android:background="@drawable/button_green"
-        android:textColor="#ffffffff"
-        android:layout_above="@+id/noteCount"
-        android:layout_alignLeft="@+id/addNote"
-        android:layout_alignStart="@+id/addNote"/>
 
 </androidx.percentlayout.widget.PercentRelativeLayout>

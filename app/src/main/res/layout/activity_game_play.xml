@@ -20,7 +20,7 @@
         android:id="@+id/next"
         android:background="@drawable/button_red"
         android:textColor="#ffffffff"
-        android:textSize="24sp"
+        android:textSize="28sp"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"/>
@@ -32,7 +32,7 @@
         android:id="@+id/success"
         android:background="@drawable/button_green"
         android:textColor="#ffffffff"
-        android:textSize="24sp"
+        android:textSize="28sp"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"/>
 
@@ -46,7 +46,7 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
         android:textColor="#ffffffff"
-        android:textSize="18sp"
+        android:textSize="21sp"
         android:gravity="center"/>
 
     <nevo_mashiach.pitkiot.NotActivities.MyTextView
@@ -56,7 +56,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/roundModeGame"
         tools:text="פנטומימה"
-        android:textSize="20sp"
+        android:textSize="24sp"
         android:layout_above="@+id/next"
         android:layout_centerHorizontal="true"/>
 
@@ -67,7 +67,7 @@
         android:layout_marginTop="10dp"
         android:id="@+id/currentSuccess"
         android:textColor="#ffffffff"
-        android:textSize="18sp"
+        android:textSize="21sp"
         android:gravity="center"
         android:layout_below="@+id/editScoreHeadline"
         android:layout_alignParentLeft="true"
@@ -81,7 +81,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/currentDef"
-        android:textSize="40sp"
+        android:textSize="44sp"
         android:gravity="center"
         android:textColor="#ffffffff"
         android:layout_below="@+id/currentSuccess"
@@ -91,7 +91,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/time"
-        android:textSize="30sp"
+        android:textSize="34sp"
         android:text="@string/game_time_remaining"
         android:gravity="center"
         android:layout_above="@+id/next"
@@ -134,7 +134,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/teamNum"
         android:text="Team 1"
-        android:textSize="33sp"
+        android:textSize="38sp"
         android:gravity="center"
         android:textColor="#ffffffff"
         android:textStyle="normal|bold"

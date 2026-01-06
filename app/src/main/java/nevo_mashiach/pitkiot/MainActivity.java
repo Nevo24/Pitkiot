@@ -50,6 +50,8 @@ public class MainActivity extends AppCompatActivity {
     ImageView mAnimationFigure;
     @BindView(R.id.gamePlayFigureHappy)
     ImageView mGamePlayFigureHappy;
+    @BindView(R.id.settingsIcon)
+    TextView mSettingsIcon;
     @BindView(R.id.languageToggle)
     TextView mLanguageToggle;
     static AppCompatActivity thisActivity;
@@ -276,7 +278,7 @@ public class MainActivity extends AppCompatActivity {
         return super.onKeyDown(keyCode, event);
     }
 
-    @OnClick(R.id.settings)
+    @OnClick(R.id.settingsIcon)
     public void settings(View view) {
         Intent intent = new Intent(context, Settings.class);
         startActivity(intent);
@@ -290,23 +292,9 @@ public class MainActivity extends AppCompatActivity {
         //android.os.Process.killProcess(pid);
     }
 
-    @OnTouch({R.id.playGame, R.id.addNote, R.id.reset, R.id.settings})
+    @OnTouch({R.id.playGame, R.id.addNote, R.id.reset})
     boolean onTouch(View view, MotionEvent motion) {
         return db.onTouch(context, view, motion);
-    }
-
-    @OnClick(R.id.languageToggle)
-    public void toggleLanguage(View view) {
-        String currentLang = prefs.getString("app_language", "he");
-        String newLang = currentLang.equals("he") ? "en" : "he";
-
-        // Save new language preference
-        spEditor.putString("app_language", newLang);
-        spEditor.commit();
-
-        // Apply new language and recreate activity
-        setLocale(newLang);
-        recreate();
     }
 
     private void loadLanguagePreference() {
@@ -335,6 +323,20 @@ public class MainActivity extends AppCompatActivity {
         }
 
         resources.updateConfiguration(config, resources.getDisplayMetrics());
+    }
+
+    @OnClick(R.id.languageToggle)
+    public void toggleLanguage(View view) {
+        String currentLang = prefs.getString("app_language", "he");
+        String newLang = currentLang.equals("he") ? "en" : "he";
+
+        // Save new language preference
+        spEditor.putString("app_language", newLang);
+        spEditor.commit();
+
+        // Apply new language and recreate activity
+        setLocale(newLang);
+        recreate();
     }
 
     private void updateLanguageFlag() {

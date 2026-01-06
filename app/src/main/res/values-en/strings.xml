@@ -2,22 +2,22 @@
     <string name="app_name">Pitkiot</string>
 
     <!-- Main Screen -->
-    <string name="title_note_management">Note Management</string>
+    <string name="title_note_management">NOTES MANAGEMENT</string>
     <string name="reminder_text">* Don\'t forget everyone needs to know the character</string>
-    <string name="button_online_collection">Online Collection</string>
-    <string name="button_delete_notes">Delete Notes</string>
+    <string name="button_online_collection">🌐  Online Collection</string>
+    <string name="button_delete_notes">🗑️  Delete Notes</string>
     <string name="button_add">Add</string>
     <string name="hint_enter_character">Enter character</string>
     <string name="note_count">Number of notes: %d</string>
     <string name="note_count_database">Number of notes in database: %d</string>
 
     <!-- MainActivity buttons -->
-    <string name="button_play_game">Play</string>
-    <string name="button_manage_notes">Manage Notes</string>
-    <string name="button_reset">Reset Game</string>
+    <string name="button_play_game">▶️  Play</string>
+    <string name="button_manage_notes">📝  NOTES MANAGEMENT</string>
+    <string name="button_reset">🔄  Reset Game</string>
     <string name="button_settings">Settings</string>
-    <string name="button_return_to_game">Return to Game</string>
-    <string name="button_start_new_game">Start New Game</string>
+    <string name="button_return_to_game">⏯️  Return to Game</string>
+    <string name="button_start_new_game">▶️  Start New Game</string>
 
     <!-- Collection Dialog -->
     <string name="dialog_title_collection">Collect Notes from Players</string>
@@ -45,15 +45,15 @@
     <string name="web_label_notes">Your Notes</string>
     <string name="web_placeholder_notes">Write your notes here...</string>
     <string name="web_helper_notes">You can write multiple notes separated by commas or lines</string>
-    <string name="web_button_submit">Send Note</string>
-    <string name="web_button_submit_another">Send Another Note</string>
+    <string name="web_button_submit">Send</string>
+    <string name="web_button_submit_another">Send Another</string>
     <string name="web_loading">Loading...</string>
     <string name="web_error">Error</string>
     <string name="web_error_no_session">Game code missing. Please use the full link you received from the host.</string>
     <string name="web_error_no_name">Please enter a name or nickname</string>
     <string name="web_error_no_content">Please write a note before submitting</string>
     <string name="web_sending">Sending...</string>
-    <string name="web_success">Note sent successfully! 🎉</string>
+    <string name="web_success">Notes sent successfully! 🎉</string>
     <string name="web_error_submit">Error sending note. Please try again.</string>
     <string name="web_session_code">Code: %s</string>
 
@@ -73,7 +73,7 @@
     <string name="dialog_uneven_title">Option Explanation</string>
     <string name="dialog_uneven_msg">Sometimes the game ends with some teams playing one round less than others (or receiving less time in their final round). To avoid such unfairness, at the end of the game, this option will add points to the disadvantaged teams according to their performance.\nIn short, if you want a fair game, check this option.</string>
     <string name="dialog_invalid_input_title">Invalid Input!</string>
-    <string name="dialog_invalid_input_msg">Please enter a whole number between 1 and 300</string>
+    <string name="dialog_invalid_input_msg">Please enter a an integer between 1 and 300</string>
     <string name="dialog_ok">OK</string>
     <string name="dialog_back_main_title">Return to Main Menu</string>
     <string name="dialog_back_main_msg">Are you sure you want to return to the main menu? (You can make changes and return to the same game state).</string>
@@ -88,7 +88,7 @@
     <string name="dialog_delete_all_title">Empty Notes Database</string>
     <string name="dialog_delete_all_msg">Are you sure you want to delete all notes from the database?</string>
     <string name="dialog_reset_game_title">Reset Game</string>
-    <string name="dialog_reset_game_msg">Are you sure you want to reset the game? Note that the game will start from the beginning but the notes will remain.\nTo delete notes, go to \"Note Management\".</string>
+    <string name="dialog_reset_game_msg">Are you sure you want to reset the game? Note that the game will start from the beginning but the notes will remain.\nTo delete notes, go to \"NOTES MANAGEMENT\".</string>
     <string name="dialog_reset_settings_title">Reset Settings</string>
     <string name="dialog_reset_settings_msg">Are you sure you want to reset the settings? Note that team scores will only reset when resetting the game.</string>
     <string name="dialog_resume_game_title">Return to Running Game</string>
