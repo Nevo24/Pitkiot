@@ -15,7 +15,7 @@ import android.os.CountDownTimer;
 import android.os.LocaleList;
 import android.os.SystemClock;
 import android.os.Vibrator;
-import android.preference.PreferenceManager;
+import androidx.preference.PreferenceManager;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;

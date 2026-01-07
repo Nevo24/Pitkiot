@@ -14,7 +14,7 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.LocaleList;
-import android.preference.PreferenceManager;
+import androidx.preference.PreferenceManager;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -51,8 +51,6 @@ import static nevo_mashiach.pitkiot.NotActivities.db.defs;
 @SuppressLint("SourceLockedOrientationActivity")
 public class NoteManagement extends AppCompatActivity {
 
-    private ActivityNoteManagementBinding binding;
-    
     EditText mTypeDef;
     TextView mNoteCount;
 
@@ -68,7 +66,7 @@ public class NoteManagement extends AppCompatActivity {
     private NoteCollectionSession noteCollectionSession;
     private Dialog collectionDialog;
     private int receivedNotesCount = 0;
-    private java.util.HashMap<String, Integer> submitterNoteCounts = new java.util.HashMap<>();
+    private final java.util.HashMap<String, Integer> submitterNoteCounts = new java.util.HashMap<>();
     private static final String FIREBASE_HOSTING_URL = "https://pitkiot-29650.web.app";
 
 
@@ -82,7 +80,7 @@ public class NoteManagement extends AppCompatActivity {
         spEditor = prefs.edit();
         loadLanguagePreference();
 
-        binding = ActivityNoteManagementBinding.inflate(getLayoutInflater());
+        ActivityNoteManagementBinding binding = ActivityNoteManagementBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         
