@@ -143,7 +143,7 @@ public class Settings extends AppCompatActivity {
             items[i]= getString(R.string.game_team_label) + (i + 1);
         }
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item, items) {
 
             public View getView(int position, View convertView, ViewGroup parent) {
@@ -168,7 +168,7 @@ public class Settings extends AppCompatActivity {
         };
 
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        Spinner spinner = (Spinner) findViewById(R.id.settingsSpinner);
+        Spinner spinner = findViewById(R.id.settingsSpinner);
         spinner.setAdapter(adapter);
 
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
