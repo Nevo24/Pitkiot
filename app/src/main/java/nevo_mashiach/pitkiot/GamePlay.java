@@ -39,7 +39,6 @@ public class GamePlay extends AppCompatActivity {
     public static final String TAG = GamePlay.class.getName();
 
     Context context;
-    private ActivityGamePlayBinding binding;
 
     MyTextView mCurrentDef;
     MyTextView mTeamNum;
@@ -90,19 +89,14 @@ public class GamePlay extends AppCompatActivity {
             config.locale = locale;
         }
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            config.setLayoutDirection(locale);
-            return context.createConfigurationContext(config);
-        } else {
-            resources.updateConfiguration(config, resources.getDisplayMetrics());
-            return context;
-        }
+        config.setLayoutDirection(locale);
+        return context.createConfigurationContext(config);
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = ActivityGamePlayBinding.inflate(getLayoutInflater());
+        ActivityGamePlayBinding binding = ActivityGamePlayBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
@@ -167,8 +161,7 @@ public class GamePlay extends AppCompatActivity {
         sadAanim.stop();
 
         //Save game state:
-        Set<String> set = new HashSet<String>();
-        set.addAll(db.temp);
+        Set<String> set = new HashSet<>(db.temp);
         spEditor.putStringSet("temp", set);
         set.clear();
         set.addAll(db.defs);

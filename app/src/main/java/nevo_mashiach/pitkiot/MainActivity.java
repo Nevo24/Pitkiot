@@ -39,7 +39,6 @@ public class MainActivity extends AppCompatActivity {
     public DialogBag dialogBag;
 
     Context context;
-    private ActivityMainBinding binding;
 
     TextView mNoteCount;
     MyButton mPlayGame;
@@ -70,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
         spEditor = prefs.edit();
         loadLanguagePreference();
 
-        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        ActivityMainBinding binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
@@ -132,29 +131,29 @@ public class MainActivity extends AppCompatActivity {
         //smsTime
         try {
             db.smsTime = prefs.getLong("smsTime", System.currentTimeMillis());
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
 
         //Settings
         try {
             db.autoBalanceCheckBox = prefs.getBoolean("autoBalanceCheckBoxBackup", true);
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         try {
             db.soundCheckBox = prefs.getBoolean("soundCheckBoxBackup", true);
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         try {
             db.timePerRound = prefs.getInt("timePerRoundBackup", 60);
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         try {
             db.timeDownOnNext = prefs.getInt("timeDownOnNextBackup", 5);
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         try {
             db.amountOfTeams = prefs.getInt("amountOfTeams", 2);
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
 
         //Game state
@@ -162,18 +161,18 @@ public class MainActivity extends AppCompatActivity {
         try {
             set = prefs.getStringSet("defs", null);
             db.defs = new ArrayList<>(set);
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         try {
             set = prefs.getStringSet("temp", null);
             db.temp = new ArrayList<>(set);
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         for (int i = 0; i < 24; i++) {
             try {
                 set = prefs.getStringSet("team" + i + "Notes", null);
                 db.teamsNotes[i] = new ArrayList<>(set);
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
             try {
                 db.teamsRoundNum[i] = prefs.getInt("team" + i + "RoundNum", 0);
@@ -181,24 +180,24 @@ public class MainActivity extends AppCompatActivity {
             }
             try {
                 db.scores[i] = prefs.getInt("team" + i + "Score", 0);
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
         }
         try {
             db.totalRoundNumber = prefs.getInt("totalRoundNumber", 0);
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         try {
             db.currentSuccessNum = prefs.getInt("currentSuccessNum", 0);
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         try {
             db.currentPlaying = prefs.getInt("currentPlaying", 0);
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         try {
             db.mMillisUntilFinished = prefs.getLong("mMillisUntilFinished", 60 * 1000);
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         try {
             db.gamePlayIsPaused = prefs.getBoolean("gamePlayIsPaused", false);
@@ -206,7 +205,7 @@ public class MainActivity extends AppCompatActivity {
         }
         try {
             db.summaryIsPaused = prefs.getBoolean("summaryIsPaused", false);
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
     }
 
@@ -259,7 +258,7 @@ public class MainActivity extends AppCompatActivity {
                 spEditor.putInt("totalRoundNumber", 0);
                 spEditor.putInt("currentSuccessNum", 0);
                 spEditor.putInt("currentPlaying", 0);
-                spEditor.putLong("mMillisUntilFinished", db.timePerRound * 1000);
+                spEditor.putLong("mMillisUntilFinished", db.timePerRound * 1000L);
                 spEditor.putBoolean("summaryIsPaused", false);
                 spEditor.putBoolean("gamePlayIsPaused", false);
                 spEditor.commit();
@@ -327,9 +326,7 @@ public class MainActivity extends AppCompatActivity {
             config.locale = locale;
         }
 
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            config.setLayoutDirection(locale);
-        }
+        config.setLayoutDirection(locale);
 
         resources.updateConfiguration(config, resources.getDisplayMetrics());
     }

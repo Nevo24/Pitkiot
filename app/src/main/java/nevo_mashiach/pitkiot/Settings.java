@@ -29,7 +29,6 @@ import nevo_mashiach.pitkiot.NotActivities.db;
 
 public class Settings extends AppCompatActivity {
 
-    private ActivitySettingsBinding binding;
     public DialogBag dialogBag;
     Context context;
 
@@ -53,7 +52,7 @@ public class Settings extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = ActivitySettingsBinding.inflate(getLayoutInflater());
+        ActivitySettingsBinding binding = ActivitySettingsBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         
         // Initialize view references
@@ -126,10 +125,10 @@ public class Settings extends AppCompatActivity {
         super.onResume();
         mAutoBalaceCheckBox.setChecked(db.autoBalanceCheckBox);
         mSoundCheckBox.setChecked(db.soundCheckBox);
-        mEditRoundTime.setText("" + db.timePerRound);
-        mEditNextTime.setText("" + db.timeDownOnNext);
-        mAmoutOfTeams.setText("" + db.amountOfTeams);
-        mTeamEditableScore.setText("" + db.scores[0]);
+        mEditRoundTime.setText(String.valueOf(db.timePerRound));
+        mEditNextTime.setText(String.valueOf(db.timeDownOnNext));
+        mAmoutOfTeams.setText(String.valueOf(db.amountOfTeams));
+        mTeamEditableScore.setText(String.valueOf(db.scores[0]));
         mBalanceExplanation.setPadding(17, 0, 0, 0);
         createGroupSpinner();
         if(db.amountOfTeams == 2) mDecrease1.setEnabled(false);
@@ -176,7 +175,7 @@ public class Settings extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
                 selectedSpinner = position;
-                mTeamEditableScore.setText("" + db.scores[selectedSpinner]);
+                mTeamEditableScore.setText(String.valueOf(db.scores[selectedSpinner]));
                 if (db.scores[selectedSpinner] == 0) mDecrease2.setEnabled(false);
                 else mDecrease2.setEnabled(true);
             }
@@ -211,25 +210,25 @@ public class Settings extends AppCompatActivity {
 
 
     void focusChangedEditRoundTime(boolean hasFocus) {
-        if (hasFocus == false) {
+        if (!hasFocus) {
             if (mEditRoundTime.getText().toString().equals("")) {
-                mEditRoundTime.setText("" + db.timePerRound);
+                mEditRoundTime.setText(String.valueOf(db.timePerRound));
                 return;
             }
             try {
                 num = Integer.parseInt(mEditRoundTime.getText().toString());
             } catch (NumberFormatException e) {
                 dialogBag.invalidInput();
-                mEditRoundTime.setText("" + db.timePerRound);
+                mEditRoundTime.setText(String.valueOf(db.timePerRound));
                 return;
             }
             if (num > 300 || num < 1) {
                 dialogBag.invalidInput();
-                mEditRoundTime.setText("" + db.timePerRound);
+                mEditRoundTime.setText(String.valueOf(db.timePerRound));
                 return;
             }
             db.timePerRound = num;
-            mEditRoundTime.setText("" + db.timePerRound);
+            mEditRoundTime.setText(String.valueOf(db.timePerRound));
             //save roundTime to shared preferences
             spEditor.putInt("timePerRoundBackup", num);
             spEditor.commit();
@@ -239,23 +238,23 @@ public class Settings extends AppCompatActivity {
     void focusChangedEditNextTime(boolean hasFocus) {
         if (hasFocus == false) {
             if (mEditNextTime.getText().toString().equals("")) {
-                mEditNextTime.setText("" + db.timeDownOnNext);
+                mEditNextTime.setText(String.valueOf(db.timeDownOnNext));
                 return;
             }
             try {
                 num = Integer.parseInt(mEditNextTime.getText().toString());
             } catch (NumberFormatException e) {
                 dialogBag.invalidInput();
-                mEditNextTime.setText("" + db.timeDownOnNext);
+                mEditNextTime.setText(String.valueOf(db.timeDownOnNext));
                 return;
             }
             if (num > 300 || num < 1) {
                 dialogBag.invalidInput();
-                mEditNextTime.setText("" + db.timeDownOnNext);
+                mEditNextTime.setText(String.valueOf(db.timeDownOnNext));
                 return;
             }
             db.timeDownOnNext = num;
-            mEditNextTime.setText("" + db.timeDownOnNext);
+            mEditNextTime.setText(String.valueOf(db.timeDownOnNext));
             //save nextTime to shared preferences
             spEditor.putInt("timeDownOnNextBackup", num);
             spEditor.commit();
@@ -296,7 +295,7 @@ public class Settings extends AppCompatActivity {
         spEditor.putInt("amountOfTeams", db.amountOfTeams);
         spEditor.commit();
         createGroupSpinner();
-        mAmoutOfTeams.setText("" + db.amountOfTeams);
+        mAmoutOfTeams.setText(String.valueOf(db.amountOfTeams));
     }
 
     public void increaseTeam2Score(View view) {
@@ -308,7 +307,7 @@ public class Settings extends AppCompatActivity {
         mDecrease2.setEnabled(true);
         spEditor.putInt("team" + selectedSpinner + "Score", db.scores[selectedSpinner]);
         spEditor.commit();
-        mTeamEditableScore.setText("" + db.scores[selectedSpinner]);
+        mTeamEditableScore.setText(String.valueOf(db.scores[selectedSpinner]));
     }
 
     public void decreaseTeam1Score(View view) {
@@ -323,7 +322,7 @@ public class Settings extends AppCompatActivity {
         spEditor.putInt("amountOfTeams", db.amountOfTeams);
         spEditor.commit();
         createGroupSpinner();
-        mAmoutOfTeams.setText("" + db.amountOfTeams);
+        mAmoutOfTeams.setText(String.valueOf(db.amountOfTeams));
     }
 
     public void decreaseTeam2Score(View view) {
@@ -336,7 +335,7 @@ public class Settings extends AppCompatActivity {
         if (db.scores[selectedSpinner] == 0) mDecrease2.setEnabled(false);
         spEditor.putInt("team" + selectedSpinner + "score", db.scores[selectedSpinner]);
         spEditor.commit();
-        mTeamEditableScore.setText("" + db.scores[selectedSpinner]);
+        mTeamEditableScore.setText(String.valueOf(db.scores[selectedSpinner]));
     }
 
     boolean onTouch(View view, MotionEvent motion) {
