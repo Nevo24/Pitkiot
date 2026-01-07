@@ -15,7 +15,7 @@ import nevo_mashiach.pitkiot.MainActivity;
 
 
 /**
- * Created by Nevo2 on 9/14/2016.
+ * Created by Nevo Mashiach on 9/14/2016.
  */
 public class DialogBag {
 

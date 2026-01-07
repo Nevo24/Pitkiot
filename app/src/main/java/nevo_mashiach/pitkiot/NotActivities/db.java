@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import nevo_mashiach.pitkiot.R;
 
 /**
- * Created by Nevo2 on 10/12/2016.
+ * Created by Nevo Mashiach on 10/12/2016.
  */
 
 public class db {

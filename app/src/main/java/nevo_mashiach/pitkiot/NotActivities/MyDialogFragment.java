@@ -14,7 +14,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
 /**
- * Created by Nevo2 on 9/14/2016.
+ * Created by Nevo Mashiach on 9/14/2016.
  */
 public class MyDialogFragment extends DialogFragment {
     String title;

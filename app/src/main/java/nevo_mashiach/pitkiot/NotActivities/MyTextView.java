@@ -1,14 +1,12 @@
 package nevo_mashiach.pitkiot.NotActivities;
 
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
-import android.view.View;
 import androidx.appcompat.widget.AppCompatTextView;
 
 /**
- * Created by Nevo2 on 10/19/2016.
+ * Created by Nevo Mashiach on 10/19/2016.
  */
 
 public class MyTextView extends AppCompatTextView {

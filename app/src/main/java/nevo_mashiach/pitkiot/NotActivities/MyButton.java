@@ -6,7 +6,7 @@ import android.util.AttributeSet;
 import androidx.appcompat.widget.AppCompatButton;
 
 /**
- * Created by Nevo2 on 10/20/2016.
+ * Created by Nevo Mashiach on 10/20/2016.
  */
 
 public class MyButton extends AppCompatButton{

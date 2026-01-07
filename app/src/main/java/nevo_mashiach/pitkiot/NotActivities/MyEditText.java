@@ -7,7 +7,7 @@ import android.view.KeyEvent;
 import android.widget.EditText;
 
 /**
- * Created by Nevo2 on 10/18/2016.
+ * Created by Nevo Mashiach on 10/18/2016.
  */
 
 public class MyEditText extends EditText {
