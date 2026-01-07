@@ -36,6 +36,7 @@
             android:id="@+id/amoutOfTeams"
             android:layout_height="match_parent"
             android:gravity="center"
+        android:textAlignment="center"
             android:text="0"
             android:textSize="32sp"
             android:textStyle="bold"
@@ -89,6 +90,7 @@
             android:id="@+id/teamEditableScore"
             android:layout_height="match_parent"
             android:gravity="center"
+        android:textAlignment="center"
             android:text="0"
             android:textSize="32sp"
             android:textStyle="bold"
@@ -143,8 +145,6 @@
         android:id="@+id/timeHeadline"
         android:textSize="22sp"
         android:layout_below="@+id/soundCheckBox"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
         android:layout_marginTop="24dp"/>
 
     <nevo_mashiach.pitkiot.NotActivities.MyTextView

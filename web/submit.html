@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="he" dir="rtl">
+<html lang="he">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -20,7 +20,6 @@
             justify-content: center;
             align-items: center;
             padding: 20px;
-            direction: rtl;
         }
 
         .container {
@@ -122,7 +121,6 @@
             font-size: 16px;
             font-family: 'Tahoma', Arial, sans-serif;
             transition: border-color 0.3s, box-shadow 0.3s;
-            direction: rtl;
             background: white;
         }
 
@@ -225,6 +223,54 @@
             color: #888;
             margin-top: 6px;
             font-style: italic;
+        }
+
+        /* Direction-specific styles */
+        [dir="rtl"] input[type="text"],
+        [dir="rtl"] textarea {
+            text-align: right;
+            direction: rtl;
+        }
+
+        [dir="ltr"] input[type="text"],
+        [dir="ltr"] textarea {
+            text-align: left;
+            direction: ltr;
+        }
+
+        [dir="rtl"] label,
+        [dir="rtl"] .helper-text {
+            text-align: right;
+            direction: rtl;
+        }
+
+        [dir="ltr"] label,
+        [dir="ltr"] .helper-text {
+            text-align: left;
+            direction: ltr;
+        }
+
+        [dir="ltr"] .message {
+            text-align: left;
+            direction: ltr;
+        }
+
+        [dir="rtl"] .message {
+            text-align: right;
+            direction: rtl;
+        }
+
+        /* Placeholder alignment */
+        [dir="rtl"] input::placeholder,
+        [dir="rtl"] textarea::placeholder {
+            text-align: right;
+            direction: rtl;
+        }
+
+        [dir="ltr"] input::placeholder,
+        [dir="ltr"] textarea::placeholder {
+            text-align: left;
+            direction: ltr;
         }
     </style>
 </head>

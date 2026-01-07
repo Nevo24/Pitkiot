@@ -1,15 +1,14 @@
 package nevo_mashiach.pitkiot.NotActivities;
 
-import android.app.FragmentManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 
+import androidx.fragment.app.FragmentManager;
+
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
 
 import nevo_mashiach.pitkiot.MainActivity;
@@ -101,7 +100,7 @@ public class DialogBag {
     }
 
     private void multiGameOverFinalScore(int[] scores) {
-        String scoreSummary =  "";
+        StringBuilder scoreSummary = new StringBuilder();
         TreeMap<Integer, ArrayList<String>> treeMap = new TreeMap<>(Collections.reverseOrder());
         for (int i = 0; i < db.amountOfTeams; i++) {
             if(!treeMap.containsKey(scores[i])){
@@ -109,17 +108,14 @@ public class DialogBag {
             }
             treeMap.get(scores[i]).add(String.format(context.getString(nevo_mashiach.pitkiot.R.string.dialog_team_score), (i + 1), scores[i]));
         }
-        Set set = treeMap.entrySet();
-        Iterator iterator = set.iterator();
-        while(iterator.hasNext()) {
-            Map.Entry mentry = (Map.Entry)iterator.next();
-            for (int j = 0; j < ((ArrayList)mentry.getValue()).size(); j++) {
-                scoreSummary += ((ArrayList)mentry.getValue()).get(j);
+        for (Map.Entry<Integer, ArrayList<String>> entry : treeMap.entrySet()) {
+            for (String teamScore : entry.getValue()) {
+                scoreSummary.append(teamScore);
             }
         }
         MyDialogFragment dialog = new MyDialogFragment(
                 context.getString(nevo_mashiach.pitkiot.R.string.dialog_final_score_title),
-                scoreSummary
+                scoreSummary.toString()
         );
         dialog = dialog.setPositiveButton(context.getString(nevo_mashiach.pitkiot.R.string.dialog_return_main), new DialogInterface.OnClickListener() {
             @Override

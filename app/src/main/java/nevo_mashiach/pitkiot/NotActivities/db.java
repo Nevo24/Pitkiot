@@ -49,6 +49,7 @@ public class db {
     public static long smsTime;
 
 
+    @SuppressWarnings("unchecked")
     private db() {
         defs = new ArrayList<String>();
         temp = new ArrayList<String>();
@@ -173,7 +174,10 @@ public class db {
     }
 
     public static boolean onTouch(Context context, View view, MotionEvent motion) {
-        if (motion.getAction() == MotionEvent.ACTION_UP) view.setPadding(0, 0, 0, 0);
+        if (motion.getAction() == MotionEvent.ACTION_UP) {
+            view.setPadding(0, 0, 0, 0);
+            view.performClick();
+        }
         else if(motion.getAction() == MotionEvent.ACTION_MOVE) {
             Rect rect = new Rect(view.getLeft(), view.getTop(), view.getRight(), view.getBottom());
             if(!rect.contains(view.getLeft() + (int) motion.getX(), view.getTop() + (int) motion.getY())) {
@@ -188,7 +192,10 @@ public class db {
     }
 
     public static boolean onTouchExplanation(Context context, View view, MotionEvent motion) {
-        if (motion.getAction() == MotionEvent.ACTION_UP) view.setPadding(17, 0, 0, 0);
+        if (motion.getAction() == MotionEvent.ACTION_UP) {
+            view.setPadding(17, 0, 0, 0);
+            view.performClick();
+        }
         else if(motion.getAction() == MotionEvent.ACTION_MOVE) {
             Rect rect = new Rect(view.getLeft(), view.getTop(), view.getRight(), view.getBottom());
             if(!rect.contains(view.getLeft() + (int) motion.getX(), view.getTop() + (int) motion.getY())) {

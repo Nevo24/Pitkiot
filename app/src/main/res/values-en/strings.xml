@@ -44,7 +44,7 @@
     <string name="web_helper_name">To identify who sent the note</string>
     <string name="web_label_notes">Your Notes</string>
     <string name="web_placeholder_notes">Write your notes here...</string>
-    <string name="web_helper_notes">You can write multiple notes separated by commas or lines</string>
+    <string name="web_helper_notes">You can write multiple notes separated by commas or new lines</string>
     <string name="web_button_submit">Send</string>
     <string name="web_button_submit_another">Send Another</string>
     <string name="web_loading">Loading...</string>

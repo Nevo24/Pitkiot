@@ -1,5 +1,6 @@
 package nevo_mashiach.pitkiot;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
@@ -21,41 +22,27 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnCheckedChanged;
-import butterknife.OnClick;
-import butterknife.OnFocusChange;
-import butterknife.OnTouch;
+import nevo_mashiach.pitkiot.databinding.ActivitySettingsBinding;
 import nevo_mashiach.pitkiot.NotActivities.DialogBag;
 import nevo_mashiach.pitkiot.NotActivities.MyEditText;
 import nevo_mashiach.pitkiot.NotActivities.db;
 
 public class Settings extends AppCompatActivity {
 
+    private ActivitySettingsBinding binding;
     public DialogBag dialogBag;
     Context context;
 
-    @BindView(R.id.autoBalaceCheckBox)
     CheckBox mAutoBalaceCheckBox;
-    @BindView(R.id.soundCheckBox)
     CheckBox mSoundCheckBox;
-    @BindView(R.id.editRoundTime)
     MyEditText mEditRoundTime;
-    @BindView(R.id.editNextTime)
     MyEditText mEditNextTime;
-    @BindView(R.id.amoutOfTeams)
     TextView mAmoutOfTeams;
-    @BindView(R.id.teamEditableScore)
     TextView mTeamEditableScore;
-    @BindView(R.id.balanceExplanation)
     TextView mBalanceExplanation;
 
-    @BindView(R.id.increase1)
     Button mIncrease1;
-    @BindView(R.id.decrease1)
     Button mDecrease1;
-    @BindView(R.id.decrease2)
     Button mDecrease2;
 
     int num;
@@ -66,11 +53,47 @@ public class Settings extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_settings);
-        ButterKnife.bind(this);
+        binding = ActivitySettingsBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+        
+        // Initialize view references
+        mAutoBalaceCheckBox = binding.autoBalaceCheckBox;
+        mSoundCheckBox = binding.soundCheckBox;
+        mEditRoundTime = binding.editRoundTime;
+        mEditNextTime = binding.editNextTime;
+        mAmoutOfTeams = binding.amoutOfTeams;
+        mTeamEditableScore = binding.teamEditableScore;
+        mBalanceExplanation = binding.balanceExplanation;
+        mIncrease1 = binding.increase1;
+        mDecrease1 = binding.decrease1;
+        mDecrease2 = binding.decrease2;
+        
+        // Set up listeners
+        mAutoBalaceCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> onAutoBalanceChecked(isChecked));
+        mSoundCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> onSoundChecked(isChecked));
+        mBalanceExplanation.setOnClickListener(this::explanationBalanceDialog);
+        mEditRoundTime.setOnFocusChangeListener((v, hasFocus) -> focusChangedEditRoundTime(hasFocus));
+        mEditNextTime.setOnFocusChangeListener((v, hasFocus) -> focusChangedEditNextTime(hasFocus));
+        binding.resetSettings.setOnClickListener(this::resetAllSettings);
+        mIncrease1.setOnClickListener(this::increaseTeam1Score);
+        binding.increase2.setOnClickListener(this::increaseTeam2Score);
+        mDecrease1.setOnClickListener(this::decreaseTeam1Score);
+        mDecrease2.setOnClickListener(this::decreaseTeam2Score);
+
+        // Set up touch listeners - Note: db.onTouch()/onTouchExplanation() internally call view.performClick()
+        @SuppressLint("ClickableViewAccessibility")
+        View.OnTouchListener resetTouchListener = (v, motion) -> db.onTouch(context, v, motion);
+        binding.resetSettings.setOnTouchListener(resetTouchListener);
+
+        @SuppressLint("ClickableViewAccessibility")
+        View.OnTouchListener explanationTouchListener = (v, motion) -> db.onTouchExplanation(context, v, motion);
+        // MyTextView overrides performClick() and db.onTouchExplanation() calls it - this is a lint false positive
+        //noinspection AndroidLintClickableViewAccessibility
+        mBalanceExplanation.setOnTouchListener(explanationTouchListener);
+        
         context = this;
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        dialogBag = new DialogBag(getFragmentManager(), this);
+        dialogBag = new DialogBag(getSupportFragmentManager(), this);
         prefs = PreferenceManager.getDefaultSharedPreferences(context);
         spEditor = prefs.edit();
 
@@ -167,7 +190,6 @@ public class Settings extends AppCompatActivity {
     }
 
     //*********************** ON CLICKS ********************************
-    @OnCheckedChanged(R.id.autoBalaceCheckBox)
     void onAutoBalanceChecked(boolean checked) {
         //save autoBalanceCheckBox to shared preferences
         db.autoBalanceCheckBox = checked;
@@ -175,7 +197,6 @@ public class Settings extends AppCompatActivity {
         spEditor.commit();
     }
 
-    @OnCheckedChanged(R.id.soundCheckBox)
     void onSoundChecked(boolean checked) {
         db.soundCheckBox = checked;
         //save autoBalanceCheckBox to shared preferences
@@ -184,13 +205,11 @@ public class Settings extends AppCompatActivity {
         spEditor.commit();
     }
 
-    @OnClick(R.id.balanceExplanation)
     public void explanationBalanceDialog(View view) {
         dialogBag.unevenExplanation();
     }
 
 
-    @OnFocusChange(R.id.editRoundTime)
     void focusChangedEditRoundTime(boolean hasFocus) {
         if (hasFocus == false) {
             if (mEditRoundTime.getText().toString().equals("")) {
@@ -217,7 +236,6 @@ public class Settings extends AppCompatActivity {
         } else mEditRoundTime.setText("");
     }
 
-    @OnFocusChange(R.id.editNextTime)
     void focusChangedEditNextTime(boolean hasFocus) {
         if (hasFocus == false) {
             if (mEditNextTime.getText().toString().equals("")) {
@@ -244,7 +262,6 @@ public class Settings extends AppCompatActivity {
         } else mEditNextTime.setText("");
     }
 
-    @OnClick(R.id.resetSettings)
     public void resetAllSettings(View view) {
         Runnable task = new Runnable() {
             public void run() {
@@ -267,7 +284,6 @@ public class Settings extends AppCompatActivity {
         dialogBag.resetSettings(task);
     }
 
-    @OnClick(R.id.increase1)
     public void increaseTeam1Score(View view) {
         if (db.amountOfTeams == 24) return;
         if (db.gamePlayIsPaused || db.summaryIsPaused) {
@@ -283,7 +299,6 @@ public class Settings extends AppCompatActivity {
         mAmoutOfTeams.setText("" + db.amountOfTeams);
     }
 
-    @OnClick(R.id.increase2)
     public void increaseTeam2Score(View view) {
         if (!db.gamePlayIsPaused && !db.summaryIsPaused) {
             dialogBag.cannotEditScore();
@@ -296,7 +311,6 @@ public class Settings extends AppCompatActivity {
         mTeamEditableScore.setText("" + db.scores[selectedSpinner]);
     }
 
-    @OnClick(R.id.decrease1)
     public void decreaseTeam1Score(View view) {
         if (db.amountOfTeams == 2) return;
         if (db.gamePlayIsPaused || db.summaryIsPaused) {
@@ -312,7 +326,6 @@ public class Settings extends AppCompatActivity {
         mAmoutOfTeams.setText("" + db.amountOfTeams);
     }
 
-    @OnClick(R.id.decrease2)
     public void decreaseTeam2Score(View view) {
         if (db.scores[selectedSpinner] == 0) return;
         if (!db.gamePlayIsPaused && !db.summaryIsPaused) {
@@ -326,11 +339,9 @@ public class Settings extends AppCompatActivity {
         mTeamEditableScore.setText("" + db.scores[selectedSpinner]);
     }
 
-    @OnTouch({R.id.resetSettings})
     boolean onTouch(View view, MotionEvent motion) {
         return db.onTouch(context, view, motion);
     }
 
-    @OnTouch({R.id.balanceExplanation})
     boolean onTouchExplanation(View view, MotionEvent motion) {return db.onTouchExplanation(context, view, motion);}
 }

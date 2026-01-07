@@ -1,5 +1,6 @@
 package nevo_mashiach.pitkiot;
 
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -40,22 +41,21 @@ import java.util.Locale;
 import java.util.Set;
 
 import androidx.appcompat.app.AppCompatActivity;
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
-import butterknife.OnTouch;
+import nevo_mashiach.pitkiot.databinding.ActivityNoteManagementBinding;
 import nevo_mashiach.pitkiot.NotActivities.DialogBag;
 import nevo_mashiach.pitkiot.NotActivities.NoteCollectionSession;
 import nevo_mashiach.pitkiot.NotActivities.db;
 
 import static nevo_mashiach.pitkiot.NotActivities.db.defs;
 
+@SuppressLint("SourceLockedOrientationActivity")
 public class NoteManagement extends AppCompatActivity {
 
-    @BindView(R.id.typeDef)
+    private ActivityNoteManagementBinding binding;
+    
     EditText mTypeDef;
-    @BindView(R.id.noteCount)
     TextView mNoteCount;
+
 
     Context context;
     AppCompatActivity thisActivity;
@@ -82,12 +82,30 @@ public class NoteManagement extends AppCompatActivity {
         spEditor = prefs.edit();
         loadLanguagePreference();
 
-        setContentView(R.layout.activity_note_management);
+        binding = ActivityNoteManagementBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        ButterKnife.bind(this);
+        
+        // Initialize view references
+        mTypeDef = binding.typeDef;
+        mNoteCount = binding.noteCount;
         thisActivity = this;
-        dialogBag = new DialogBag(getFragmentManager(), this);
+        dialogBag = new DialogBag(getSupportFragmentManager(), this);
 
+
+        
+        // Set up click listeners
+        binding.addDef.setOnClickListener(this::addingDefToDb);
+        binding.deleteNotes.setOnClickListener(this::deleteNodesButton);
+        binding.collectNotesOnline.setOnClickListener(this::startOnlineNoteCollection);
+        
+        // Set up touch listeners
+        // Note: db.onTouch() internally calls view.performClick() for accessibility
+        @SuppressLint("ClickableViewAccessibility")
+        View.OnTouchListener touchListener = (v, motion) -> db.onTouch(context, v, motion);
+        binding.addDef.setOnTouchListener(touchListener);
+        binding.deleteNotes.setOnTouchListener(touchListener);
+        binding.collectNotesOnline.setOnTouchListener(touchListener);
         mTypeDef.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -125,7 +143,7 @@ public class NoteManagement extends AppCompatActivity {
 
     private void add(String name) {
         name = name.trim();
-        if (!db.noteExists(name) && !name.equals("")) {
+        if (!db.noteExists(name) && !name.isEmpty()) {
             defs.add(name);
             saveNotes();
             mNoteCount.setText(String.format(getString(R.string.note_count_database), db.totalNoteAmount()));
@@ -134,15 +152,13 @@ public class NoteManagement extends AppCompatActivity {
 
     private void saveNotes() {
         //save notes to shared preferences
-        Set<String> set = new HashSet<String>();
-        set.addAll(db.defs);
+        Set<String> set = new HashSet<String>(db.defs);
         spEditor.putStringSet("defs", set);
         spEditor.commit();
     }
 
 
     //*********************** ON CLICKS ********************************
-    @OnClick(R.id.addDef)
     public void addingDefToDb(View view) {
         String input = mTypeDef.getText().toString();
         List<String> notes = parseNotes(input);
@@ -153,18 +169,12 @@ public class NoteManagement extends AppCompatActivity {
     }
 
 
-    @OnClick(R.id.deleteNotes)
     public void deleteNodesButton(View view) {
         Intent intent = new Intent(context, NoteList.class);
         startActivity(intent);
     }
 
-    @OnTouch({R.id.addDef, R.id.deleteNotes})
-    boolean onTouch(View view, MotionEvent motion) {
-        return db.onTouch(context, view, motion);
-    }
 
-    @OnClick(R.id.collectNotesOnline)
     public void startOnlineNoteCollection(View view) {
         // Reset counters for new session
         receivedNotesCount = 0;
@@ -191,7 +201,7 @@ public class NoteManagement extends AppCompatActivity {
                     }
 
                     // Update the dialog UI
-                    receivedNotesCount++;
+                    receivedNotesCount += notes.size();
                     updateCollectionDialogUI(submitterName, noteContent);
                     Toast.makeText(context, String.format(getString(R.string.toast_new_note_received), submitterName), Toast.LENGTH_SHORT).show();
                 });
@@ -232,7 +242,7 @@ public class NoteManagement extends AppCompatActivity {
 
         // Generate QR code
         try {
-            Bitmap qrBitmap = generateQRCode(url, 500, 500);
+            Bitmap qrBitmap = generateQRCode(url);
             qrCodeImage.setImageBitmap(qrBitmap);
         } catch (WriterException e) {
             Toast.makeText(context, getString(R.string.toast_qr_error), Toast.LENGTH_SHORT).show();
@@ -313,13 +323,13 @@ public class NoteManagement extends AppCompatActivity {
         }
     }
 
-    private Bitmap generateQRCode(String text, int width, int height) throws WriterException {
+    private Bitmap generateQRCode(String text) throws WriterException {
         QRCodeWriter qrCodeWriter = new QRCodeWriter();
-        BitMatrix bitMatrix = qrCodeWriter.encode(text, BarcodeFormat.QR_CODE, width, height);
+        BitMatrix bitMatrix = qrCodeWriter.encode(text, BarcodeFormat.QR_CODE, 500, 500);
 
-        Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
-        for (int x = 0; x < width; x++) {
-            for (int y = 0; y < height; y++) {
+        Bitmap bitmap = Bitmap.createBitmap(500, 500, Bitmap.Config.RGB_565);
+        for (int x = 0; x < 500; x++) {
+            for (int y = 0; y < 500; y++) {
                 bitmap.setPixel(x, y, bitMatrix.get(x, y) ? Color.BLACK : Color.WHITE);
             }
         }
@@ -339,7 +349,6 @@ public class NoteManagement extends AppCompatActivity {
         return notes;
     }
 
-    @OnTouch(R.id.collectNotesOnline)
     boolean onTouchCollectOnline(View view, MotionEvent motion) {
         return db.onTouch(context, view, motion);
     }
@@ -365,9 +374,7 @@ public class NoteManagement extends AppCompatActivity {
             config.locale = locale;
         }
 
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            config.setLayoutDirection(locale);
-        }
+        config.setLayoutDirection(locale);
 
         resources.updateConfiguration(config, resources.getDisplayMetrics());
     }

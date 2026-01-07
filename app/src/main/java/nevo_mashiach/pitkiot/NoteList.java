@@ -1,6 +1,5 @@
 package nevo_mashiach.pitkiot;
 
-import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -11,7 +10,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -21,7 +23,7 @@ import java.util.Set;
 import nevo_mashiach.pitkiot.NotActivities.DialogBag;
 import nevo_mashiach.pitkiot.NotActivities.db;
 
-public class NoteList extends ListActivity {
+public class NoteList extends AppCompatActivity {
 
     ArrayList<String> notes = new ArrayList<>();
     Context context;
@@ -30,17 +32,19 @@ public class NoteList extends ListActivity {
     SharedPreferences.Editor spEditor;
 
     DialogBag dialogBag;
+    ListView listView;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.sample_main);
         context = this;
-        dialogBag = new DialogBag(getFragmentManager(), this);
+        dialogBag = new DialogBag(getSupportFragmentManager(), this);
 
         prefs = PreferenceManager.getDefaultSharedPreferences(context);
         spEditor = prefs.edit();
 
-        setListAdapter(mListAdapter);
+        listView = findViewById(android.R.id.list);
+        listView.setAdapter(mListAdapter);
 
         findViewById(R.id.deleteAll).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -138,6 +142,7 @@ public class NoteList extends ListActivity {
         else{
             for (int i = 0; i < 24; i++) {
                 db.teamsNotes[i].remove(note);
+                set.clear();
                 set.addAll(db.teamsNotes[i]);
                 spEditor.putStringSet("team" + i + "Notes", set);
             }
@@ -148,15 +153,16 @@ public class NoteList extends ListActivity {
 
     public void deleteAllNotes() {
         db.defs.clear();
-        db.teamsNotes[0].clear();
-        db.teamsNotes[1].clear();
         db.temp.clear();
+        for (int i = 0; i < 24; i++) {
+            db.teamsNotes[i].clear();
+        }
         Set<String> set = new HashSet<String>();
         spEditor.putStringSet("defs", set);
+        spEditor.putStringSet("temp", set);
         for (int i = 0; i < 24; i++) {
             spEditor.putStringSet("team" + i + "Notes", set);
         }
-        spEditor.putStringSet("temp", set);
         spEditor.commit();
     }
 

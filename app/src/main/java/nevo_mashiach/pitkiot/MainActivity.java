@@ -1,5 +1,6 @@
 package nevo_mashiach.pitkiot;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -12,7 +13,6 @@ import android.os.CountDownTimer;
 import android.os.LocaleList;
 import android.preference.PreferenceManager;
 import android.view.KeyEvent;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
@@ -25,16 +25,13 @@ import java.util.Locale;
 import java.util.Set;
 
 import androidx.appcompat.app.AppCompatActivity;
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
-import butterknife.OnTouch;
 import nevo_mashiach.pitkiot.NotActivities.DialogBag;
 import nevo_mashiach.pitkiot.NotActivities.ExitActivity;
 import nevo_mashiach.pitkiot.NotActivities.MyButton;
 import nevo_mashiach.pitkiot.NotActivities.db;
+import nevo_mashiach.pitkiot.databinding.ActivityMainBinding;
 
-
+@SuppressLint("SourceLockedOrientationActivity")
 public class MainActivity extends AppCompatActivity {
 
     static boolean firstLaunch = true;
@@ -42,18 +39,15 @@ public class MainActivity extends AppCompatActivity {
     public DialogBag dialogBag;
 
     Context context;
-    @BindView(R.id.noteCount)
+    private ActivityMainBinding binding;
+
     TextView mNoteCount;
-    @BindView(R.id.playGame)
     MyButton mPlayGame;
-    @BindView(R.id.animationFigure)
     ImageView mAnimationFigure;
-    @BindView(R.id.gamePlayFigureHappy)
     ImageView mGamePlayFigureHappy;
-    @BindView(R.id.settingsIcon)
     TextView mSettingsIcon;
-    @BindView(R.id.languageToggle)
     TextView mLanguageToggle;
+
     static AppCompatActivity thisActivity;
     AnimationDrawable happyAanim;
     CountDownTimer animationTimer;
@@ -76,10 +70,19 @@ public class MainActivity extends AppCompatActivity {
         spEditor = prefs.edit();
         loadLanguagePreference();
 
-        setContentView(R.layout.activity_main);
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        ButterKnife.bind(this);
-        dialogBag = new DialogBag(getFragmentManager(), this);
+
+        // Initialize view references
+        mNoteCount = binding.noteCount;
+        mPlayGame = binding.playGame;
+        mAnimationFigure = binding.animationFigure;
+        mGamePlayFigureHappy = binding.gamePlayFigureHappy;
+        mSettingsIcon = binding.settingsIcon;
+        mLanguageToggle = binding.languageToggle;
+
+        dialogBag = new DialogBag(getSupportFragmentManager(), this);
         thisActivity = this;
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -96,6 +99,22 @@ public class MainActivity extends AppCompatActivity {
         mGamePlayFigureHappy.setVisibility(View.INVISIBLE);
         mGamePlayFigureHappy.setBackgroundResource(R.drawable.animation_happy);
         happyAanim = (AnimationDrawable) mGamePlayFigureHappy.getBackground();
+
+        // Set up click listeners
+        binding.playGame.setOnClickListener(v -> startGamePlayActivity());
+        binding.addNote.setOnClickListener(v -> startNoteAdditionActivity());
+        binding.reset.setOnClickListener(v -> resetDialogBag());
+        binding.animationFigure.setOnClickListener(v -> beHappy());
+        binding.settingsIcon.setOnClickListener(v -> settings());
+        binding.languageToggle.setOnClickListener(v -> toggleLanguage());
+
+        // Set up touch listeners
+        // Note: db.onTouch() internally calls view.performClick() for accessibility
+        @SuppressLint("ClickableViewAccessibility")
+        View.OnTouchListener touchListener = (v, motion) -> db.onTouch(context, v, motion);
+        binding.playGame.setOnTouchListener(touchListener);
+        binding.addNote.setOnTouchListener(touchListener);
+        binding.reset.setOnTouchListener(touchListener);
     }
 
     protected void onResume() {
@@ -193,8 +212,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     //*********************** ON CLICKS ********************************
-    @OnClick(R.id.playGame)
-    public void startGamePlayActivity(View view) {
+    public void startGamePlayActivity() {
         if (db.totalNoteAmount() == 0) {
             dialogBag.dbEmptyBeforeGame();
             return;
@@ -219,14 +237,12 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    @OnClick(R.id.addNote)
-    public void startNoteAdditionActivity(View view) {
+    public void startNoteAdditionActivity() {
         Intent intent = new Intent(context, NoteManagement.class);
         startActivity(intent);
     }
 
-    @OnClick(R.id.reset)
-    public void resetDialogBag(View view) {
+    public void resetDialogBag() {
         Runnable task = new Runnable() {
             public void run() {
                 db.resetGame();
@@ -252,8 +268,7 @@ public class MainActivity extends AppCompatActivity {
         dialogBag.resetGame(task);
     }
 
-    @OnClick(R.id.animationFigure)
-    public void beHappy(View view) {
+    public void beHappy() {
         mAnimationFigure.setVisibility(View.INVISIBLE);
         mGamePlayFigureHappy.setVisibility(View.VISIBLE);
         happyAanim.stop();
@@ -278,8 +293,7 @@ public class MainActivity extends AppCompatActivity {
         return super.onKeyDown(keyCode, event);
     }
 
-    @OnClick(R.id.settingsIcon)
-    public void settings(View view) {
+    public void settings() {
         Intent intent = new Intent(context, Settings.class);
         startActivity(intent);
     }
@@ -290,11 +304,6 @@ public class MainActivity extends AppCompatActivity {
         thisActivity.startActivity(intent);
         //int pid = android.os.Process.myPid();
         //android.os.Process.killProcess(pid);
-    }
-
-    @OnTouch({R.id.playGame, R.id.addNote, R.id.reset})
-    boolean onTouch(View view, MotionEvent motion) {
-        return db.onTouch(context, view, motion);
     }
 
     private void loadLanguagePreference() {
@@ -325,8 +334,7 @@ public class MainActivity extends AppCompatActivity {
         resources.updateConfiguration(config, resources.getDisplayMetrics());
     }
 
-    @OnClick(R.id.languageToggle)
-    public void toggleLanguage(View view) {
+    public void toggleLanguage() {
         String currentLang = prefs.getString("app_language", "he");
         String newLang = currentLang.equals("he") ? "en" : "he";
 

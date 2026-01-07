@@ -47,7 +47,8 @@
         android:layout_alignParentEnd="true"
         android:textColor="#ffffffff"
         android:textSize="21sp"
-        android:gravity="center"/>
+        android:gravity="center"
+        android:textAlignment="center"/>
 
     <nevo_mashiach.pitkiot.NotActivities.MyTextView
         android:layout_marginBottom="10dp"

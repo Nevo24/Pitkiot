@@ -35,4 +35,10 @@ public class MyTextView extends TextView {
         }
     }
 
+    @Override
+    public boolean performClick() {
+        // Call super to handle accessibility
+        return super.performClick();
+    }
+
 }

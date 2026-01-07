@@ -1,5 +1,6 @@
 package nevo_mashiach.pitkiot;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -12,7 +13,6 @@ import android.os.Bundle;
 import android.os.LocaleList;
 import android.preference.PreferenceManager;
 import android.view.KeyEvent;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -29,53 +29,36 @@ import java.util.HashSet;
 import java.util.Set;
 
 import androidx.appcompat.app.AppCompatActivity;
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
-import butterknife.OnTouch;
+import nevo_mashiach.pitkiot.databinding.ActivitySummaryBinding;
 import nevo_mashiach.pitkiot.NotActivities.DialogBag;
 import nevo_mashiach.pitkiot.NotActivities.MyButton;
 import nevo_mashiach.pitkiot.NotActivities.db;
 
+@SuppressLint("SourceLockedOrientationActivity")
 public class Summary extends AppCompatActivity {
 
     public static final String TAG = Summary.class.getName();
 
-    @BindView(R.id.t1Total)
+    private ActivitySummaryBinding binding;
+    
     TextView mT1Total;
-    @BindView(R.id.t2Total)
     TextView mT2Total;
-    @BindView(R.id.t1Round)
     TextView mT1Round;
-    @BindView(R.id.t2Round)
     TextView mT2Round;
-    @BindView(R.id.editScoreHeadline)
     TextView mTotalNotes;
-    @BindView(R.id.summaryHeadline)
     TextView mSummaryHeadline;
-    @BindView(R.id.roundModeSummary)
     TextView mRoundModeSummary;
-    @BindView(R.id.ready)
     MyButton mReady;
-    @BindView(R.id.t1Plus)
     TextView mT1Plus;
-    @BindView(R.id.t2Plus)
     TextView mT2Plus;
-    @BindView(R.id.team1Headline)
     TextView mTeam1Headline;
-    @BindView(R.id.team2Headline)
     TextView mTeam2Headline;
-    @BindView(R.id.pressHereFigure)
     ImageView mPressHereFigure;
-
-    @BindView(R.id.summarySpinner)
     View mSummarySpinner;
-    @BindView(R.id.multiTeamsPlus)
     TextView mMultiTeamsPlus;
-    @BindView(R.id.multiTeamTotalScore)
     TextView mMultiTeamTotalScore;
-    @BindView(R.id.multiTeamRound)
     TextView mMultiTeamRound;
+
 
     Context context;
     public DialogBag dialogBag;
@@ -84,6 +67,8 @@ public class Summary extends AppCompatActivity {
     SharedPreferences prefs;
     SharedPreferences.Editor spEditor;
     int selectedSpinner = 1;
+    int teamThatJustPlayed = -1;
+    int successCountForTeamThatJustPlayed = 0;
 
 
     @Override
@@ -121,18 +106,46 @@ public class Summary extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_summary);
+        binding = ActivitySummaryBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        ButterKnife.bind(this);
+        
+        // Initialize view references
+        mT1Total = binding.t1Total;
+        mT2Total = binding.t2Total;
+        mT1Round = binding.t1Round;
+        mT2Round = binding.t2Round;
+        mTotalNotes = binding.editScoreHeadline;
+        mSummaryHeadline = binding.summaryHeadline;
+        mRoundModeSummary = binding.roundModeSummary;
+        mReady = binding.ready;
+        mT1Plus = binding.t1Plus;
+        mT2Plus = binding.t2Plus;
+        mTeam1Headline = binding.team1Headline;
+        mTeam2Headline = binding.team2Headline;
+        mPressHereFigure = binding.pressHereFigure;
+        mSummarySpinner = binding.summarySpinner;
+        mMultiTeamsPlus = binding.multiTeamsPlus;
+        mMultiTeamTotalScore = binding.multiTeamTotalScore;
+        mMultiTeamRound = binding.multiTeamRound;
         context = this;
         prefs = PreferenceManager.getDefaultSharedPreferences(context);
         spEditor = prefs.edit();
-        dialogBag = new DialogBag(getFragmentManager(), this);
+        dialogBag = new DialogBag(getSupportFragmentManager(), this);
         if (firstTime) {
             updateInfoFromSharedPreferences();
             firstTime = false;
         }
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+
+        // Set up click listener
+        binding.ready.setOnClickListener(v -> backToGamePlay());
+
+        // Set up touch listener
+        // Note: db.onTouch() internally calls view.performClick() for accessibility
+        @SuppressLint("ClickableViewAccessibility")
+        View.OnTouchListener touchListener = (v, motion) -> db.onTouch(context, v, motion);
+        binding.ready.setOnTouchListener(touchListener);
+                getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         onCreate = true;
     }
@@ -144,16 +157,26 @@ public class Summary extends AppCompatActivity {
         mTotalNotes.setText(getString(R.string.game_notes_remaining) + db.roundNoteAmount());
         if (!db.summaryIsPaused) {
             mRoundModeSummary.setText(db.getRoundMode(context));
-            mReady.setText(getIntent().getExtras().getString("readyText"));
+            // Check if Intent has extras (might be null when resuming from MainActivity)
+            if (getIntent().getExtras() != null) {
+                mReady.setText(getIntent().getExtras().getString("readyText"));
+                mSummaryHeadline.setText(getIntent().getExtras().getString("summaryHeadline"));
+            } else {
+                // Fallback to loading from SharedPreferences
+                updateInfoFromSharedPreferences();
+            }
 
-            mSummaryHeadline.setText(getIntent().getExtras().getString("summaryHeadline"));
             if (mSummaryHeadline.getText().equals(getString(R.string.game_time_up))) { //If we are here because of time out
                 if(db.amountOfTeams == 2){
                     if (db.currentPlaying == 0) mT1Plus.setText("+" + db.currentSuccessNum);
                     else mT2Plus.setText("+" + db.currentSuccessNum);
+                    teamThatJustPlayed = db.currentPlaying;
+                    successCountForTeamThatJustPlayed = db.currentSuccessNum;
                 }
                 else{
                     mMultiTeamsPlus.setText("+" + db.currentSuccessNum);
+                    teamThatJustPlayed = db.currentPlaying;
+                    successCountForTeamThatJustPlayed = db.currentSuccessNum;
                 }
                 db.currentSuccessNum = 0;
                 db.increseRoundNum();
@@ -165,6 +188,19 @@ public class Summary extends AppCompatActivity {
                     if (db.autoBalanceCheckBox) autoBalance();  //If auto balance is checked
                     gameOverDialogCall();
                 } else {
+                    // Notes finished mid-round - still show the indicator!
+                    if(db.amountOfTeams == 2){
+                        if (db.currentPlaying == 0) mT1Plus.setText("+" + db.currentSuccessNum);
+                        else mT2Plus.setText("+" + db.currentSuccessNum);
+                        teamThatJustPlayed = db.currentPlaying;
+                        successCountForTeamThatJustPlayed = db.currentSuccessNum;
+                    }
+                    else{
+                        mMultiTeamsPlus.setText("+" + db.currentSuccessNum);
+                        teamThatJustPlayed = db.currentPlaying;
+                        successCountForTeamThatJustPlayed = db.currentSuccessNum;
+                    }
+                    db.currentSuccessNum = 0;
                     dialogBag.modeChanged();
                     mTotalNotes.setText(getString(R.string.game_notes_remaining) + db.totalNoteAmount());
                 }
@@ -184,17 +220,47 @@ public class Summary extends AppCompatActivity {
             db.summaryIsPaused = false;
             // Refresh localized strings in case language was changed
             mRoundModeSummary.setText(db.getRoundMode(context));
+            // Restore indicator when returning from main menu
+            if (db.amountOfTeams == 2) {
+                // Restore 2-team indicators from saved state
+                if (teamThatJustPlayed == 0 && successCountForTeamThatJustPlayed > 0) {
+                    mT1Plus.setText("+" + successCountForTeamThatJustPlayed);
+                }
+                if (teamThatJustPlayed == 1 && successCountForTeamThatJustPlayed > 0) {
+                    mT2Plus.setText("+" + successCountForTeamThatJustPlayed);
+                }
+            } else {
+                // Restore multi-team indicator
+                if (teamThatJustPlayed == db.currentPlaying && successCountForTeamThatJustPlayed > 0) {
+                    mMultiTeamsPlus.setText("+" + successCountForTeamThatJustPlayed);
+                } else {
+                    mMultiTeamsPlus.setText("");
+                }
+            }
         }
         if (db.amountOfTeams == 2) {
             multiTeamsVisibility(false);
             twoTeamsVisibility(true);
             mT1Total.setText(getString(R.string.game_total_score) + db.scores[0]);
             mT2Total.setText(getString(R.string.game_total_score) + db.scores[1]);
+            // Restore 2-team indicators after activity destruction
+            if (teamThatJustPlayed == 0 && successCountForTeamThatJustPlayed > 0) {
+                mT1Plus.setText("+" + successCountForTeamThatJustPlayed);
+            }
+            if (teamThatJustPlayed == 1 && successCountForTeamThatJustPlayed > 0) {
+                mT2Plus.setText("+" + successCountForTeamThatJustPlayed);
+            }
         } else {
             multiTeamsVisibility(true);
             twoTeamsVisibility(false);
             createGroupSpinner();
             mMultiTeamTotalScore.setText(getString(R.string.game_total_score) + db.scores[db.currentPlaying]);
+            // Restore indicator if viewing the team that just played
+            if (teamThatJustPlayed == db.currentPlaying && successCountForTeamThatJustPlayed > 0) {
+                mMultiTeamsPlus.setText("+" + successCountForTeamThatJustPlayed);
+            } else {
+                mMultiTeamsPlus.setText("");
+            }
         }
         onCreate = false;
     }
@@ -214,6 +280,8 @@ public class Summary extends AppCompatActivity {
             mMultiTeamRound.setText(prefs.getString("t" + db.currentPlaying + "Round", ""));
         }
         db.team2AverageAnswersPerSecond = Double.longBitsToDouble(prefs.getLong("team2AverageAnswersPerSecond", Double.doubleToLongBits(0)));
+        teamThatJustPlayed = prefs.getInt("teamThatJustPlayed", -1);
+        successCountForTeamThatJustPlayed = prefs.getInt("successCountForTeamThatJustPlayed", 0);
     }
 
         public void gameOverDialogCall() {
@@ -239,8 +307,11 @@ public class Summary extends AppCompatActivity {
             } else {//If the round amount is equal
                 if(db.currentPlaying != i) continue; //If the last team to play is not the current selected
                 double totalPlayingTime = (((double) db.teamsRoundNum[i] - 1) * (double) db.timePerRound) + ((double) db.timePerRound - (double) db.mMillisUntilFinished / 1000);
-                db.team2AverageAnswersPerSecond = (double) db.scores[i] / totalPlayingTime;
-                db.scores[i] = (int) Math.round((double) db.scores[i] + (double) db.mMillisUntilFinished / 1000 * db.team2AverageAnswersPerSecond);
+                // Prevent division by zero if team finished instantly
+                if (totalPlayingTime > 0) {
+                    db.team2AverageAnswersPerSecond = (double) db.scores[i] / totalPlayingTime;
+                    db.scores[i] = (int) Math.round((double) db.scores[i] + (double) db.mMillisUntilFinished / 1000 * db.team2AverageAnswersPerSecond);
+                }
             }
         }
     }
@@ -271,6 +342,8 @@ public class Summary extends AppCompatActivity {
         if(!db.gameOverDialogActivated) spEditor.putBoolean("summaryIsPaused", true);
         spEditor.putBoolean("gamePlayIsPaused", false);
         spEditor.putLong("team2AverageAnswersPerSecond", Double.doubleToRawLongBits(db.team2AverageAnswersPerSecond));
+        spEditor.putInt("teamThatJustPlayed", teamThatJustPlayed);
+        spEditor.putInt("successCountForTeamThatJustPlayed", successCountForTeamThatJustPlayed);
 
         //Save text-info
         spEditor.putString("summaryHeadline", mSummaryHeadline.getText().toString());
@@ -346,7 +419,6 @@ public class Summary extends AppCompatActivity {
                 ((TextView) v).setTypeface(externalFont);
                 ((TextView) v).setTextColor(0x88000000);
                 ((TextView) v).setTextSize(25);
-                mMultiTeamsPlus.setText("");
                 return v;
             }
         };
@@ -362,6 +434,13 @@ public class Summary extends AppCompatActivity {
                 selectedSpinner = position;
                 mMultiTeamTotalScore.setText(getString(R.string.game_total_score) + db.scores[selectedSpinner]);
                 mMultiTeamRound.setText(getString(R.string.game_number_of_rounds) + db.teamsRoundNum[selectedSpinner]);
+
+                // Show indicator only if this is the team that just played
+                if (teamThatJustPlayed == selectedSpinner && successCountForTeamThatJustPlayed > 0) {
+                    mMultiTeamsPlus.setText("+" + successCountForTeamThatJustPlayed);
+                } else {
+                    mMultiTeamsPlus.setText("");
+                }
             }
 
             @Override
@@ -374,12 +453,14 @@ public class Summary extends AppCompatActivity {
 
 
     //*********************** ON CLICKS ********************************
-    @OnClick(R.id.ready)
-    public void backToGamePlay(View view) {
+    public void backToGamePlay() {
         if (mSummaryHeadline.getText().equals(getString(R.string.game_time_up))) {
             db.mMillisUntilFinished = db.timePerRound * 1000;
             db.currentPlaying = (db.currentPlaying + 1)%db.amountOfTeams;
         } else db.resetRound();
+        // Clear indicator tracking since we're starting a new turn
+        teamThatJustPlayed = -1;
+        successCountForTeamThatJustPlayed = 0;
         Collections.shuffle(db.defs);
         Intent intent = new Intent(context, GamePlay.class);
         startActivity(intent);
@@ -396,8 +477,4 @@ public class Summary extends AppCompatActivity {
         return super.onKeyDown(keyCode, event);
     }
 
-    @OnTouch({R.id.ready})
-    boolean onTouch(View view, MotionEvent motion) {
-        return db.onTouch(context, view, motion);
-    }
 }

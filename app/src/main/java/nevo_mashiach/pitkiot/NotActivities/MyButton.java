@@ -32,4 +32,10 @@ public class MyButton extends Button{
         setTypeface(font_type);
     }
 
+    @Override
+    public boolean performClick() {
+        // Call super to handle accessibility
+        return super.performClick();
+    }
+
 }
