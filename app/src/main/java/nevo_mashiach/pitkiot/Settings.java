@@ -9,7 +9,6 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import androidx.preference.PreferenceManager;
 import android.view.KeyEvent;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -37,7 +36,7 @@ public class Settings extends AppCompatActivity {
     CheckBox mSoundCheckBox;
     MyEditText mEditRoundTime;
     MyEditText mEditNextTime;
-    TextView mAmoutOfTeams;
+    TextView mAmountOfTeams;
     TextView mTeamEditableScore;
     TextView mBalanceExplanation;
 
@@ -61,7 +60,7 @@ public class Settings extends AppCompatActivity {
         mSoundCheckBox = binding.soundCheckBox;
         mEditRoundTime = binding.editRoundTime;
         mEditNextTime = binding.editNextTime;
-        mAmoutOfTeams = binding.amoutOfTeams;
+        mAmountOfTeams = binding.amoutOfTeams;
         mTeamEditableScore = binding.teamEditableScore;
         mBalanceExplanation = binding.balanceExplanation;
         mIncrease1 = binding.increase1;
@@ -102,19 +101,16 @@ public class Settings extends AppCompatActivity {
         mSoundCheckBox.setTypeface(tf);
 
 
-        mEditNextTime.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    mEditRoundTime.clearFocus();
-                    mEditNextTime.clearFocus();
+        mEditNextTime.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                mEditRoundTime.clearFocus();
+                mEditNextTime.clearFocus();
 
-                    //Closing keyboard:
-                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
-                }
-                return false;
+                //Closing keyboard:
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
             }
+            return false;
         });
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -128,7 +124,7 @@ public class Settings extends AppCompatActivity {
         mSoundCheckBox.setChecked(db.soundCheckBox);
         mEditRoundTime.setText(String.valueOf(db.timePerRound));
         mEditNextTime.setText(String.valueOf(db.timeDownOnNext));
-        mAmoutOfTeams.setText(String.valueOf(db.amountOfTeams));
+        mAmountOfTeams.setText(String.valueOf(db.amountOfTeams));
         mTeamEditableScore.setText(String.valueOf(db.scores[0]));
         mBalanceExplanation.setPadding(17, 0, 0, 0);
         createGroupSpinner();
@@ -300,7 +296,7 @@ public class Settings extends AppCompatActivity {
         spEditor.putInt("amountOfTeams", db.amountOfTeams);
         spEditor.commit();
         createGroupSpinner();
-        mAmoutOfTeams.setText(String.valueOf(db.amountOfTeams));
+        mAmountOfTeams.setText(String.valueOf(db.amountOfTeams));
     }
 
     public void increaseTeam2Score(View view) {
@@ -327,7 +323,7 @@ public class Settings extends AppCompatActivity {
         spEditor.putInt("amountOfTeams", db.amountOfTeams);
         spEditor.commit();
         createGroupSpinner();
-        mAmoutOfTeams.setText(String.valueOf(db.amountOfTeams));
+        mAmountOfTeams.setText(String.valueOf(db.amountOfTeams));
     }
 
     public void decreaseTeam2Score(View view) {
