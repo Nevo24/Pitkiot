@@ -3,13 +3,13 @@ package nevo_mashiach.pitkiot.NotActivities;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
-import android.widget.Button;
+import androidx.appcompat.widget.AppCompatButton;
 
 /**
  * Created by Nevo2 on 10/20/2016.
  */
 
-public class MyButton extends Button{
+public class MyButton extends AppCompatButton{
 
 
     public MyButton(Context context, AttributeSet attrs) {

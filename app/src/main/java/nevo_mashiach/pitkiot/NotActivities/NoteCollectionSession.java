@@ -1,8 +1,10 @@
 package nevo_mashiach.pitkiot.NotActivities;
 
 import android.content.Context;
+import android.os.Build;
 import android.util.Log;
 
+import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.ListenerRegistration;
@@ -22,8 +24,8 @@ public class NoteCollectionSession {
     private static final String COLLECTION_SESSIONS = "sessions";
     private static final String COLLECTION_SUBMISSIONS = "submissions";
 
-    private FirebaseFirestore firestore;
-    private Context context;
+    private final FirebaseFirestore firestore;
+    private final Context context;
     private String sessionId;
     private ListenerRegistration listenerRegistration;
     private OnNoteReceivedListener noteReceivedListener;
@@ -67,7 +69,7 @@ public class NoteCollectionSession {
 
     /**
      * Generates the web form URL for this session
-     * @param baseUrl Your Firebase Hosting URL (e.g., "https://pitkiot-app.web.app")
+     * @param baseUrl Your Firebase Hosting URL (e.g., "<a href="https://pitkiot-app.web.app">...</a>")
      */
     public String getSubmissionUrl(String baseUrl) {
         if (sessionId == null) {
@@ -104,21 +106,23 @@ public class NoteCollectionSession {
 
                     if (snapshots != null && !snapshots.isEmpty()) {
                         // Process new submissions
-                        for (DocumentSnapshot doc : snapshots.getDocumentChanges().stream()
-                                .filter(dc -> dc.getType() == com.google.firebase.firestore.DocumentChange.Type.ADDED)
-                                .map(dc -> dc.getDocument())
-                                .toArray(DocumentSnapshot[]::new)) {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                            for (DocumentSnapshot doc : snapshots.getDocumentChanges().stream()
+                                    .filter(dc -> dc.getType() == DocumentChange.Type.ADDED)
+                                    .map(DocumentChange::getDocument)
+                                    .toArray(DocumentSnapshot[]::new)) {
 
-                            String submitterName = doc.getString("submitterName");
-                            String noteContent = doc.getString("noteContent");
+                                String submitterName = doc.getString("submitterName");
+                                String noteContent = doc.getString("noteContent");
 
-                            if (noteContent != null && !noteContent.trim().isEmpty()) {
-                                Log.d(TAG, "New note from " + submitterName + ": " + noteContent);
-                                if (noteReceivedListener != null) {
-                                    noteReceivedListener.onNoteReceived(
-                                            submitterName != null ? submitterName : context.getString(R.string.submitter_anonymous),
-                                            noteContent
-                                    );
+                                if (noteContent != null && !noteContent.trim().isEmpty()) {
+                                    Log.d(TAG, "New note from " + submitterName + ": " + noteContent);
+                                    if (noteReceivedListener != null) {
+                                        noteReceivedListener.onNoteReceived(
+                                                submitterName != null ? submitterName : context.getString(R.string.submitter_anonymous),
+                                                noteContent
+                                        );
+                                    }
                                 }
                             }
                         }
@@ -145,10 +149,8 @@ public class NoteCollectionSession {
     public void endSession() {
         stopListening();
         // Optionally delete the session from Firestore
-        if (sessionId != null) {
-            // We'll let Firestore TTL policies handle cleanup, or you can delete manually:
-            // firestore.collection(COLLECTION_SESSIONS).document(sessionId).delete();
-        }
+        // We'll let Firestore TTL policies handle cleanup, or you can delete manually:
+        // firestore.collection(COLLECTION_SESSIONS).document(sessionId).delete();
         sessionId = null;
     }
 }

@@ -5,13 +5,13 @@ import android.content.Context;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
 import android.view.View;
-import android.widget.TextView;
+import androidx.appcompat.widget.AppCompatTextView;
 
 /**
  * Created by Nevo2 on 10/19/2016.
  */
 
-public class MyTextView extends TextView {
+public class MyTextView extends AppCompatTextView {
 
     public MyTextView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);

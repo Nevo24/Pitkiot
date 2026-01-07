@@ -22,6 +22,8 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+
 import java.util.Locale;
 
 import java.util.Collections;
@@ -398,7 +400,7 @@ public class Summary extends AppCompatActivity {
             items[i] = getString(R.string.game_team_label) + (i + 1);
         }
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item, items) {
 
             public View getView(int position, View convertView, ViewGroup parent) {
@@ -411,7 +413,9 @@ public class Summary extends AppCompatActivity {
                 return v;
             }
 
-            public View getDropDownView(int position, View convertView, ViewGroup parent) {
+            @NonNull
+            @Override
+            public View getDropDownView(int position, View convertView, @NonNull ViewGroup parent) {
                 View v = super.getDropDownView(position, convertView, parent);
 
                 Typeface externalFont = Typeface.createFromAsset(getAssets(), "gan.ttf");
@@ -423,7 +427,7 @@ public class Summary extends AppCompatActivity {
         };
 
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        Spinner spinner = (Spinner) findViewById(R.id.summarySpinner);
+        Spinner spinner = findViewById(R.id.summarySpinner);
         spinner.setAdapter(adapter);
         spinner.setSelection(db.currentPlaying);
 
