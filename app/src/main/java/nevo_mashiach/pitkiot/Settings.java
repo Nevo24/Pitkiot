@@ -2,6 +2,7 @@ package nevo_mashiach.pitkiot;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import androidx.annotation.NonNull;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.graphics.Typeface;
@@ -146,7 +147,9 @@ public class Settings extends AppCompatActivity {
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item, items) {
 
-            public View getView(int position, View convertView, ViewGroup parent) {
+            @NonNull
+            @Override
+            public View getView(int position, View convertView, @NonNull ViewGroup parent) {
                 View v = super.getView(position, convertView, parent);
 
                 Typeface externalFont=Typeface.createFromAsset(getAssets(), "gan.ttf");
@@ -156,8 +159,10 @@ public class Settings extends AppCompatActivity {
                 return v;
             }
 
-            public View getDropDownView(int position,  View convertView,  ViewGroup parent) {
-                View v =super.getDropDownView(position, convertView, parent);
+            @NonNull
+            @Override
+            public View getDropDownView(int position, View convertView, @NonNull ViewGroup parent) {
+                View v = super.getDropDownView(position, convertView, parent);
 
                 Typeface externalFont=Typeface.createFromAsset(getAssets(), "gan.ttf");
                 ((TextView) v).setTypeface(externalFont);
@@ -211,7 +216,7 @@ public class Settings extends AppCompatActivity {
 
     void focusChangedEditRoundTime(boolean hasFocus) {
         if (!hasFocus) {
-            if (mEditRoundTime.getText().toString().equals("")) {
+            if (mEditRoundTime.getText().toString().isEmpty()) {
                 mEditRoundTime.setText(String.valueOf(db.timePerRound));
                 return;
             }
@@ -236,8 +241,8 @@ public class Settings extends AppCompatActivity {
     }
 
     void focusChangedEditNextTime(boolean hasFocus) {
-        if (hasFocus == false) {
-            if (mEditNextTime.getText().toString().equals("")) {
+        if (!hasFocus) {
+            if (mEditNextTime.getText().toString().isEmpty()) {
                 mEditNextTime.setText(String.valueOf(db.timeDownOnNext));
                 return;
             }
@@ -276,8 +281,8 @@ public class Settings extends AppCompatActivity {
 
                 mAutoBalaceCheckBox.setChecked(true);
                 mSoundCheckBox.setChecked(true);
-                mEditRoundTime.setText("60");
-                mEditNextTime.setText("5");
+                mEditRoundTime.setText(String.valueOf(60));
+                mEditNextTime.setText(String.valueOf(5));
             }
         };
         dialogBag.resetSettings(task);
