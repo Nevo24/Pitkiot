@@ -330,7 +330,7 @@ public class GamePlay extends AppCompatActivity {
         happyAanim.stop();
         happyAanim.start();
         db.currentSuccessNum++;
-        db.increseScore();
+        db.increaseScore();
         mCurrentSuccess.setText(getString(R.string.game_successes_this_round) + db.currentSuccessNum);
 
         db.defTransfer("success", currentDef);

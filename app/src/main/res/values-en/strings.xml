@@ -28,6 +28,7 @@
     <string name="received_notes_count">%1$d notes received from %2$d people</string>
     <string name="waiting_for_notes">Waiting for notes...</string>
     <string name="submitter_item">✓ %1$s: %2$d notes</string>
+    <string name="notes_word">notes</string>
 
     <!-- Toast Messages -->
     <string name="toast_new_note_received">New note received from %s</string>
@@ -117,30 +118,23 @@
     <string name="mode_explain_one_word">Explain with one word</string>
     <string name="mode_pantomime">Pantomime</string>
 
-    <!-- SMS dialogs (legacy feature) -->
-    <string name="dialog_sms_explanation_title">Scan SMS Messages</string>
-    <string name="dialog_sms_explanation_msg">When you press the button, all SMS messages received since the specified time will be scanned. An SMS in the correct format will be used to add notes to the database. To do this, send an SMS in the following format:\n\"Pitkiot: character1, character2, character3....\"\nSpaces don\'t matter in the SMS, but it\'s important that it starts with \"Pitkiot\", followed by a colon, and finally the character names separated by commas.</string>
-    <string name="dialog_sms_scanned_title">SMS Messages Scanned</string>
-    <string name="dialog_sms_scanned_msg">Number of matching messages received: %d</string>
-    <string name="dialog_click_again_title">Please Click the Button Again</string>
-    <string name="dialog_click_again_msg">If you confirmed, please click the \"Scan SMS\" button again to start the scanning process.</string>
-    <string name="dialog_sms_access_title">SMS Access Request</string>
-    <string name="dialog_sms_access_msg">In order for the app to scan the SMS messages on your device, it needs to receive one-time access permission. Please click \'Allow\' in the next window. Don\'t be paranoid, I really have nothing to do with your SMS messages.</string>
-    <string name="dialog_button_understood_alt">Got it</string>
-    <string name="dialog_button_okay">Okay</string>
 
     <!-- Collection session -->
     <string name="submitter_anonymous">Anonymous</string>
+    <string name="dialog_close_collection_title">Exit Note Collection?</string>
+    <string name="dialog_close_collection_msg">If you exit now, the received notes will not be saved to the database.\nTo save the notes, stay here and press the \"Finish and Save Notes\" button.</string>
+    <string name="dialog_close_without_saving">Exit Without Saving Notes</string>
+    <string name="dialog_stay_collecting">Stay</string>
 
     <!-- Settings screen -->
     <string name="settings_title">Settings</string>
     <string name="settings_select_teams">Select number of teams:</string>
-    <string name="settings_auto_balance">Auto-balance scores at game end</string>
+    <string name="settings_auto_balance">Auto-balance score</string>
     <string name="settings_sound">Sound</string>
-    <string name="settings_seconds_per_round">Seconds per round:</string>
-    <string name="settings_seconds_reduced_pass">Seconds reduced when pressing \"pass\":</string>
-    <string name="settings_input_instruction">* Enter seconds between 1 and 300</string>
-    <string name="settings_edit_team_scores">* Edit team scores:</string>
+    <string name="settings_seconds_per_round">Seconds per round</string>
+    <string name="settings_seconds_reduced_pass">Seconds reduced when pressing \"pass\"</string>
+    <string name="settings_input_instruction">Enter seconds between 1 and 300</string>
+    <string name="settings_edit_team_scores">Edit team scores</string>
     <string name="settings_reset_button">Reset Settings</string>
 
     <!-- Game play screen -->

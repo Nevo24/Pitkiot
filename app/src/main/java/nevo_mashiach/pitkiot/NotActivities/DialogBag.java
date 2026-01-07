@@ -209,23 +209,6 @@ public class DialogBag {
         dialog.show(fragmentManager, "ConfirmCharacterRemove"); //The second one is just a string tag that we can use to refer to it.
     }
 
-    public void smsExplanation() {
-        MyDialogFragment dialog = new MyDialogFragment(
-                context.getString(nevo_mashiach.pitkiot.R.string.dialog_sms_explanation_title),
-                context.getString(nevo_mashiach.pitkiot.R.string.dialog_sms_explanation_msg)
-        );
-        dialog = dialog.setNaturalButton(context.getString(nevo_mashiach.pitkiot.R.string.dialog_button_understood_alt), null);
-        dialog.show(fragmentManager, "SmsExplanation"); //The second one is just a string tag that we can use to refer to it.
-    }
-
-    public void smsScaned(int amount) {
-        MyDialogFragment dialog = new MyDialogFragment(
-                context.getString(nevo_mashiach.pitkiot.R.string.dialog_sms_scanned_title),
-                String.format(context.getString(nevo_mashiach.pitkiot.R.string.dialog_sms_scanned_msg), amount)
-        );
-        dialog = dialog.setNaturalButton(context.getString(nevo_mashiach.pitkiot.R.string.dialog_button_okay), null);
-        dialog.show(fragmentManager, "SmsScaned"); //The second one is just a string tag that we can use to refer to it.
-    }
 
     public void resetGame(final Runnable task) {
         MyDialogFragment dialog = new MyDialogFragment(
@@ -272,28 +255,6 @@ public class DialogBag {
         dialog.show(fragmentManager, "FirstNoteLoad"); //The second one is just a string tag that we can use to refer to it.
     }
 
-    public void clickAgainPlease() {
-        MyDialogFragment dialog = new MyDialogFragment(
-                context.getString(nevo_mashiach.pitkiot.R.string.dialog_click_again_title),
-                context.getString(nevo_mashiach.pitkiot.R.string.dialog_click_again_msg)
-        );
-        dialog = dialog.setNaturalButton(context.getString(nevo_mashiach.pitkiot.R.string.dialog_button_understood_alt), null);
-        dialog.show(fragmentManager, "ClickAgainPlease"); //The second one is just a string tag that we can use to refer to it.
-    }
-
-    public void allowingAccessToSms(final Runnable task) {
-        MyDialogFragment dialog = new MyDialogFragment(
-                context.getString(nevo_mashiach.pitkiot.R.string.dialog_sms_access_title),
-                context.getString(nevo_mashiach.pitkiot.R.string.dialog_sms_access_msg)
-        );
-        dialog = dialog.setPositiveButton(context.getString(nevo_mashiach.pitkiot.R.string.dialog_button_understood_alt), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                task.run();
-            }
-        });
-        dialog.show(fragmentManager, "AllowingAccessToSms"); //The second one is just a string tag that we can use to refer to it.
-    }
 
     public void cannotEditScore() {
         MyDialogFragment dialog = new MyDialogFragment(
@@ -311,5 +272,20 @@ public class DialogBag {
         );
         dialog = dialog.setNaturalButton(context.getString(nevo_mashiach.pitkiot.R.string.dialog_understood), null);
         dialog.show(fragmentManager, "ClickAgainPlease"); //The second one is just a string tag that we can use to refer to it.
+    }
+
+    public void confirmCloseCollection(final Runnable closeTask) {
+        MyDialogFragment dialog = new MyDialogFragment(
+                context.getString(nevo_mashiach.pitkiot.R.string.dialog_close_collection_title),
+                context.getString(nevo_mashiach.pitkiot.R.string.dialog_close_collection_msg)
+        );
+        dialog = dialog.setPositiveButton(context.getString(nevo_mashiach.pitkiot.R.string.dialog_close_without_saving), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                closeTask.run();
+            }
+        });
+        dialog = dialog.setNegativeButton(context.getString(nevo_mashiach.pitkiot.R.string.dialog_stay_collecting), null);
+        dialog.show(fragmentManager, "ConfirmCloseCollection");
     }
 }

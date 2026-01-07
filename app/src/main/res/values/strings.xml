@@ -28,6 +28,7 @@
     <string name="received_notes_count">%1$d פתקים התקבלו מ-%2$d אנשים</string>
     <string name="waiting_for_notes">ממתין לפתקים...</string>
     <string name="submitter_item">✓ %1$s: %2$d פתקים</string>
+    <string name="notes_word">פתקים</string>
 
     <!-- Toast Messages -->
     <string name="toast_new_note_received">פתק חדש התקבל מ%s</string>
@@ -117,30 +118,23 @@
     <string name="mode_explain_one_word">הסבר במילה אחת</string>
     <string name="mode_pantomime">פנטומימה</string>
 
-    <!-- SMS dialogs (legacy feature) -->
-    <string name="dialog_sms_explanation_title">סרוק סמסים</string>
-    <string name="dialog_sms_explanation_msg">בעת הלחיצה על הכפתור יסרקו כל הסמסים שהתקבלו מאז הזמן המפורט. סמס בפורמט המתאים ישמש כמקור הוספת פתקים למאגר. לצורך כך יש לשלוח סמס בתבנית הבאה:\n\"פתקיות: דמות1, דמות2, דמות3....\"\nאין משמעות לרווחים בסמס אך חשוב שבתחילתו יהיה רשום \"פיתקיות\"\nאו \"פתקיות\", לאחר מכן נקודותיים ולבסוף שמות הדמויות מופרדים בפסיקים.</string>
-    <string name="dialog_sms_scanned_title">סמסים נסרקו</string>
-    <string name="dialog_sms_scanned_msg">מספר הודעות מתאימות שהתקבלו: %d</string>
-    <string name="dialog_click_again_title">נא ללחוץ שוב על הכפתור</string>
-    <string name="dialog_click_again_msg">במידה ואישרת יש ללחוץ שוב על הכפתור \"סרוק סמסים\" על מנת להתחיל בתהליך הסריקה.</string>
-    <string name="dialog_sms_access_title">בקשת גישה לסמסים</string>
-    <string name="dialog_sms_access_msg">על מנת שהאפליקציה תוכל לסרוק את הסמסים שעל מכשירך, עליה לקבל אישור גישה חד פעמי. אנא לחץ על \'התר\' בחלון הבא. אל תהיה פרנואיד, אין לי באמת מה לעשות עם הסמסים שלך.</string>
-    <string name="dialog_button_understood_alt">הבנתי</string>
-    <string name="dialog_button_okay">אוקיי</string>
 
     <!-- Collection session -->
     <string name="submitter_anonymous">אנונימי</string>
+    <string name="dialog_close_collection_title">לצאת מאיסוף הפתקים?</string>
+    <string name="dialog_close_collection_msg">אם תצא עכשיו, הפתקים שהתקבלו לא יישמרו למאגר.\nכדי לשמור את הפתקים, הישאר כאן ולחץ על הכפתור \"סיים ושמור פתקים\".</string>
+    <string name="dialog_close_without_saving">צא ללא שמירת הפתקים</string>
+    <string name="dialog_stay_collecting">הישאר</string>
 
     <!-- Settings screen -->
     <string name="settings_title">הגדרות</string>
     <string name="settings_select_teams">בחירת מספר קבוצות:</string>
-    <string name="settings_auto_balance">איזון ניקוד בסיום משחק</string>
+    <string name="settings_auto_balance">איזון ניקוד</string>
     <string name="settings_sound">סאונד</string>
-    <string name="settings_seconds_per_round">מספר שניות לסיבוב:</string>
-    <string name="settings_seconds_reduced_pass">מספר שניות שיורדות כשלוחצים על \"עבור\":</string>
-    <string name="settings_input_instruction">* הזן שניות בין 1 ל- 300</string>
-    <string name="settings_edit_team_scores">* עריכת ניקוד קבוצות:</string>
+    <string name="settings_seconds_per_round">מספר שניות לסיבוב</string>
+    <string name="settings_seconds_reduced_pass">מספר שניות שיורדות כשלוחצים על \"עבור\"</string>
+    <string name="settings_input_instruction">הזן שניות בין 1 ל- 300</string>
+    <string name="settings_edit_team_scores">עריכת ניקוד קבוצות</string>
     <string name="settings_reset_button">איפוס הגדרות</string>
 
     <!-- Game play screen -->

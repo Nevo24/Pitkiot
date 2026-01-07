@@ -18,105 +18,110 @@
     <androidx.percentlayout.widget.PercentRelativeLayout
         android:id="@+id/topLayout"
         android:layout_width="match_parent"
-        app:layout_heightPercent="10%"
-        android:gravity="left|center"
-        android:orientation="horizontal"
+        app:layout_heightPercent="15%"
+        android:gravity="center"
+        android:orientation="vertical"
         android:layout_below="@+id/editNextTime"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true">
 
-        <Button
-            android:id="@+id/increase1"
-            android:layout_height="match_parent"
-            app:layout_widthPercent="15%"
-            android:text="+"
-            android:layout_toRightOf="@+id/amoutOfTeams"/>
-
-        <nevo_mashiach.pitkiot.NotActivities.MyTextView
-            android:id="@+id/amoutOfTeams"
-            android:layout_height="match_parent"
-            android:gravity="center"
-        android:textAlignment="center"
-            android:text="0"
-            android:textSize="32sp"
-            android:textStyle="bold"
-            app:layout_widthPercent="28%"
-            android:layout_alignParentTop="true"
-            android:layout_toRightOf="@+id/decrease1"
-            android:layout_toEndOf="@+id/decrease1"/>
-
-        <Button
-            android:id="@+id/decrease1"
-            android:layout_height="match_parent"
-            app:layout_widthPercent="15%"
-            android:text="-"
-            android:layout_centerVertical="true"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"/>
-
         <nevo_mashiach.pitkiot.NotActivities.MyTextView
             android:id="@+id/team1Text"
-            android:gravity="right|center"
+            android:gravity="center"
             android:text="@string/settings_select_teams"
-            android:textSize="21sp"
-            android:layout_height="match_parent"
-            app:layout_widthPercent="40%"
+            android:textSize="22sp"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
             android:layout_alignParentTop="true"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true"/>
+            android:layout_centerHorizontal="true"/>
+
+        <LinearLayout
+            android:id="@+id/team1Controls"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_below="@+id/team1Text"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="8dp">
+
+            <Button
+                android:id="@+id/decrease1"
+                android:layout_height="wrap_content"
+                android:layout_width="60dp"
+                android:text="-"
+                android:textSize="21sp"/>
+
+            <nevo_mashiach.pitkiot.NotActivities.MyTextView
+                android:id="@+id/amoutOfTeams"
+                android:layout_height="wrap_content"
+                android:layout_width="80dp"
+                android:gravity="center"
+                android:textAlignment="center"
+                android:text="0"
+                android:textSize="32sp"
+                android:textStyle="bold"/>
+
+            <Button
+                android:id="@+id/increase1"
+                android:layout_height="wrap_content"
+                android:layout_width="60dp"
+                android:text="+"
+                android:textSize="21sp"/>
+        </LinearLayout>
     </androidx.percentlayout.widget.PercentRelativeLayout>
 
 
     <androidx.percentlayout.widget.PercentRelativeLayout
         android:id="@+id/bottomLayout"
         android:layout_width="match_parent"
-        app:layout_heightPercent="10%"
-        android:gravity="left|center"
-        android:orientation="horizontal"
+        app:layout_heightPercent="15%"
+        android:gravity="center"
+        android:orientation="vertical"
         android:layout_below="@+id/editScoreHeadline"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true">
 
-        <Button
-            android:id="@+id/increase2"
-            android:layout_height="match_parent"
-            app:layout_widthPercent="15%"
-            android:text="+"
-            android:layout_alignParentTop="true"
-            android:layout_toRightOf="@+id/teamEditableScore"
-            android:layout_toEndOf="@+id/teamEditableScore"/>
-
-        <nevo_mashiach.pitkiot.NotActivities.MyTextView
-            android:id="@+id/teamEditableScore"
-            android:layout_height="match_parent"
-            android:gravity="center"
-        android:textAlignment="center"
-            android:text="0"
-            android:textSize="32sp"
-            android:textStyle="bold"
-            app:layout_widthPercent="28%"
-            android:layout_alignParentTop="true"
-            android:layout_toRightOf="@+id/decrease2"
-            android:layout_alignBottom="@+id/settingsSpinner"/>
-
-        <Button
-            android:id="@+id/decrease2"
-            android:layout_height="match_parent"
-            app:layout_widthPercent="15%"
-            android:text="-"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"/>
-
         <Spinner
             android:id="@+id/settingsSpinner"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_alignBottom="@+id/increase2"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:gravity="right|center"
-            android:textSize="21sp"
-            app:layout_widthPercent="40%"/>
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:gravity="center"
+            android:textSize="21sp"/>
+
+        <LinearLayout
+            android:id="@+id/team2Controls"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_below="@+id/settingsSpinner"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="8dp">
+
+            <Button
+                android:id="@+id/decrease2"
+                android:layout_height="wrap_content"
+                android:layout_width="60dp"
+                android:text="-"
+                android:textSize="21sp"/>
+
+            <nevo_mashiach.pitkiot.NotActivities.MyTextView
+                android:id="@+id/teamEditableScore"
+                android:layout_height="wrap_content"
+                android:layout_width="80dp"
+                android:gravity="center"
+                android:textAlignment="center"
+                android:text="0"
+                android:textSize="32sp"
+                android:textStyle="bold"/>
+
+            <Button
+                android:id="@+id/increase2"
+                android:layout_height="wrap_content"
+                android:layout_width="60dp"
+                android:text="+"
+                android:textSize="21sp"/>
+        </LinearLayout>
     </androidx.percentlayout.widget.PercentRelativeLayout>
 
 
@@ -125,7 +130,7 @@
         android:theme="@style/MyCheckBox"
         android:textColor="@color/common_google_signin_btn_text_dark_default"
         android:button="@null"
-        android:drawableRight="?android:attr/listChoiceIndicatorMultiple"
+        android:drawableStart="?android:attr/listChoiceIndicatorMultiple"
         android:text="@string/settings_auto_balance"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -133,10 +138,9 @@
         android:textSize="21sp"
         android:checked="false"
         android:textStyle="normal|bold"
-        android:gravity="right|center_vertical|start"
+        android:gravity="start|center_vertical"
         android:layout_below="@+id/headline"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"/>
+        android:layout_alignParentStart="true"/>
 
     <nevo_mashiach.pitkiot.NotActivities.MyTextView
         android:text="@string/settings_input_instruction"
@@ -153,7 +157,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/team1Headline"
-        android:textSize="21sp"
+        android:textSize="22sp"
         android:layout_marginTop="12dp"
         android:layout_below="@+id/editRoundTime"
         android:layout_alignParentLeft="true"
@@ -180,7 +184,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/textView1"
-        android:textSize="21sp"
+        android:textSize="22sp"
         android:layout_marginTop="12dp"
         android:layout_below="@+id/timeHeadline"
         android:layout_alignParentLeft="true"
@@ -190,7 +194,7 @@
         android:theme="@style/MyCheckBox"
         android:textColor="@color/common_google_signin_btn_text_dark_default"
         android:button="@null"
-        android:drawableRight="?android:attr/listChoiceIndicatorMultiple"
+        android:drawableStart="?android:attr/listChoiceIndicatorMultiple"
         android:text="@string/settings_sound"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -198,10 +202,9 @@
         android:textSize="21sp"
         android:checked="false"
         android:textStyle="normal|bold"
-        android:gravity="right|center_vertical|start"
+        android:gravity="start|center_vertical"
         android:layout_below="@+id/autoBalaceCheckBox"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
+        android:layout_alignParentStart="true"
         android:layout_marginTop="14dp"/>
 
     <nevo_mashiach.pitkiot.NotActivities.MyEditText
@@ -227,10 +230,9 @@
         android:layout_height="30dp"
         android:textStyle="bold"
         android:id="@+id/balanceExplanation"
-        android:textSize="18sp"
+        android:textSize="21sp"
         android:layout_alignTop="@+id/autoBalaceCheckBox"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"/>
+        android:layout_alignParentEnd="true"/>
 
     <nevo_mashiach.pitkiot.NotActivities.MyTextView
         android:layout_width="wrap_content"
@@ -251,6 +253,7 @@
         android:layout_height="wrap_content"
         android:text="@string/settings_edit_team_scores"
         android:textSize="22sp"
+        android:gravity="center"
         android:layout_below="@+id/topLayout"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"/>

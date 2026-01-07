@@ -69,6 +69,10 @@ public class NoteManagement extends AppCompatActivity {
     private final java.util.HashMap<String, Integer> submitterNoteCounts = new java.util.HashMap<>();
     private static final String FIREBASE_HOSTING_URL = "https://pitkiot-29650.web.app";
 
+    // Prevent double-launching activities
+    private long lastActivityLaunchTime = 0;
+    private static final long ACTIVITY_LAUNCH_COOLDOWN = 500; // milliseconds
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,18 +95,19 @@ public class NoteManagement extends AppCompatActivity {
         dialogBag = new DialogBag(getSupportFragmentManager(), this);
 
 
-        
-        // Set up click listeners
-        binding.addDef.setOnClickListener(this::addingDefToDb);
-        binding.deleteNotes.setOnClickListener(this::deleteNodesButton);
-        binding.collectNotesOnline.setOnClickListener(this::startOnlineNoteCollection);
-        
-        // Set up touch listeners
+
+        // Set up click and touch listeners
         // Note: db.onTouch() internally calls view.performClick() for accessibility
         @SuppressLint("ClickableViewAccessibility")
         View.OnTouchListener touchListener = (v, motion) -> db.onTouch(context, v, motion);
+
+        binding.addDef.setOnClickListener(this::addingDefToDb);
         binding.addDef.setOnTouchListener(touchListener);
+
+        binding.deleteNotes.setOnClickListener(this::deleteNodesButton);
         binding.deleteNotes.setOnTouchListener(touchListener);
+
+        binding.collectNotesOnline.setOnClickListener(this::startOnlineNoteCollection);
         binding.collectNotesOnline.setOnTouchListener(touchListener);
         mTypeDef.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -121,6 +126,7 @@ public class NoteManagement extends AppCompatActivity {
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
     }
 
+
     protected void onResume() {
         super.onResume();
         mNoteCount.setText(String.format(getString(R.string.note_count_database), db.totalNoteAmount()));
@@ -137,6 +143,7 @@ public class NoteManagement extends AppCompatActivity {
             collectionDialog.dismiss();
         }
     }
+
 
 
     private void add(String name) {
@@ -168,12 +175,26 @@ public class NoteManagement extends AppCompatActivity {
 
 
     public void deleteNodesButton(View view) {
+        // Prevent double-launching within cooldown period
+        long currentTime = System.currentTimeMillis();
+        if (currentTime - lastActivityLaunchTime < ACTIVITY_LAUNCH_COOLDOWN) {
+            android.util.Log.d("NoteManagement", "Activity launch ignored - too soon after previous launch");
+            return;
+        }
+        lastActivityLaunchTime = currentTime;
+
         Intent intent = new Intent(context, NoteList.class);
         startActivity(intent);
     }
 
 
     public void startOnlineNoteCollection(View view) {
+        // Prevent double-opening if dialog is already showing
+        if (collectionDialog != null && collectionDialog.isShowing()) {
+            android.util.Log.d("NoteManagement", "Dialog already showing, ignoring duplicate call");
+            return;
+        }
+
         // Reset counters for new session
         receivedNotesCount = 0;
         submitterNoteCounts.clear();
@@ -191,15 +212,18 @@ public class NoteManagement extends AppCompatActivity {
         noteCollectionSession.startListening(new NoteCollectionSession.OnNoteReceivedListener() {
             @Override
             public void onNoteReceived(String submitterName, String noteContent) {
+                android.util.Log.d("NoteManagement", "Note received from " + submitterName + ": " + noteContent);
                 runOnUiThread(() -> {
-                    // Parse and add notes (same logic as SMS)
+                    // Parse and add notes from submission
                     List<String> notes = parseNotes(noteContent);
+                    android.util.Log.d("NoteManagement", "Parsed " + notes.size() + " notes");
                     for (String note : notes) {
                         add(note);
                     }
 
                     // Update the dialog UI
                     receivedNotesCount += notes.size();
+                    android.util.Log.d("NoteManagement", "Total notes received: " + receivedNotesCount);
                     updateCollectionDialogUI(submitterName, noteContent);
                     Toast.makeText(context, String.format(getString(R.string.toast_new_note_received), submitterName), Toast.LENGTH_SHORT).show();
                 });
@@ -221,13 +245,30 @@ public class NoteManagement extends AppCompatActivity {
         @SuppressLint("InflateParams")
         View dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_note_collection, null);
         collectionDialog.setContentView(dialogView);
-        collectionDialog.setCancelable(false);
+        collectionDialog.setCancelable(false); // Prevent automatic dismissal on back press
+
+        // Handle back button press
+        collectionDialog.setOnKeyListener((dialog, keyCode, event) -> {
+            if (keyCode == android.view.KeyEvent.KEYCODE_BACK && event.getAction() == android.view.KeyEvent.ACTION_UP) {
+                Runnable closeTask = () -> {
+                    if (noteCollectionSession != null) {
+                        noteCollectionSession.endSession();
+                    }
+                    collectionDialog.dismiss();
+                    receivedNotesCount = 0;
+                    submitterNoteCounts.clear();
+                };
+                dialogBag.confirmCloseCollection(closeTask);
+                return true;
+            }
+            return false;
+        });
 
         // Setup dialog views
         TextView sessionUrlText = dialogView.findViewById(R.id.sessionUrlText);
         ImageView qrCodeImage = dialogView.findViewById(R.id.qrCodeImage);
-        Button copyUrlButton = dialogView.findViewById(R.id.copyUrlButton);
-        Button closeSessionButton = dialogView.findViewById(R.id.closeSessionButton);
+        nevo_mashiach.pitkiot.NotActivities.MyButton copyUrlButton = dialogView.findViewById(R.id.copyUrlButton);
+        nevo_mashiach.pitkiot.NotActivities.MyButton closeSessionButton = dialogView.findViewById(R.id.closeSessionButton);
         TextView receivedNotesCountText = dialogView.findViewById(R.id.receivedNotesCount);
 
         // Set values
@@ -255,6 +296,9 @@ public class NoteManagement extends AppCompatActivity {
             clipboard.setPrimaryClip(clip);
             Toast.makeText(context, getString(R.string.toast_link_copied), Toast.LENGTH_SHORT).show();
         });
+        @SuppressLint("ClickableViewAccessibility")
+        View.OnTouchListener touchListener = (v, motion) -> db.onTouch(context, v, motion);
+        copyUrlButton.setOnTouchListener(touchListener);
 
         // Close button
         closeSessionButton.setOnClickListener(v -> {
@@ -266,6 +310,7 @@ public class NoteManagement extends AppCompatActivity {
             receivedNotesCount = 0;
             submitterNoteCounts.clear();
         });
+        closeSessionButton.setOnTouchListener(touchListener);
 
         collectionDialog.show();
     }
@@ -274,6 +319,11 @@ public class NoteManagement extends AppCompatActivity {
         if (collectionDialog != null && collectionDialog.isShowing()) {
             View dialogView = collectionDialog.findViewById(R.id.receivedNotesList);
             TextView countText = collectionDialog.findViewById(R.id.receivedNotesCount);
+
+            if (dialogView == null || countText == null) {
+                android.util.Log.e("NoteManagement", "Dialog views not found!");
+                return;
+            }
 
             // Count notes in this submission
             List<String> notes = parseNotes(noteContent);
@@ -290,6 +340,8 @@ public class NoteManagement extends AppCompatActivity {
             int totalPeople = submitterNoteCounts.size();
             countText.setText(String.format(getString(R.string.received_notes_count), receivedNotesCount, totalPeople));
 
+            android.util.Log.d("NoteManagement", "Updated count: " + receivedNotesCount + " notes from " + totalPeople + " people");
+
             // Rebuild the submitters list
             if (dialogView instanceof LinearLayout) {
                 LinearLayout notesList = (LinearLayout) dialogView;
@@ -297,27 +349,63 @@ public class NoteManagement extends AppCompatActivity {
                 // Clear all views
                 notesList.removeAllViews();
 
-                // Add a TextView for each submitter with styled appearance
+                // Add a horizontal layout for each submitter with BiDi-safe text arrangement
                 for (java.util.Map.Entry<String, Integer> entry : submitterNoteCounts.entrySet()) {
                     String name = entry.getKey();
                     int count = entry.getValue();
 
-                    TextView submitterItem = new TextView(context);
-                    submitterItem.setText(String.format(getString(R.string.submitter_item), name, count));
-                    submitterItem.setTextSize(16);
-                    submitterItem.setTextColor(Color.parseColor("#406D3C"));
-                    submitterItem.setBackgroundResource(R.drawable.note_item_background);
-                    submitterItem.setPadding(30, 20, 30, 20);
-                    submitterItem.setGravity(android.view.Gravity.CENTER);
-                    submitterItem.setTextAlignment(TextView.TEXT_ALIGNMENT_CENTER);
-                    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                    // Create horizontal container
+                    LinearLayout itemContainer = new LinearLayout(context);
+                    itemContainer.setOrientation(LinearLayout.HORIZONTAL);
+                    itemContainer.setLayoutDirection(View.LAYOUT_DIRECTION_LTR); // Force LTR to maintain visual order
+                    itemContainer.setGravity(android.view.Gravity.CENTER);
+                    itemContainer.setBackgroundResource(R.drawable.note_item_background);
+                    itemContainer.setPadding(30, 20, 30, 20);
+                    LinearLayout.LayoutParams containerParams = new LinearLayout.LayoutParams(
                             LinearLayout.LayoutParams.MATCH_PARENT,
                             LinearLayout.LayoutParams.WRAP_CONTENT
                     );
-                    params.setMargins(0, 0, 0, 15);
-                    submitterItem.setLayoutParams(params);
+                    containerParams.setMargins(0, 0, 0, 15);
+                    itemContainer.setLayoutParams(containerParams);
 
-                    notesList.addView(submitterItem);
+                    // Part 1: Checkmark (always LTR, separate from name)
+                    TextView checkmarkPart = new TextView(context);
+                    checkmarkPart.setText("✓ ");
+                    checkmarkPart.setTextSize(16);
+                    checkmarkPart.setTextColor(Color.parseColor("#406D3C"));
+                    checkmarkPart.setGravity(android.view.Gravity.CENTER_VERTICAL);
+                    checkmarkPart.setTextDirection(TextView.TEXT_DIRECTION_LTR);
+
+                    // Part 2: Name (auto direction based on content)
+                    TextView namePart = new TextView(context);
+                    namePart.setText(name);
+                    namePart.setTextSize(16);
+                    namePart.setTextColor(Color.parseColor("#406D3C"));
+                    namePart.setGravity(android.view.Gravity.CENTER_VERTICAL);
+                    namePart.setTextDirection(TextView.TEXT_DIRECTION_FIRST_STRONG);
+
+                    // Part 3: Colon separator
+                    TextView colonPart = new TextView(context);
+                    colonPart.setText(": ");
+                    colonPart.setTextSize(16);
+                    colonPart.setTextColor(Color.parseColor("#406D3C"));
+                    colonPart.setGravity(android.view.Gravity.CENTER_VERTICAL);
+
+                    // Part 4: Count + "notes"/"פתקים" (force LTR to keep number before word)
+                    TextView countPart = new TextView(context);
+                    countPart.setText(count + " " + getString(R.string.notes_word));
+                    countPart.setTextSize(16);
+                    countPart.setTextColor(Color.parseColor("#406D3C"));
+                    countPart.setGravity(android.view.Gravity.CENTER_VERTICAL);
+                    countPart.setTextDirection(TextView.TEXT_DIRECTION_LTR);
+
+                    // Add all parts to container in order
+                    itemContainer.addView(checkmarkPart);
+                    itemContainer.addView(namePart);
+                    itemContainer.addView(colonPart);
+                    itemContainer.addView(countPart);
+
+                    notesList.addView(itemContainer);
                 }
             }
         }
@@ -337,7 +425,7 @@ public class NoteManagement extends AppCompatActivity {
     }
 
     private List<String> parseNotes(String content) {
-        // Parse notes separated by commas or newlines (same as SMS logic)
+        // Parse notes separated by commas or newlines
         List<String> notes = new ArrayList<>();
         String[] parts = content.replace("\n", ",").split(",");
         for (String part : parts) {

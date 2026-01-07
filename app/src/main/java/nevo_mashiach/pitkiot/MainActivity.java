@@ -128,12 +128,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void loadDb() {
-        //smsTime
-        try {
-            db.smsTime = prefs.getLong("smsTime", System.currentTimeMillis());
-        } catch (Exception ignored) {
-        }
-
         //Settings
         try {
             db.autoBalanceCheckBox = prefs.getBoolean("autoBalanceCheckBoxBackup", true);

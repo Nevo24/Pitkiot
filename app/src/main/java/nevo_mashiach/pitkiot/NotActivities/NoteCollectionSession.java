@@ -1,7 +1,6 @@
 package nevo_mashiach.pitkiot.NotActivities;
 
 import android.content.Context;
-import android.os.Build;
 import android.util.Log;
 
 import com.google.firebase.firestore.DocumentChange;
@@ -104,13 +103,11 @@ public class NoteCollectionSession {
                         return;
                     }
 
-                    if (snapshots != null && !snapshots.isEmpty()) {
-                        // Process new submissions
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                            for (DocumentSnapshot doc : snapshots.getDocumentChanges().stream()
-                                    .filter(dc -> dc.getType() == DocumentChange.Type.ADDED)
-                                    .map(DocumentChange::getDocument)
-                                    .toArray(DocumentSnapshot[]::new)) {
+                    if (snapshots != null) {
+                        // Process new submissions only (not initial data)
+                        for (DocumentChange dc : snapshots.getDocumentChanges()) {
+                            if (dc.getType() == DocumentChange.Type.ADDED) {
+                                DocumentSnapshot doc = dc.getDocument();
 
                                 String submitterName = doc.getString("submitterName");
                                 String noteContent = doc.getString("noteContent");

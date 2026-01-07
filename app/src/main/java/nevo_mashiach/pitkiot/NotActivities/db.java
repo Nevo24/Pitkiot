@@ -46,26 +46,23 @@ public class db {
     public static boolean gamePlayIsPaused = false;
     public static boolean summaryIsPaused = false;
 
-    public static long smsTime;
-
 
     @SuppressWarnings("unchecked")
     private db() {
-        defs = new ArrayList<String>();
-        temp = new ArrayList<String>();
+        defs = new ArrayList<>();
+        temp = new ArrayList<>();
         teamsNotes = new ArrayList[24];
         for(int i = 0; i < 24 ; i++){
-            teamsNotes[i] = new ArrayList<String>();
+            teamsNotes[i] = new ArrayList<>();
         }
         teamsRoundNum = new int[24];
         scores = new int[24];
     }
 
-    public static db getInstance() {
+    public static void getInstance() {
         if (instance == null) {
             instance = new db();
         }
-        return instance;
     }
 
 
@@ -75,7 +72,7 @@ public class db {
         scores = new int[24];
         currentSuccessNum = 0;
         currentPlaying = 0; //current playing team
-        mMillisUntilFinished = db.timePerRound * 1000;
+        mMillisUntilFinished = db.timePerRound * 1000L;
         gamePlayIsPaused = false;
         summaryIsPaused = false;
         totalRoundNumber = 0;
@@ -122,11 +119,11 @@ public class db {
         return null;
     }
 
-    public static void increseRoundNum() {
+    public static void increaseRoundNum() {
         teamsRoundNum[currentPlaying]++;
     }
 
-    public static void increseScore() {
+    public static void increaseScore() {
         scores[currentPlaying]++;
     }
 
@@ -158,7 +155,7 @@ public class db {
     }
 
     public static void makeSound(Context context, int resid) {
-        if (db.soundCheckBox == false) return;
+        if (!db.soundCheckBox) return;
         mPlayer = MediaPlayer.create(context, resid);
         mPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
 
@@ -177,6 +174,7 @@ public class db {
         if (motion.getAction() == MotionEvent.ACTION_UP) {
             view.setPadding(0, 0, 0, 0);
             view.performClick();
+            return true; // Consume the event to prevent double-click
         }
         else if(motion.getAction() == MotionEvent.ACTION_MOVE) {
             Rect rect = new Rect(view.getLeft(), view.getTop(), view.getRight(), view.getBottom());
@@ -184,7 +182,7 @@ public class db {
                 view.setPadding(0, 0, 0, 0);
             }
         }
-        else {
+        else if(motion.getAction() == MotionEvent.ACTION_DOWN) {
             view.setPadding(0, 10, 10, 0);
             makeSound(context, R.raw.button_press_sound);
         }
@@ -195,6 +193,7 @@ public class db {
         if (motion.getAction() == MotionEvent.ACTION_UP) {
             view.setPadding(17, 0, 0, 0);
             view.performClick();
+            return true; // Consume the event to prevent double-click
         }
         else if(motion.getAction() == MotionEvent.ACTION_MOVE) {
             Rect rect = new Rect(view.getLeft(), view.getTop(), view.getRight(), view.getBottom());
@@ -202,23 +201,8 @@ public class db {
                 view.setPadding(17, 0, 0, 0);
             }
         }
-        else {
+        else if(motion.getAction() == MotionEvent.ACTION_DOWN) {
             view.setPadding(17, 20, 20, 0);
-            makeSound(context, R.raw.button_press_sound);
-        }
-        return false;
-    }
-
-    public static boolean onTouchEditIcon(Context context, View view, MotionEvent motion) {
-        if (motion.getAction() == MotionEvent.ACTION_UP) view.setPadding(18, 0, 0, 18);
-        else if(motion.getAction() == MotionEvent.ACTION_MOVE) {
-            Rect rect = new Rect(view.getLeft(), view.getTop(), view.getRight(), view.getBottom());
-            if(!rect.contains(view.getLeft() + (int) motion.getX(), view.getTop() + (int) motion.getY())) {
-                view.setPadding(18, 0, 0, 18);
-            }
-        }
-        else {
-            view.setPadding(18, 20, 20, 18);
             makeSound(context, R.raw.button_press_sound);
         }
         return false;

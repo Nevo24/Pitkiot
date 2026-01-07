@@ -179,11 +179,11 @@ public class Summary extends AppCompatActivity {
                     successCountForTeamThatJustPlayed = db.currentSuccessNum;
                 }
                 db.currentSuccessNum = 0;
-                db.increseRoundNum();
+                db.increaseRoundNum();
             } else { //If the notes are out
                 if (db.totalRoundNumber == 0) { //If the game is over
                     mPressHereFigure.setVisibility(View.INVISIBLE);
-                    db.increseRoundNum();
+                    db.increaseRoundNum();
                     //db.currentPlaying = (db.currentPlaying + 1)%db.amountOfTeams; -- Maybe consider adding it
                     if (db.autoBalanceCheckBox) autoBalance();  //If auto balance is checked
                     gameOverDialogCall();
