@@ -8,6 +8,7 @@ import androidx.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import androidx.annotation.NonNull;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
@@ -64,7 +65,7 @@ public class NoteList extends AppCompatActivity {
         Collections.sort(notes);
     }
 
-    private BaseAdapter mListAdapter = new BaseAdapter() {
+    private final BaseAdapter mListAdapter = new BaseAdapter() {
         @Override
         public int getCount() {
             return notes.size();
@@ -122,7 +123,7 @@ public class NoteList extends AppCompatActivity {
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         return true;
     }
 

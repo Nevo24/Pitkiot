@@ -217,6 +217,8 @@ public class NoteManagement extends AppCompatActivity {
     private void showNoteCollectionDialog(String sessionId, String url) {
         // Create dialog
         collectionDialog = new Dialog(context);
+        // Passing null is acceptable for dialog layouts - the dialog window itself is the parent
+        @SuppressLint("InflateParams")
         View dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_note_collection, null);
         collectionDialog.setContentView(dialogView);
         collectionDialog.setCancelable(false);
