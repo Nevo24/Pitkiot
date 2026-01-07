@@ -208,7 +208,7 @@ public class GamePlay extends AppCompatActivity {
             // Refresh localized strings in case language was changed
             mTeamNum.setText(getString(R.string.game_team_label) + (db.currentPlaying + 1));
             mRoundModeGame.setText(db.getRoundMode(context));
-            mTotalNotes.setText(getString(R.string.game_notes_remaining) + db.roundNoteAmount());
+            mTotalNotes.setText(getString(R.string.game_notes_remaining, db.roundNoteAmount()));
             if(db.defs.isEmpty() || !mCurrentDef.getText().equals(db.defs.get(0))) setDef();
         }
         timeGenerate("regular");
@@ -217,7 +217,7 @@ public class GamePlay extends AppCompatActivity {
 
     @SuppressLint("SetTextI18n")
     public void setDef() {
-        mTotalNotes.setText(getString(R.string.game_notes_remaining) + db.roundNoteAmount());
+        mTotalNotes.setText(getString(R.string.game_notes_remaining, db.roundNoteAmount()));
         if (db.roundNoteAmount() == 0) {
             db.timer.cancel();
             db.increaseRoundMode();
