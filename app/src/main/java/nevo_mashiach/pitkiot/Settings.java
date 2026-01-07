@@ -337,10 +337,4 @@ public class Settings extends AppCompatActivity {
         spEditor.commit();
         mTeamEditableScore.setText(String.valueOf(db.scores[selectedSpinner]));
     }
-
-    boolean onTouch(View view, MotionEvent motion) {
-        return db.onTouch(context, view, motion);
-    }
-
-    boolean onTouchExplanation(View view, MotionEvent motion) {return db.onTouchExplanation(context, view, motion);}
 }
