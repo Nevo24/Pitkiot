@@ -152,7 +152,7 @@ public class Summary extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         if (!onCreate) return; //preventing round++ when minimizing the app
-        mTotalNotes.setText(getString(R.string.game_notes_remaining) + db.roundNoteAmount());
+        mTotalNotes.setText(getString(R.string.game_notes_remaining, db.roundNoteAmount()));
         if (!db.summaryIsPaused) {
             mRoundModeSummary.setText(db.getRoundMode(context));
             // Check if Intent has extras (might be null when resuming from MainActivity)
@@ -166,13 +166,13 @@ public class Summary extends AppCompatActivity {
 
             if (mSummaryHeadline.getText().equals(getString(R.string.game_time_up))) { //If we are here because of time out
                 if(db.amountOfTeams == 2){
-                    if (db.currentPlaying == 0) mT1Plus.setText(String.format("+%d", db.currentSuccessNum));
-                    else mT2Plus.setText(String.format("+%d", db.currentSuccessNum));
+                    if (db.currentPlaying == 0) mT1Plus.setText(String.format(Locale.US, "+%d", db.currentSuccessNum));
+                    else mT2Plus.setText(String.format(Locale.US, "+%d", db.currentSuccessNum));
                     teamThatJustPlayed = db.currentPlaying;
                     successCountForTeamThatJustPlayed = db.currentSuccessNum;
                 }
                 else{
-                    mMultiTeamsPlus.setText(String.format("+%d", db.currentSuccessNum));
+                    mMultiTeamsPlus.setText(String.format(Locale.US, "+%d", db.currentSuccessNum));
                     teamThatJustPlayed = db.currentPlaying;
                     successCountForTeamThatJustPlayed = db.currentSuccessNum;
                 }
@@ -188,13 +188,13 @@ public class Summary extends AppCompatActivity {
                 } else {
                     // Notes finished mid-round - still show the indicator!
                     if(db.amountOfTeams == 2){
-                        if (db.currentPlaying == 0) mT1Plus.setText(String.format("+%d", db.currentSuccessNum));
-                        else mT2Plus.setText(String.format("+%d", db.currentSuccessNum));
+                        if (db.currentPlaying == 0) mT1Plus.setText(String.format(Locale.US, "+%d", db.currentSuccessNum));
+                        else mT2Plus.setText(String.format(Locale.US, "+%d", db.currentSuccessNum));
                         teamThatJustPlayed = db.currentPlaying;
                         successCountForTeamThatJustPlayed = db.currentSuccessNum;
                     }
                     else{
-                        mMultiTeamsPlus.setText(String.format("+%d", db.currentSuccessNum));
+                        mMultiTeamsPlus.setText(String.format(Locale.US, "+%d", db.currentSuccessNum));
                         teamThatJustPlayed = db.currentPlaying;
                         successCountForTeamThatJustPlayed = db.currentSuccessNum;
                     }
@@ -206,13 +206,13 @@ public class Summary extends AppCompatActivity {
             if (db.amountOfTeams == 2) {
                 multiTeamsVisibility(false);
                 twoTeamsVisibility(true);
-                mT1Round.setText(getString(R.string.game_number_of_rounds) + db.teamsRoundNum[0]);
-                mT2Round.setText(getString(R.string.game_number_of_rounds) + db.teamsRoundNum[1]);
+                mT1Round.setText(getString(R.string.game_number_of_rounds, db.teamsRoundNum[0]));
+                mT2Round.setText(getString(R.string.game_number_of_rounds, db.teamsRoundNum[1]));
             } else {
                 multiTeamsVisibility(true);
                 twoTeamsVisibility(false);
                 createGroupSpinner();
-                mMultiTeamRound.setText(getString(R.string.game_number_of_rounds) + db.teamsRoundNum[db.currentPlaying]);
+                mMultiTeamRound.setText(getString(R.string.game_number_of_rounds, db.teamsRoundNum[db.currentPlaying]));
             }
         } else {
             db.summaryIsPaused = false;
@@ -222,15 +222,15 @@ public class Summary extends AppCompatActivity {
             if (db.amountOfTeams == 2) {
                 // Restore 2-team indicators from saved state
                 if (teamThatJustPlayed == 0 && successCountForTeamThatJustPlayed > 0) {
-                    mT1Plus.setText(String.format("+%d", successCountForTeamThatJustPlayed));
+                    mT1Plus.setText(String.format(Locale.US, "+%d", successCountForTeamThatJustPlayed));
                 }
                 if (teamThatJustPlayed == 1 && successCountForTeamThatJustPlayed > 0) {
-                    mT2Plus.setText(String.format("+%d", successCountForTeamThatJustPlayed));
+                    mT2Plus.setText(String.format(Locale.US, "+%d", successCountForTeamThatJustPlayed));
                 }
             } else {
                 // Restore multi-team indicator
                 if (teamThatJustPlayed == db.currentPlaying && successCountForTeamThatJustPlayed > 0) {
-                    mMultiTeamsPlus.setText(String.format("+%d", successCountForTeamThatJustPlayed));
+                    mMultiTeamsPlus.setText(String.format(Locale.US, "+%d", successCountForTeamThatJustPlayed));
                 } else {
                     mMultiTeamsPlus.setText("");
                 }
@@ -243,10 +243,10 @@ public class Summary extends AppCompatActivity {
             mT2Total.setText(getString(R.string.game_total_score, db.scores[1]));
             // Restore 2-team indicators after activity destruction
             if (teamThatJustPlayed == 0 && successCountForTeamThatJustPlayed > 0) {
-                mT1Plus.setText(String.format("+%d", successCountForTeamThatJustPlayed));
+                mT1Plus.setText(String.format(Locale.US, "+%d", successCountForTeamThatJustPlayed));
             }
             if (teamThatJustPlayed == 1 && successCountForTeamThatJustPlayed > 0) {
-                mT2Plus.setText(String.format("+%d", successCountForTeamThatJustPlayed));
+                mT2Plus.setText(String.format(Locale.US, "+%d", successCountForTeamThatJustPlayed));
             }
         } else {
             multiTeamsVisibility(true);
@@ -255,7 +255,7 @@ public class Summary extends AppCompatActivity {
             mMultiTeamTotalScore.setText(getString(R.string.game_total_score, db.scores[db.currentPlaying]));
             // Restore indicator if viewing the team that just played
             if (teamThatJustPlayed == db.currentPlaying && successCountForTeamThatJustPlayed > 0) {
-                mMultiTeamsPlus.setText(String.format("+%d", successCountForTeamThatJustPlayed));
+                mMultiTeamsPlus.setText(String.format(Locale.US, "+%d", successCountForTeamThatJustPlayed));
             } else {
                 mMultiTeamsPlus.setText("");
             }
@@ -274,8 +274,8 @@ public class Summary extends AppCompatActivity {
             mT2Total.setText(prefs.getString("t2Total", ""));
             mT2Round.setText(prefs.getString("t2Round", ""));
         } else {
-            String totalKey = String.format("t%dTotal", db.currentPlaying);
-            String roundKey = String.format("t%dRound", db.currentPlaying);
+            String totalKey = "t" + db.currentPlaying + "Total";
+            String roundKey = "t" + db.currentPlaying + "Round";
             mMultiTeamTotalScore.setText(prefs.getString(totalKey, ""));
             mMultiTeamRound.setText(prefs.getString(roundKey, ""));
         }
@@ -321,8 +321,7 @@ public class Summary extends AppCompatActivity {
         super.onPause();
 
         //Save game state:
-        Set<String> set = new HashSet<String>();
-        set.addAll(db.temp);
+        Set<String> set = new HashSet<>(db.temp);
         spEditor.putStringSet("temp", set);
         set.clear();
         set.addAll(db.defs);
@@ -437,7 +436,7 @@ public class Summary extends AppCompatActivity {
 
                 // Show indicator only if this is the team that just played
                 if (teamThatJustPlayed == selectedSpinner && successCountForTeamThatJustPlayed > 0) {
-                    mMultiTeamsPlus.setText(String.format("+%d", successCountForTeamThatJustPlayed));
+                    mMultiTeamsPlus.setText(String.format(Locale.US, "+%d", successCountForTeamThatJustPlayed));
                 } else {
                     mMultiTeamsPlus.setText("");
                 }
@@ -455,7 +454,7 @@ public class Summary extends AppCompatActivity {
     //*********************** ON CLICKS ********************************
     public void backToGamePlay() {
         if (mSummaryHeadline.getText().equals(getString(R.string.game_time_up))) {
-            db.mMillisUntilFinished = db.timePerRound * 1000;
+            db.mMillisUntilFinished = db.timePerRound * 1000L;
             db.currentPlaying = (db.currentPlaying + 1)%db.amountOfTeams;
         } else db.resetRound();
         // Clear indicator tracking since we're starting a new turn
