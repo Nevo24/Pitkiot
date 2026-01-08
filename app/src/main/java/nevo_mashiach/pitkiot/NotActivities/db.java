@@ -2,11 +2,13 @@ package nevo_mashiach.pitkiot.NotActivities;
 
 import android.content.Context;
 import android.graphics.Rect;
-import android.media.MediaPlayer;
+import android.media.AudioAttributes;
+import android.media.SoundPool;
 import android.os.CountDownTimer;
 import android.view.MotionEvent;
 import android.view.View;
 
+import java.util.HashMap;
 import java.util.ArrayList;
 
 import nevo_mashiach.pitkiot.R;
@@ -18,7 +20,8 @@ import nevo_mashiach.pitkiot.R;
 public class db {
 
     private static db instance = null;
-    private static MediaPlayer mPlayer;
+    private static SoundPool soundPool;
+    private static HashMap<Integer, Integer> soundMap;
 
     //game:
     public static ArrayList<String> defs;
@@ -62,6 +65,35 @@ public class db {
     public static void getInstance() {
         if (instance == null) {
             instance = new db();
+        }
+    }
+
+    public static void initializeSounds(Context context) {
+        if (soundPool == null) {
+            AudioAttributes audioAttributes = new AudioAttributes.Builder()
+                    .setUsage(AudioAttributes.USAGE_GAME)
+                    .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                    .build();
+
+            soundPool = new SoundPool.Builder()
+                    .setMaxStreams(5)
+                    .setAudioAttributes(audioAttributes)
+                    .build();
+
+            soundMap = new HashMap<>();
+            soundMap.put(R.raw.button_press_sound, soundPool.load(context, R.raw.button_press_sound, 1));
+            soundMap.put(R.raw.succsess_sound, soundPool.load(context, R.raw.succsess_sound, 1));
+            soundMap.put(R.raw.pass_sound, soundPool.load(context, R.raw.pass_sound, 1));
+            soundMap.put(R.raw.tick_sound, soundPool.load(context, R.raw.tick_sound, 1));
+            soundMap.put(R.raw.time_is_up_sound, soundPool.load(context, R.raw.time_is_up_sound, 1));
+        }
+    }
+
+    public static void releaseSounds() {
+        if (soundPool != null) {
+            soundPool.release();
+            soundPool = null;
+            soundMap = null;
         }
     }
 
@@ -156,22 +188,17 @@ public class db {
 
     public static void makeSound(Context context, int resid) {
         if (!db.soundCheckBox) return;
-        mPlayer = MediaPlayer.create(context, resid);
-        mPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-
-            @Override
-            public void onCompletion(MediaPlayer mp) {
-                // TODO Auto-generated method stub
-                mp.reset();
-                mp.release();
+        if (soundPool != null && soundMap != null && soundMap.containsKey(resid)) {
+            Integer soundId = soundMap.get(resid);
+            if (soundId != null) {
+                soundPool.play(soundId, 1.0f, 1.0f, 1, 0, 1.0f);
             }
-
-        });
-        mPlayer.start();
+        }
     }
 
     public static boolean onTouch(Context context, View view, MotionEvent motion) {
         if (motion.getAction() == MotionEvent.ACTION_UP) {
+            view.setPressed(false);
             view.setPadding(0, 0, 0, 0);
             view.performClick();
             return true; // Consume the event to prevent double-click
@@ -179,6 +206,7 @@ public class db {
         else if(motion.getAction() == MotionEvent.ACTION_MOVE) {
             Rect rect = new Rect(view.getLeft(), view.getTop(), view.getRight(), view.getBottom());
             if(!rect.contains(view.getLeft() + (int) motion.getX(), view.getTop() + (int) motion.getY())) {
+                view.setPressed(false);
                 view.setPadding(0, 0, 0, 0);
             }
         }
@@ -191,6 +219,7 @@ public class db {
 
     public static boolean onTouchExplanation(Context context, View view, MotionEvent motion) {
         if (motion.getAction() == MotionEvent.ACTION_UP) {
+            view.setPressed(false);
             view.setPadding(17, 0, 0, 0);
             view.performClick();
             return true; // Consume the event to prevent double-click
@@ -198,6 +227,7 @@ public class db {
         else if(motion.getAction() == MotionEvent.ACTION_MOVE) {
             Rect rect = new Rect(view.getLeft(), view.getTop(), view.getRight(), view.getBottom());
             if(!rect.contains(view.getLeft() + (int) motion.getX(), view.getTop() + (int) motion.getY())) {
+                view.setPressed(false);
                 view.setPadding(17, 0, 0, 0);
             }
         }

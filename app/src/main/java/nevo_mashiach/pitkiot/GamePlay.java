@@ -305,6 +305,10 @@ public class GamePlay extends AppCompatActivity {
         db.defTransfer("next", currentDef);
         setDef();
         timeGenerate("next");
+        mSuccess.setPressed(false);
+        mNext.setPressed(false);
+        mSuccess.setPadding(0, 0, 0, 0);
+        mNext.setPadding(0, 0, 0, 0);
         mSuccess.setEnabled(true);
         mNext.setEnabled(true);
     }
@@ -335,6 +339,10 @@ public class GamePlay extends AppCompatActivity {
 
         db.defTransfer("success", currentDef);
         setDef();
+        mSuccess.setPressed(false);
+        mNext.setPressed(false);
+        mSuccess.setPadding(0, 0, 0, 0);
+        mNext.setPadding(0, 0, 0, 0);
         mSuccess.setEnabled(true);
         mNext.setEnabled(true);
     }
