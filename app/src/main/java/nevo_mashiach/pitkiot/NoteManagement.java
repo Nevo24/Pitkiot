@@ -368,6 +368,9 @@ public class NoteManagement extends AppCompatActivity {
                     containerParams.setMargins(0, 0, 0, 15);
                     itemContainer.setLayoutParams(containerParams);
 
+                    // Check if name is entirely Hebrew (no Latin characters)
+                    boolean isHebrew = name.matches("[\\u0590-\\u05FF\\s]+");
+
                     // Part 1: Checkmark (always LTR, separate from name)
                     TextView checkmarkPart = new TextView(context);
                     checkmarkPart.setText("✓ ");
@@ -376,34 +379,50 @@ public class NoteManagement extends AppCompatActivity {
                     checkmarkPart.setGravity(android.view.Gravity.CENTER_VERTICAL);
                     checkmarkPart.setTextDirection(TextView.TEXT_DIRECTION_LTR);
 
-                    // Part 2: Name (auto direction based on content)
-                    TextView namePart = new TextView(context);
-                    namePart.setText(name);
-                    namePart.setTextSize(16);
-                    namePart.setTextColor(Color.parseColor("#406D3C"));
-                    namePart.setGravity(android.view.Gravity.CENTER_VERTICAL);
-                    namePart.setTextDirection(TextView.TEXT_DIRECTION_FIRST_STRONG);
-
-                    // Part 3: Colon separator
-                    TextView colonPart = new TextView(context);
-                    colonPart.setText(": ");
-                    colonPart.setTextSize(16);
-                    colonPart.setTextColor(Color.parseColor("#406D3C"));
-                    colonPart.setGravity(android.view.Gravity.CENTER_VERTICAL);
-
-                    // Part 4: Count + "notes"/"פתקים" (force LTR to keep number before word)
-                    TextView countPart = new TextView(context);
-                    countPart.setText(count + " " + getString(R.string.notes_word));
-                    countPart.setTextSize(16);
-                    countPart.setTextColor(Color.parseColor("#406D3C"));
-                    countPart.setGravity(android.view.Gravity.CENTER_VERTICAL);
-                    countPart.setTextDirection(TextView.TEXT_DIRECTION_LTR);
-
-                    // Add all parts to container in order
                     itemContainer.addView(checkmarkPart);
-                    itemContainer.addView(namePart);
-                    itemContainer.addView(colonPart);
-                    itemContainer.addView(countPart);
+
+                    if (isHebrew) {
+                        // For Hebrew: add count first, then name with RTL and colon before
+                        TextView countPart = new TextView(context);
+                        countPart.setText(count + " " + getString(R.string.notes_word) + " ");
+                        countPart.setTextSize(16);
+                        countPart.setTextColor(Color.parseColor("#406D3C"));
+                        countPart.setGravity(android.view.Gravity.CENTER_VERTICAL);
+                        countPart.setTextDirection(TextView.TEXT_DIRECTION_LTR);
+                        itemContainer.addView(countPart);
+
+                        TextView namePart = new TextView(context);
+                        namePart.setText(name + ": ");
+                        namePart.setTextSize(16);
+                        namePart.setTextColor(Color.parseColor("#406D3C"));
+                        namePart.setGravity(android.view.Gravity.CENTER_VERTICAL);
+                        namePart.setTextDirection(TextView.TEXT_DIRECTION_RTL);
+                        itemContainer.addView(namePart);
+                    } else {
+                        // For English: split name and colon
+                        TextView namePart = new TextView(context);
+                        namePart.setText(name);
+                        namePart.setTextSize(16);
+                        namePart.setTextColor(Color.parseColor("#406D3C"));
+                        namePart.setGravity(android.view.Gravity.CENTER_VERTICAL);
+                        namePart.setTextDirection(TextView.TEXT_DIRECTION_LTR);
+                        itemContainer.addView(namePart);
+
+                        TextView colonPart = new TextView(context);
+                        colonPart.setText(": ");
+                        colonPart.setTextSize(16);
+                        colonPart.setTextColor(Color.parseColor("#406D3C"));
+                        colonPart.setGravity(android.view.Gravity.CENTER_VERTICAL);
+                        itemContainer.addView(colonPart);
+
+                        TextView countPart = new TextView(context);
+                        countPart.setText(count + " " + getString(R.string.notes_word));
+                        countPart.setTextSize(16);
+                        countPart.setTextColor(Color.parseColor("#406D3C"));
+                        countPart.setGravity(android.view.Gravity.CENTER_VERTICAL);
+                        countPart.setTextDirection(TextView.TEXT_DIRECTION_LTR);
+                        itemContainer.addView(countPart);
+                    }
 
                     notesList.addView(itemContainer);
                 }
