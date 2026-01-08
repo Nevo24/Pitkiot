@@ -3,14 +3,18 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/dialog_background"
-    android:padding="0dp">
+    android:padding="0dp"
+    android:clipToOutline="true"
+    android:clipToPadding="false"
+    android:clipChildren="true">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:gravity="center"
-        android:padding="20dp">
+        android:padding="20dp"
+        android:clipToPadding="true">
 
         <!-- Header -->
         <nevo_mashiach.pitkiot.NotActivities.MyTextView
@@ -69,7 +73,7 @@
         <!-- Copy URL Button -->
         <nevo_mashiach.pitkiot.NotActivities.MyButton
             android:id="@+id/copyUrlButton"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/button_copy_link"
             android:textColor="#ffffff"

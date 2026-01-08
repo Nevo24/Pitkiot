@@ -245,6 +245,7 @@ public class NoteManagement extends AppCompatActivity {
         @SuppressLint("InflateParams")
         View dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_note_collection, null);
         collectionDialog.setContentView(dialogView);
+        collectionDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
         collectionDialog.setCancelable(false); // Prevent automatic dismissal on back press
 
         // Handle back button press
