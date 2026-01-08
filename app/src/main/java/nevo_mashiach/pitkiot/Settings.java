@@ -143,11 +143,15 @@ public class Settings extends AppCompatActivity {
             buttonParams.removeRule(androidx.percentlayout.widget.PercentRelativeLayout.ALIGN_PARENT_END);
             mAutoBalaceCheckBox.setGravity(android.view.Gravity.END | android.view.Gravity.CENTER_VERTICAL);
             mSoundCheckBox.setGravity(android.view.Gravity.END | android.view.Gravity.CENTER_VERTICAL);
-            // Move checkbox icon to right side (end) of text for Hebrew
-            android.graphics.drawable.Drawable checkboxDrawable = androidx.appcompat.content.res.AppCompatResources.getDrawable(
+            // Move checkbox icon to right side (end) of text for Hebrew - create separate drawables for each checkbox
+            android.graphics.drawable.Drawable checkboxDrawable1 = androidx.appcompat.content.res.AppCompatResources.getDrawable(
                 context, androidx.appcompat.R.drawable.abc_btn_check_material);
-            mAutoBalaceCheckBox.setCompoundDrawablesWithIntrinsicBounds(null, null, checkboxDrawable, null);
-            mSoundCheckBox.setCompoundDrawablesWithIntrinsicBounds(null, null, checkboxDrawable, null);
+            android.graphics.drawable.Drawable checkboxDrawable2 = androidx.appcompat.content.res.AppCompatResources.getDrawable(
+                context, androidx.appcompat.R.drawable.abc_btn_check_material);
+            if (checkboxDrawable1 != null) checkboxDrawable1 = checkboxDrawable1.mutate();
+            if (checkboxDrawable2 != null) checkboxDrawable2 = checkboxDrawable2.mutate();
+            mAutoBalaceCheckBox.setCompoundDrawablesWithIntrinsicBounds(null, null, checkboxDrawable1, null);
+            mSoundCheckBox.setCompoundDrawablesWithIntrinsicBounds(null, null, checkboxDrawable2, null);
         } else {
             // English: checkboxes on left, button on right, checkbox icon on left of text
             checkboxParams.addRule(androidx.percentlayout.widget.PercentRelativeLayout.ALIGN_PARENT_START);
@@ -158,19 +162,31 @@ public class Settings extends AppCompatActivity {
             buttonParams.removeRule(androidx.percentlayout.widget.PercentRelativeLayout.ALIGN_PARENT_START);
             mAutoBalaceCheckBox.setGravity(android.view.Gravity.START | android.view.Gravity.CENTER_VERTICAL);
             mSoundCheckBox.setGravity(android.view.Gravity.START | android.view.Gravity.CENTER_VERTICAL);
-            // Keep checkbox icon on left side (start) of text for English - already set in XML
-            android.graphics.drawable.Drawable checkboxDrawable = androidx.appcompat.content.res.AppCompatResources.getDrawable(
+            // Keep checkbox icon on left side (start) of text for English - create separate drawables for each checkbox
+            android.graphics.drawable.Drawable checkboxDrawable1 = androidx.appcompat.content.res.AppCompatResources.getDrawable(
                 context, androidx.appcompat.R.drawable.abc_btn_check_material);
-            mAutoBalaceCheckBox.setCompoundDrawablesWithIntrinsicBounds(checkboxDrawable, null, null, null);
-            mSoundCheckBox.setCompoundDrawablesWithIntrinsicBounds(checkboxDrawable, null, null, null);
+            android.graphics.drawable.Drawable checkboxDrawable2 = androidx.appcompat.content.res.AppCompatResources.getDrawable(
+                context, androidx.appcompat.R.drawable.abc_btn_check_material);
+            if (checkboxDrawable1 != null) checkboxDrawable1 = checkboxDrawable1.mutate();
+            if (checkboxDrawable2 != null) checkboxDrawable2 = checkboxDrawable2.mutate();
+            mAutoBalaceCheckBox.setCompoundDrawablesWithIntrinsicBounds(checkboxDrawable1, null, null, null);
+            mSoundCheckBox.setCompoundDrawablesWithIntrinsicBounds(checkboxDrawable2, null, null, null);
         }
 
         mAutoBalaceCheckBox.setLayoutParams(checkboxParams);
         mSoundCheckBox.setLayoutParams(soundParams);
         mBalanceExplanation.setLayoutParams(buttonParams);
 
+        // Temporarily remove listeners to avoid triggering them during initialization
+        mAutoBalaceCheckBox.setOnCheckedChangeListener(null);
+        mSoundCheckBox.setOnCheckedChangeListener(null);
+
         mAutoBalaceCheckBox.setChecked(db.autoBalanceCheckBox);
         mSoundCheckBox.setChecked(db.soundCheckBox);
+
+        // Re-add listeners after setting initial state
+        mAutoBalaceCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> onAutoBalanceChecked(isChecked));
+        mSoundCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> onSoundChecked(isChecked));
         mEditRoundTime.setText(String.valueOf(db.timePerRound));
         mEditNextTime.setText(String.valueOf(db.timeDownOnNext));
         mAmountOfTeams.setText(String.valueOf(db.amountOfTeams));
@@ -250,8 +266,7 @@ public class Settings extends AppCompatActivity {
 
     void onSoundChecked(boolean checked) {
         db.soundCheckBox = checked;
-        //save autoBalanceCheckBox to shared preferences
-        db.autoBalanceCheckBox = checked;
+        //save soundCheckBox to shared preferences
         spEditor.putBoolean("soundCheckBoxBackup", checked);
         spEditor.commit();
     }
