@@ -70,6 +70,10 @@ public class Summary extends AppCompatActivity {
     int teamThatJustPlayed = -1;
     int successCountForTeamThatJustPlayed = 0;
 
+    // Semantic state for proper localization on resume
+    String summaryState = "";  // "time_up" or "notes_finished"
+    int nextTeamForButton = -1;  // Which team number to show in button
+
 
     @Override
     protected void attachBaseContext(Context base) {
@@ -159,8 +163,30 @@ public class Summary extends AppCompatActivity {
             mRoundModeSummary.setText(db.getRoundMode(context));
             // Check if Intent has extras (might be null when resuming from MainActivity)
             if (getIntent().getExtras() != null) {
-                mReady.setText(getIntent().getExtras().getString("readyText"));
-                mSummaryHeadline.setText(getIntent().getExtras().getString("summaryHeadline"));
+                String readyText = getIntent().getExtras().getString("readyText");
+                String summaryHeadline = getIntent().getExtras().getString("summaryHeadline");
+                mReady.setText(readyText);
+                mSummaryHeadline.setText(summaryHeadline);
+
+                // Determine and save semantic state for future resumes
+                if (summaryHeadline.equals(getString(R.string.game_time_up))) {
+                    summaryState = "time_up";
+                } else if (summaryHeadline.equals(getString(R.string.game_notes_finished))) {
+                    summaryState = "notes_finished";
+                }
+
+                // Extract team number from button text for future localization
+                // readyText format: "START! Team turn X" or "CONTINUE! Team turn X"
+                try {
+                    String[] parts = readyText.split(" ");
+                    if (parts.length > 0) {
+                        String lastPart = parts[parts.length - 1];
+                        nextTeamForButton = Integer.parseInt(lastPart);
+                    }
+                } catch (NumberFormatException e) {
+                    // If parsing fails, calculate from current playing
+                    nextTeamForButton = ((db.currentPlaying + 1) % db.amountOfTeams) + 1;
+                }
             } else {
                 // Fallback to loading from SharedPreferences
                 updateInfoFromSharedPreferences();
@@ -267,20 +293,38 @@ public class Summary extends AppCompatActivity {
 
 
     private void updateInfoFromSharedPreferences() {
-        mSummaryHeadline.setText(prefs.getString("summaryHeadline", ""));
-        mReady.setText(prefs.getString("ready", ""));
-        mRoundModeSummary.setText(prefs.getString("roundModeSummary", ""));
-        if (db.amountOfTeams == 2) {
-            mT1Total.setText(prefs.getString("t1Total", ""));
-            mT1Round.setText(prefs.getString("t1Round", ""));
-            mT2Total.setText(prefs.getString("t2Total", ""));
-            mT2Round.setText(prefs.getString("t2Round", ""));
-        } else {
-            String totalKey = "t" + db.currentPlaying + "Total";
-            String roundKey = "t" + db.currentPlaying + "Round";
-            mMultiTeamTotalScore.setText(prefs.getString(totalKey, ""));
-            mMultiTeamRound.setText(prefs.getString(roundKey, ""));
+        // Load semantic state instead of localized text
+        summaryState = prefs.getString("summaryState", "");
+        nextTeamForButton = prefs.getInt("nextTeamForButton", -1);
+
+        // Regenerate localized strings from semantic state
+        if (!summaryState.isEmpty()) {
+            if (summaryState.equals("time_up")) {
+                mSummaryHeadline.setText(getString(R.string.game_time_up));
+                if (nextTeamForButton >= 0) {
+                    mReady.setText(getString(R.string.game_start_team_turn) + nextTeamForButton);
+                }
+            } else if (summaryState.equals("notes_finished")) {
+                mSummaryHeadline.setText(getString(R.string.game_notes_finished));
+                if (nextTeamForButton >= 0) {
+                    mReady.setText(getString(R.string.game_continue_team_turn) + nextTeamForButton);
+                }
+            }
         }
+
+        mRoundModeSummary.setText(db.getRoundMode(context));
+
+        // Regenerate localized strings for scores and rounds
+        if (db.amountOfTeams == 2) {
+            mT1Total.setText(getString(R.string.game_total_score, db.scores[0]));
+            mT1Round.setText(getString(R.string.game_number_of_rounds, db.teamsRoundNum[0]));
+            mT2Total.setText(getString(R.string.game_total_score, db.scores[1]));
+            mT2Round.setText(getString(R.string.game_number_of_rounds, db.teamsRoundNum[1]));
+        } else {
+            mMultiTeamTotalScore.setText(getString(R.string.game_total_score, db.scores[db.currentPlaying]));
+            mMultiTeamRound.setText(getString(R.string.game_number_of_rounds, db.teamsRoundNum[db.currentPlaying]));
+        }
+
         db.team2AverageAnswersPerSecond = Double.longBitsToDouble(prefs.getLong("team2AverageAnswersPerSecond", Double.doubleToLongBits(0)));
         teamThatJustPlayed = prefs.getInt("teamThatJustPlayed", -1);
         successCountForTeamThatJustPlayed = prefs.getInt("successCountForTeamThatJustPlayed", 0);
@@ -346,19 +390,10 @@ public class Summary extends AppCompatActivity {
         spEditor.putInt("teamThatJustPlayed", teamThatJustPlayed);
         spEditor.putInt("successCountForTeamThatJustPlayed", successCountForTeamThatJustPlayed);
 
-        //Save text-info
-        spEditor.putString("summaryHeadline", mSummaryHeadline.getText().toString());
-        spEditor.putString("ready", mReady.getText().toString());
-        spEditor.putString("roundModeSummary", mRoundModeSummary.getText().toString());
-        if (db.amountOfTeams == 2) {
-            spEditor.putString("t1Total", mT1Total.getText().toString());
-            spEditor.putString("t1Round", mT1Round.getText().toString());
-            spEditor.putString("t2Total", mT2Total.getText().toString());
-            spEditor.putString("t2Round", mT2Round.getText().toString());
-        } else {
-            spEditor.putString("multiTeamTotalScore", mMultiTeamTotalScore.getText().toString());
-            spEditor.putString("multiTeamRound", mMultiTeamRound.getText().toString());
-        }
+        //Save semantic state (not localized text) so it can be regenerated in any language
+        spEditor.putString("summaryState", summaryState);
+        spEditor.putInt("nextTeamForButton", nextTeamForButton);
+        // Note: Scores, rounds, and round mode are saved via db state and regenerated from there
 
         spEditor.commit();
     }

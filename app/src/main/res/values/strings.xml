@@ -9,7 +9,7 @@
     <string name="button_add">הוספה</string>
     <string name="hint_enter_character">הזן דמות</string>
     <string name="note_count">מספר הפתקים: %d</string>
-    <string name="note_count_database">מספר הפתקים במאגר: %d</string>
+    <string name="note_count_database">מספר פתקים במאגר: %d</string>
 
     <!-- MainActivity buttons -->
     <string name="button_play_game">שחק  ▶️</string>

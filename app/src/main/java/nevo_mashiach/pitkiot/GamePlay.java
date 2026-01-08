@@ -129,9 +129,7 @@ public class GamePlay extends AppCompatActivity {
         sadAanim = (AnimationDrawable) mGamePlayFigureSad.getBackground();
 
         if (firstTime) {
-            mTeamNum.setText(prefs.getString("teamNum", ""));
-            mCurrentSuccess.setText(prefs.getString("currentSuccess", ""));
-            mRoundModeGame.setText(prefs.getString("roundModeGame", ""));
+            // Load game state (not localized strings - regenerate those in onResume)
             mCurrentDef.setText(prefs.getString("currentDef", ""));
             fixedMillisUntilFinished = prefs.getLong("fixedMillisUntilFinished", 60);
             currentDef = prefs.getString("currentDefString", "");
@@ -182,11 +180,8 @@ public class GamePlay extends AppCompatActivity {
         spEditor.putBoolean("summaryIsPaused", false);
         spEditor.putBoolean("gamePlayIsPaused", true);
 
-        //Save text-info
-        spEditor.putString("teamNum", mTeamNum.getText().toString());
-        spEditor.putString("currentSuccess", mCurrentSuccess.getText().toString());
-        spEditor.putString("roundModeGame", mRoundModeGame.getText().toString());
-        spEditor.putString("currentDef", mCurrentDef.getText().toString());
+        //Save non-localized game state only (localized strings will be regenerated on resume)
+        spEditor.putString("currentDef", currentDef);  // The actual note content (not a localizable string)
         spEditor.putLong("fixedMillisUntilFinished", fixedMillisUntilFinished);
         spEditor.putString("currentDefString", currentDef);
         spEditor.commit();
