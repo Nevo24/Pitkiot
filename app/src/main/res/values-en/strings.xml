@@ -128,7 +128,7 @@
 
     <!-- Settings screen -->
     <string name="settings_title">Settings</string>
-    <string name="settings_select_teams">Select number of teams:</string>
+    <string name="settings_select_teams">Select number of teams</string>
     <string name="settings_auto_balance">Auto-balance score</string>
     <string name="settings_sound">Sound</string>
     <string name="settings_seconds_per_round">Seconds per round</string>

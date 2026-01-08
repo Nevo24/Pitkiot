@@ -128,7 +128,7 @@
 
     <!-- Settings screen -->
     <string name="settings_title">הגדרות</string>
-    <string name="settings_select_teams">בחירת מספר קבוצות:</string>
+    <string name="settings_select_teams">בחירת מספר קבוצות</string>
     <string name="settings_auto_balance">איזון ניקוד</string>
     <string name="settings_sound">סאונד</string>
     <string name="settings_seconds_per_round">מספר שניות לסיבוב</string>

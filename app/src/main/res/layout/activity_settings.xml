@@ -44,7 +44,7 @@
             android:layout_centerHorizontal="true"
             android:layout_marginTop="8dp">
 
-            <Button
+            <nevo_mashiach.pitkiot.NotActivities.MyButton
                 android:id="@+id/decrease1"
                 android:layout_height="wrap_content"
                 android:layout_width="60dp"
@@ -61,7 +61,7 @@
                 android:textSize="32sp"
                 android:textStyle="bold"/>
 
-            <Button
+            <nevo_mashiach.pitkiot.NotActivities.MyButton
                 android:id="@+id/increase1"
                 android:layout_height="wrap_content"
                 android:layout_width="60dp"
@@ -83,10 +83,13 @@
 
         <Spinner
             android:id="@+id/settingsSpinner"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
             android:gravity="center"
+            android:textAlignment="center"
+            android:spinnerMode="dropdown"
             android:textSize="21sp"/>
 
         <LinearLayout
@@ -98,7 +101,7 @@
             android:layout_centerHorizontal="true"
             android:layout_marginTop="8dp">
 
-            <Button
+            <nevo_mashiach.pitkiot.NotActivities.MyButton
                 android:id="@+id/decrease2"
                 android:layout_height="wrap_content"
                 android:layout_width="60dp"
@@ -115,7 +118,7 @@
                 android:textSize="32sp"
                 android:textStyle="bold"/>
 
-            <Button
+            <nevo_mashiach.pitkiot.NotActivities.MyButton
                 android:id="@+id/increase2"
                 android:layout_height="wrap_content"
                 android:layout_width="60dp"
