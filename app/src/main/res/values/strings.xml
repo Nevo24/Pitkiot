@@ -135,7 +135,7 @@
     <string name="settings_seconds_reduced_pass">מספר שניות שיורדות כשלוחצים על \"עבור\"</string>
     <string name="settings_input_instruction">הזן שניות בין 1 ל- 300</string>
     <string name="settings_edit_team_scores">עריכת ניקוד קבוצות</string>
-    <string name="settings_reset_button">איפוס הגדרות</string>
+    <string name="settings_reset_button">איפוס הגדרות  🔄</string>
 
     <!-- Game play screen -->
     <string name="gameplay_pass_button">עבור</string>

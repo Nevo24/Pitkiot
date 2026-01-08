@@ -135,7 +135,7 @@
     <string name="settings_seconds_reduced_pass">Seconds reduced when pressing \"pass\"</string>
     <string name="settings_input_instruction">Enter seconds between 1 and 300</string>
     <string name="settings_edit_team_scores">Edit team scores</string>
-    <string name="settings_reset_button">Reset Settings</string>
+    <string name="settings_reset_button">🔄  Reset Settings</string>
 
     <!-- Game play screen -->
     <string name="gameplay_pass_button">Pass</string>
