@@ -101,34 +101,18 @@
         android:layout_marginBottom="35dp"/>
 
     <ImageView
-        android:layout_marginLeft="15dp"
-        android:layout_marginRight="15dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginBottom="5dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        app:layout_widthPercent="90%"
+        app:layout_aspectRatio="127%"
+        android:scaleType="fitCenter"
         android:id="@+id/gamePlayFigureHappy"
-        android:layout_below="@+id/currentDef"
-        android:layout_above="@+id/time"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"/>
+        android:layout_centerInParent="true"/>
 
     <ImageView
-        android:layout_marginLeft="15dp"
-        android:layout_marginRight="15dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginBottom="5dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        app:layout_widthPercent="90%"
+        app:layout_aspectRatio="127%"
+        android:scaleType="fitCenter"
         android:id="@+id/gamePlayFigureSad"
-        android:layout_below="@+id/currentDef"
-        android:layout_above="@+id/time"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"/>
+        android:layout_centerInParent="true"/>
 
     <nevo_mashiach.pitkiot.NotActivities.MyTextView
         android:layout_width="wrap_content"
