@@ -76,7 +76,9 @@
             android:background="@drawable/button_blue"
             android:minWidth="180dp"
             android:minHeight="55dp"
-            android:layout_marginBottom="10dp"/>
+            android:layout_marginBottom="10dp"
+            android:textSize="16sp"
+            android:textStyle="bold"/>
 
         <!-- Close Button -->
         <nevo_mashiach.pitkiot.NotActivities.MyButton
@@ -122,9 +124,11 @@
         <!-- List of received notes -->
         <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="200dp"
+            android:layout_height="wrap_content"
+            android:maxHeight="400dp"
             android:background="#E8F5E9"
-            android:padding="5dp">
+            android:padding="5dp"
+            android:fillViewport="false">
 
             <LinearLayout
                 android:id="@+id/receivedNotesList"

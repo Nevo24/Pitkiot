@@ -66,7 +66,7 @@ public class NoteManagement extends AppCompatActivity {
     private NoteCollectionSession noteCollectionSession;
     private Dialog collectionDialog;
     private int receivedNotesCount = 0;
-    private final java.util.HashMap<String, Integer> submitterNoteCounts = new java.util.HashMap<>();
+    private final java.util.LinkedHashMap<String, Integer> submitterNoteCounts = new java.util.LinkedHashMap<>();
     private static final String FIREBASE_HOSTING_URL = "https://pitkiot-29650.web.app";
 
     // Prevent double-launching activities
