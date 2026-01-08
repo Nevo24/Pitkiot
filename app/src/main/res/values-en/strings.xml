@@ -60,7 +60,7 @@
 
     <!-- Dialog messages -->
     <string name="dialog_mode_changed_title">Note! Game mode changing!</string>
-    <string name="dialog_mode_changed_msg">From now %s</string>
+    <string name="dialog_mode_changed_msg">From now - %s</string>
     <string name="dialog_understood">Got it</string>
     <string name="dialog_no_notes_title">No Notes</string>
     <string name="dialog_no_notes_msg">Oh no</string>

@@ -11,7 +11,7 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="nevo_mashiach.pitkiot.GamePlay"
-    android:background="@mipmap/cool_background">
+    android:background="@mipmap/cork_board">
 
     <nevo_mashiach.pitkiot.NotActivities.MyButton
         android:text="@string/gameplay_pass_button"
@@ -75,18 +75,22 @@
         android:layout_alignParentStart="true"/>
 
     <nevo_mashiach.pitkiot.NotActivities.MyTextView
-        android:layout_marginTop="5dp"
         android:padding="10dp"
         android:text="@string/gameplay_no_more_notes"
-        android:background="@drawable/stroke"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/currentDef"
         android:textSize="44sp"
         android:gravity="center"
-        android:textColor="#ffffffff"
+        android:textColor="#FFFFFF"
+        android:shadowColor="#000000"
+        android:shadowRadius="3"
+        android:shadowDx="0"
+        android:shadowDy="0"
         android:layout_below="@+id/currentSuccess"
-        android:layout_centerHorizontal="true"/>
+        android:layout_above="@+id/gamePlayFigureHappy"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"/>
 
     <nevo_mashiach.pitkiot.NotActivities.MyTextView
         android:layout_width="match_parent"
@@ -105,14 +109,20 @@
         app:layout_aspectRatio="127%"
         android:scaleType="fitCenter"
         android:id="@+id/gamePlayFigureHappy"
-        android:layout_centerInParent="true"/>
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_above="@+id/time"
+        android:layout_marginBottom="30dp"/>
 
     <ImageView
         app:layout_widthPercent="90%"
         app:layout_aspectRatio="127%"
         android:scaleType="fitCenter"
         android:id="@+id/gamePlayFigureSad"
-        android:layout_centerInParent="true"/>
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_above="@+id/time"
+        android:layout_marginBottom="30dp"/>
 
     <nevo_mashiach.pitkiot.NotActivities.MyTextView
         android:layout_width="wrap_content"
