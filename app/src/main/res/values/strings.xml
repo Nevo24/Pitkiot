@@ -3,7 +3,7 @@
 
     <!-- Main Screen -->
     <string name="title_note_management">ניהול פתקים</string>
-    <string name="reminder_text">* לא לשכוח שכולם צריכים להכיר את הדמות</string>
+    <string name="reminder_text">* לא לשכוח שכולם צריכים להכיר את הדמויות</string>
     <string name="button_online_collection">איסוף מקוון  🌐</string>
     <string name="button_delete_notes">מחיקת פתקים  🗑️</string>
     <string name="button_add">הוספה</string>

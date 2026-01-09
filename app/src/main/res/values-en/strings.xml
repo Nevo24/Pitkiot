@@ -3,7 +3,7 @@
 
     <!-- Main Screen -->
     <string name="title_note_management">NOTES MANAGEMENT</string>
-    <string name="reminder_text">* Don\'t forget everyone needs to know the character</string>
+    <string name="reminder_text">* Don\'t forget everyone needs to know the characters</string>
     <string name="button_online_collection">🌐  Online Collection</string>
     <string name="button_delete_notes">🗑️  Delete Notes</string>
     <string name="button_add">Add</string>
