@@ -49,9 +49,9 @@
     <string name="web_label_name">שם / כינוי</string>
     <string name="web_placeholder_name">השם שלך</string>
     <string name="web_helper_name">כדי לזהות מי שלח את הפתק</string>
-    <string name="web_label_notes">הפתקים שלך</string>
-    <string name="web_placeholder_notes">כתוב פה את הפתקים שלך...</string>
-    <string name="web_helper_notes">אפשר לכתוב כמה פתקים מופרדים בפסיקים או ירידת שורה</string>
+    <string name="web_label_notes">הדמויות שלך</string>
+    <string name="web_placeholder_notes">דמות1, דמות2, דמות3...</string>
+    <string name="web_helper_notes">הפרד בפסיקים או שורות. * כולם צריכים להכיר את הדמויות</string>
     <string name="web_button_submit">שלח</string>
     <string name="web_button_submit_another">שלח נוסף</string>
     <string name="web_loading">טוען...</string>
