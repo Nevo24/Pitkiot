@@ -221,7 +221,7 @@ public class Settings extends AppCompatActivity {
                 Typeface externalFont=Typeface.createFromAsset(getAssets(), "gan.ttf");
                 ((TextView) v).setTypeface(externalFont);
                 ((TextView) v).setTextColor(0x88000000);
-                ((TextView) v).setTextSize(21);
+                ((TextView) v).setTextSize(24);
                 ((TextView) v).setGravity(android.view.Gravity.CENTER);
                 return v;
             }
@@ -234,7 +234,7 @@ public class Settings extends AppCompatActivity {
                 Typeface externalFont=Typeface.createFromAsset(getAssets(), "gan.ttf");
                 ((TextView) v).setTypeface(externalFont);
                 ((TextView) v).setTextColor(0x88000000);
-                ((TextView) v).setTextSize(21);
+                ((TextView) v).setTextSize(24);
                 ((TextView) v).setGravity(android.view.Gravity.CENTER);
                 return v;
             }
