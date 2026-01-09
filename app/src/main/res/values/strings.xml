@@ -45,7 +45,7 @@
 
     <!-- Web Form (for reference) -->
     <string name="web_title">Pitkiot - הוסף פתק</string>
-    <string name="web_header">📝 Pitkiot - פיתקיות</string>
+    <string name="web_header">📝 Pitkiot - פתקיות</string>
     <string name="web_label_name">שם / כינוי</string>
     <string name="web_placeholder_name">השם שלך</string>
     <string name="web_helper_name">כדי לזהות מי שלח את הפתק</string>
