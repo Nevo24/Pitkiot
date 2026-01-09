@@ -95,6 +95,10 @@ public class MainActivity extends AppCompatActivity {
             mNoteCount.setText(String.format(getString(R.string.note_count_database), db.totalNoteAmount()));
             firstLaunch = false;
         }
+
+        // Check for app updates every time MainActivity is created
+        UpdateChecker updateChecker = new UpdateChecker(this, getSupportFragmentManager());
+        updateChecker.checkForUpdate();
         mGamePlayFigureHappy.setVisibility(View.INVISIBLE);
         mGamePlayFigureHappy.setBackgroundResource(R.drawable.animation_happy);
         happyAanim = (AnimationDrawable) mGamePlayFigureHappy.getBackground();

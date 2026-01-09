@@ -158,4 +158,13 @@
     <!-- Sample/legacy strings -->
     <string name="sample_notes">Notes</string>
     <string name="sample_delete_all">Delete All</string>
+
+    <!-- Update Dialog -->
+    <string name="dialog_update_available_title">Update Available!</string>
+    <string name="dialog_update_available_msg">A new version of the app is available (%s).\n\nWe recommend updating to enjoy new features and bug fixes.</string>
+    <string name="button_update_now">Update Now</string>
+    <string name="button_later">Later</string>
+    <string name="dialog_update_required_title">Update Required!</string>
+    <string name="dialog_update_required_msg">This version of the app is no longer supported.\n\nPlease update to the new version (%s) to continue using the app.</string>
+    <string name="button_update">Update</string>
 </resources>

@@ -158,4 +158,13 @@
     <!-- Sample/legacy strings -->
     <string name="sample_notes">פתקים</string>
     <string name="sample_delete_all">מחק הכל</string>
+
+    <!-- Update Dialog -->
+    <string name="dialog_update_available_title">עדכון זמין!</string>
+    <string name="dialog_update_available_msg">גרסה חדשה של האפליקציה זמינה (%s).\n\nמומלץ לעדכן לגרסה החדשה כדי ליהנות מתכונות חדשות ותיקוני באגים.</string>
+    <string name="button_update_now">עדכן עכשיו</string>
+    <string name="button_later">מאוחר יותר</string>
+    <string name="dialog_update_required_title">עדכון נדרש!</string>
+    <string name="dialog_update_required_msg">גרסה זו של האפליקציה אינה נתמכת יותר.\n\nיש לעדכן לגרסה החדשה (%s) כדי להמשיך להשתמש באפליקציה.</string>
+    <string name="button_update">עדכן</string>
 </resources>
