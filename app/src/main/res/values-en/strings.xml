@@ -30,6 +30,12 @@
     <string name="submitter_item">✓ %1$s: %2$d notes</string>
     <string name="notes_word">notes</string>
 
+    <!-- Warning Dialog -->
+    <string name="warning_existing_notes_title">Notice!</string>
+    <string name="warning_existing_notes_message">You already have %d notes in your repository.\n\nIf you continue collecting more notes, they will be added to the existing repository.\n\nIf you want to start fresh, go back and delete the existing notes first.</string>
+    <string name="button_continue_collecting">Continue Collecting</string>
+    <string name="button_go_back">Go Back</string>
+
     <!-- Toast Messages -->
     <string name="toast_new_note_received">New note received from %s</string>
     <string name="toast_error">Error: %s</string>

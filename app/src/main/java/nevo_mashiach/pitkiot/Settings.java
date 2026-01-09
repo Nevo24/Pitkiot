@@ -39,6 +39,7 @@ public class Settings extends AppCompatActivity {
     TextView mAmountOfTeams;
     TextView mTeamEditableScore;
     TextView mBalanceExplanation;
+    TextView mNoteCount;
 
     Button mIncrease1;
     Button mDecrease1;
@@ -63,6 +64,7 @@ public class Settings extends AppCompatActivity {
         mAmountOfTeams = binding.amoutOfTeams;
         mTeamEditableScore = binding.teamEditableScore;
         mBalanceExplanation = binding.balanceExplanation;
+        mNoteCount = binding.noteCount;
         mIncrease1 = binding.increase1;
         mDecrease1 = binding.decrease1;
         mDecrease2 = binding.decrease2;
@@ -196,6 +198,9 @@ public class Settings extends AppCompatActivity {
         if(db.amountOfTeams == 2) mDecrease1.setEnabled(false);
         else if(db.amountOfTeams == 24) mIncrease1.setEnabled(false);
         if(db.scores[selectedSpinner] == 0) mDecrease2.setEnabled(false);
+
+        // Update note count display
+        mNoteCount.setText(String.format(getString(R.string.note_count_database), db.totalNoteAmount()));
     }
 
     private void createGroupSpinner() {

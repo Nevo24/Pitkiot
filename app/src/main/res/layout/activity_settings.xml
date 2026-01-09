@@ -268,9 +268,19 @@
         android:id="@+id/resetSettings"
         android:background="@drawable/button_green"
         android:textColor="#ffffffff"
+        android:layout_marginBottom="16dp"
+        android:layout_above="@+id/noteCount"
+        android:layout_centerHorizontal="true"/>
+
+    <nevo_mashiach.pitkiot.NotActivities.MyTextView
+        android:textSize="20sp"
+        android:text=""
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:id="@+id/noteCount"
+        android:textColor="#ffffffff"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"/>
+        android:layout_alignParentStart="true"/>
 </androidx.percentlayout.widget.PercentRelativeLayout>

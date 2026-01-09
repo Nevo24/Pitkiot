@@ -2,6 +2,7 @@ package nevo_mashiach.pitkiot;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
+import androidx.appcompat.app.AlertDialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
@@ -66,7 +67,7 @@ public class NoteManagement extends AppCompatActivity {
     private NoteCollectionSession noteCollectionSession;
     private Dialog collectionDialog;
     private int receivedNotesCount = 0;
-    private final java.util.LinkedHashMap<String, Integer> submitterNoteCounts = new java.util.LinkedHashMap<>();
+    private final java.util.LinkedHashMap<String, java.util.Set<String>> submitterNoteCounts = new java.util.LinkedHashMap<>();
     private static final String FIREBASE_HOSTING_URL = "https://pitkiot-29650.web.app";
 
     // Prevent double-launching activities
@@ -195,6 +196,23 @@ public class NoteManagement extends AppCompatActivity {
             return;
         }
 
+        // Check if there are existing notes in the repository
+        int existingNotesCount = db.defs.size() + db.temp.size();
+        for (int i = 0; i < 24; i++) {
+            existingNotesCount += db.teamsNotes[i].size();
+        }
+
+        // If there are existing notes, show warning dialog
+        if (existingNotesCount > 0) {
+            showExistingNotesWarning(existingNotesCount);
+            return;
+        }
+
+        // Continue with collection if no existing notes
+        continueOnlineNoteCollection();
+    }
+
+    private void continueOnlineNoteCollection() {
         // Reset counters for new session
         receivedNotesCount = 0;
         submitterNoteCounts.clear();
@@ -236,6 +254,27 @@ public class NoteManagement extends AppCompatActivity {
                 });
             }
         });
+    }
+
+    private void showExistingNotesWarning(int existingNotesCount) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle(getString(R.string.warning_existing_notes_title));
+        builder.setMessage(String.format(getString(R.string.warning_existing_notes_message), existingNotesCount));
+
+        // Continue Collecting button
+        builder.setPositiveButton(getString(R.string.button_continue_collecting), (dialog, which) -> {
+            dialog.dismiss();
+            continueOnlineNoteCollection();
+        });
+
+        // Go Back button
+        builder.setNegativeButton(getString(R.string.button_go_back), (dialog, which) -> {
+            dialog.dismiss();
+        });
+
+        builder.setCancelable(false);
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 
     private void showNoteCollectionDialog(String sessionId, String url) {
@@ -306,8 +345,16 @@ public class NoteManagement extends AppCompatActivity {
             if (noteCollectionSession != null) {
                 noteCollectionSession.endSession();
             }
+
+            // Calculate total unique notes before clearing
+            java.util.Set<String> allUniqueNotes = new java.util.HashSet<>();
+            for (java.util.Set<String> submitterNotes : submitterNoteCounts.values()) {
+                allUniqueNotes.addAll(submitterNotes);
+            }
+            int totalUniqueNotes = allUniqueNotes.size();
+
             collectionDialog.dismiss();
-            Toast.makeText(context, String.format(getString(R.string.toast_notes_added), receivedNotesCount), Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, String.format(getString(R.string.toast_notes_added), totalUniqueNotes), Toast.LENGTH_SHORT).show();
             receivedNotesCount = 0;
             submitterNoteCounts.clear();
         });
@@ -330,18 +377,27 @@ public class NoteManagement extends AppCompatActivity {
             List<String> notes = parseNotes(noteContent);
             int notesInSubmission = notes.size();
 
-            // Update total count for this submitter
-            Integer currentCount = submitterNoteCounts.get(submitterName);
-            if (currentCount == null) {
-                currentCount = 0;
+            // Update unique notes for this submitter
+            java.util.Set<String> currentNotes = submitterNoteCounts.get(submitterName);
+            if (currentNotes == null) {
+                currentNotes = new java.util.HashSet<>();
             }
-            submitterNoteCounts.put(submitterName, currentCount + notesInSubmission);
+            currentNotes.addAll(notes);
+            submitterNoteCounts.put(submitterName, currentNotes);
 
-            // Update total count display (total notes and total people)
+            // Update total count display (total unique notes and total people)
             int totalPeople = submitterNoteCounts.size();
-            countText.setText(String.format(getString(R.string.received_notes_count), receivedNotesCount, totalPeople));
 
-            android.util.Log.d("NoteManagement", "Updated count: " + receivedNotesCount + " notes from " + totalPeople + " people");
+            // Calculate total unique notes across all submitters
+            java.util.Set<String> allUniqueNotes = new java.util.HashSet<>();
+            for (java.util.Set<String> submitterNotes : submitterNoteCounts.values()) {
+                allUniqueNotes.addAll(submitterNotes);
+            }
+            int totalUniqueNotes = allUniqueNotes.size();
+
+            countText.setText(String.format(getString(R.string.received_notes_count), totalUniqueNotes, totalPeople));
+
+            android.util.Log.d("NoteManagement", "Updated count: " + totalUniqueNotes + " unique notes from " + totalPeople + " people");
 
             // Rebuild the submitters list
             if (dialogView instanceof LinearLayout) {
@@ -351,9 +407,9 @@ public class NoteManagement extends AppCompatActivity {
                 notesList.removeAllViews();
 
                 // Add a horizontal layout for each submitter with BiDi-safe text arrangement
-                for (java.util.Map.Entry<String, Integer> entry : submitterNoteCounts.entrySet()) {
+                for (java.util.Map.Entry<String, java.util.Set<String>> entry : submitterNoteCounts.entrySet()) {
                     String name = entry.getKey();
-                    int count = entry.getValue();
+                    int count = entry.getValue().size();
 
                     // Create horizontal container
                     LinearLayout itemContainer = new LinearLayout(context);
