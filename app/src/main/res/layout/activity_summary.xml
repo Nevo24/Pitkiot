@@ -137,6 +137,7 @@
         android:background="@drawable/button_green"
         android:layout_marginTop="12dp"
         android:textColor="#ffffff"
+        android:textSize="21sp"
         android:layout_below="@+id/roundModeSummary"
         android:layout_centerHorizontal="true"/>
 

@@ -15,7 +15,6 @@
                         />
                     <size
                         android:width="220dp"
-                        android:height="45dp"
                         />
                 </shape>
             </item>
@@ -31,7 +30,6 @@
                         />
                     <size
                         android:width="270dp"
-                        android:height="45dp"
                         />
                 </shape>
             </item>
@@ -53,7 +51,6 @@
                         />
                     <size
                         android:width="220dp"
-                        android:height="45dp"
                         />
                 </shape>
             </item>
@@ -70,7 +67,6 @@
                         />
                     <size
                         android:width="270dp"
-                        android:height="45dp"
                         />
                 </shape>
             </item>

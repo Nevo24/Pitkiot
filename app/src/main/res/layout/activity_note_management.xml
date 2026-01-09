@@ -58,7 +58,8 @@
         android:layout_marginTop="50dp"
         android:background="@drawable/button_green"
         android:text="@string/button_online_collection"
-        android:textColor="#ffffff" />
+        android:textColor="#ffffff"
+        android:textSize="21sp" />
 
     <nevo_mashiach.pitkiot.NotActivities.MyButton
         android:text="@string/button_delete_notes"
@@ -67,6 +68,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/deleteNotes"
         android:background="@drawable/button_green"
+        android:textSize="21sp"
         android:layout_marginBottom="16dp"
         android:layout_above="@+id/noteCount"
         android:layout_centerHorizontal="true"/>
@@ -80,6 +82,7 @@
         android:textColor="#ffffffff"
         android:background="@drawable/button_blue"
         android:text="@string/button_add"
+        android:textSize="21sp"
         android:layout_marginTop="10dp"
         android:layout_below="@+id/reminder"
         android:layout_alignParentRight="true"

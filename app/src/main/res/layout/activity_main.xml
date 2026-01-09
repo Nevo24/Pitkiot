@@ -57,7 +57,8 @@
         android:layout_below="@+id/playGame"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="18dp"
-        android:textColor="#ffffffff"/>
+        android:textColor="#ffffffff"
+        android:textSize="21sp"/>
 
     <nevo_mashiach.pitkiot.NotActivities.MyButton
         android:text="@string/button_reset"
@@ -68,7 +69,8 @@
         android:layout_marginBottom="16dp"
         android:layout_above="@+id/noteCount"
         android:layout_centerHorizontal="true"
-        android:textColor="#ffffffff"/>
+        android:textColor="#ffffffff"
+        android:textSize="21sp"/>
 
     <nevo_mashiach.pitkiot.NotActivities.MyTextView
         android:textSize="20sp"
@@ -89,6 +91,7 @@
         android:id="@+id/playGame"
         android:background="@drawable/button_green"
         android:textColor="#ffffffff"
+        android:textSize="21sp"
         android:layout_marginTop="75dp"
         android:layout_alignParentTop="true"
         android:layout_alignLeft="@+id/addNote"
