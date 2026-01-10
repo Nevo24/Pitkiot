@@ -448,7 +448,6 @@ public class NoteManagement extends AppCompatActivity {
                     // Create horizontal container
                     LinearLayout itemContainer = new LinearLayout(context);
                     itemContainer.setOrientation(LinearLayout.HORIZONTAL);
-                    itemContainer.setLayoutDirection(View.LAYOUT_DIRECTION_LTR); // Force LTR to maintain visual order
                     itemContainer.setGravity(android.view.Gravity.CENTER);
                     itemContainer.setBackgroundResource(R.drawable.note_item_background);
                     itemContainer.setPadding(30, 20, 30, 20);
@@ -459,45 +458,67 @@ public class NoteManagement extends AppCompatActivity {
                     containerParams.setMargins(0, 0, 0, 15);
                     itemContainer.setLayoutParams(containerParams);
 
-                    // Check if name is entirely Hebrew (no Latin characters)
-                    boolean isHebrew = name.matches("[\\u0590-\\u05FF\\s]+");
+                    // Check the game language mode (not the name language)
+                    String gameLanguage = prefs.getString("app_language", "he");
+                    boolean isGameInHebrew = gameLanguage.equals("he");
+
+                    // Check if name is entirely Hebrew (no Latin characters) - for layout direction
+                    boolean isNameHebrew = name.matches("[\\u0590-\\u05FF\\s]+");
+
+                    // Set layout direction based on name language
+                    if (isNameHebrew) {
+                        itemContainer.setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
+                    } else {
+                        itemContainer.setLayoutDirection(View.LAYOUT_DIRECTION_LTR);
+                    }
 
                     // Part 1: Checkmark (always LTR, separate from name)
                     TextView checkmarkPart = new TextView(context);
-                    checkmarkPart.setText("✓ ");
+                    checkmarkPart.setText("✓");
                     checkmarkPart.setTextSize(16);
                     checkmarkPart.setTextColor(Color.parseColor("#406D3C"));
                     checkmarkPart.setGravity(android.view.Gravity.CENTER_VERTICAL);
                     checkmarkPart.setTextDirection(TextView.TEXT_DIRECTION_LTR);
+                    // Add margin to create space between checkmark and name
+                    LinearLayout.LayoutParams checkParams = new LinearLayout.LayoutParams(
+                            LinearLayout.LayoutParams.WRAP_CONTENT,
+                            LinearLayout.LayoutParams.WRAP_CONTENT
+                    );
+                    if (isNameHebrew) {
+                        checkParams.setMarginEnd(10); // Space on the left side (visual) in RTL
+                    } else {
+                        checkParams.setMarginEnd(10); // Space on the right side in LTR
+                    }
+                    checkmarkPart.setLayoutParams(checkParams);
 
                     itemContainer.addView(checkmarkPart);
 
-                    if (isHebrew) {
-                        // For Hebrew: display as "✓ name: X notes"
+                    if (isGameInHebrew) {
+                        // Hebrew game mode: display as "✓ name: X פתקים"
                         TextView namePart = new TextView(context);
                         namePart.setText(name + ": ");
                         namePart.setTextSize(16);
                         namePart.setTextColor(Color.parseColor("#406D3C"));
                         namePart.setGravity(android.view.Gravity.CENTER_VERTICAL);
-                        namePart.setTextDirection(TextView.TEXT_DIRECTION_RTL);
+                        namePart.setTextDirection(isNameHebrew ? TextView.TEXT_DIRECTION_RTL : TextView.TEXT_DIRECTION_FIRST_STRONG);
                         itemContainer.addView(namePart);
 
                         TextView countPart = new TextView(context);
-                        // Changed order: number first, then word
-                        countPart.setText(" " + count + " " + getString(R.string.notes_word));
+                        // Hebrew game mode: number first, then word
+                        countPart.setText(count + " " + getString(R.string.notes_word));
                         countPart.setTextSize(16);
                         countPart.setTextColor(Color.parseColor("#406D3C"));
                         countPart.setGravity(android.view.Gravity.CENTER_VERTICAL);
                         countPart.setTextDirection(TextView.TEXT_DIRECTION_RTL);
                         itemContainer.addView(countPart);
                     } else {
-                        // For English: split name and colon
+                        // English game mode: display as "✓ name: 2 notes"
                         TextView namePart = new TextView(context);
                         namePart.setText(name);
                         namePart.setTextSize(16);
                         namePart.setTextColor(Color.parseColor("#406D3C"));
                         namePart.setGravity(android.view.Gravity.CENTER_VERTICAL);
-                        namePart.setTextDirection(TextView.TEXT_DIRECTION_LTR);
+                        namePart.setTextDirection(isNameHebrew ? TextView.TEXT_DIRECTION_RTL : TextView.TEXT_DIRECTION_LTR);
                         itemContainer.addView(namePart);
 
                         TextView colonPart = new TextView(context);
@@ -508,6 +529,7 @@ public class NoteManagement extends AppCompatActivity {
                         itemContainer.addView(colonPart);
 
                         TextView countPart = new TextView(context);
+                        // English game mode: number first, then word
                         countPart.setText(count + " " + getString(R.string.notes_word));
                         countPart.setTextSize(16);
                         countPart.setTextColor(Color.parseColor("#406D3C"));
