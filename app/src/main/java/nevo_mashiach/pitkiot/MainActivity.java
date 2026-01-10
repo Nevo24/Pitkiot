@@ -331,20 +331,37 @@ public class MainActivity extends AppCompatActivity {
 
     private String detectCountryFromIP() {
         try {
-            // Use ipapi.co free API to detect country
-            java.net.URL url = new java.net.URL("https://ipapi.co/country/");
+            // Use ip-api.com free API to detect country
+            java.net.URL url = new java.net.URL("https://ip-api.com/json/?fields=countryCode");
             java.net.HttpURLConnection connection = (java.net.HttpURLConnection) url.openConnection();
             connection.setRequestMethod("GET");
-            connection.setConnectTimeout(3000); // 3 second timeout
-            connection.setReadTimeout(3000);
+            connection.setConnectTimeout(5000); // 5 second timeout
+            connection.setReadTimeout(5000);
 
             int responseCode = connection.getResponseCode();
 
             if (responseCode == 200) {
                 java.io.BufferedReader reader = new java.io.BufferedReader(
                     new java.io.InputStreamReader(connection.getInputStream()));
-                String countryCode = reader.readLine().trim();
+                StringBuilder response = new StringBuilder();
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    response.append(line);
+                }
                 reader.close();
+
+                String jsonResponse = response.toString();
+
+                // Parse JSON manually to extract countryCode
+                // Response format: {"countryCode":"IL"} or {"countryCode":"US"}
+                String countryCode = null;
+                if (jsonResponse.contains("\"countryCode\":")) {
+                    int start = jsonResponse.indexOf("\"countryCode\":\"") + 15;
+                    int end = jsonResponse.indexOf("\"", start);
+                    if (start > 14 && end > start) {
+                        countryCode = jsonResponse.substring(start, end);
+                    }
+                }
 
                 // If Israel, return Hebrew, else English
                 if ("IL".equalsIgnoreCase(countryCode)) {
@@ -355,7 +372,6 @@ public class MainActivity extends AppCompatActivity {
             }
         } catch (Exception e) {
             // API failed, use fallback
-            e.printStackTrace();
         }
 
         // Fallback: use system locale
