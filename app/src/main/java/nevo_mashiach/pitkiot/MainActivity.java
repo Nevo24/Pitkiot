@@ -325,26 +325,47 @@ public class MainActivity extends AppCompatActivity {
                 spEditor.putString("app_language", detectedLanguage);
                 spEditor.commit();
                 setLocale(detectedLanguage);
+                recreate(); // Recreate activity to apply the new locale
             });
         }).start();
     }
 
     private String detectCountryFromIP() {
         try {
-            // Use ipapi.co free API to detect country
-            java.net.URL url = new java.net.URL("https://ipapi.co/country/");
+            // Use ipapi.co free API to detect country (30k requests/month free)
+            java.net.URL url = new java.net.URL("https://ipapi.co/json/");
             java.net.HttpURLConnection connection = (java.net.HttpURLConnection) url.openConnection();
             connection.setRequestMethod("GET");
-            connection.setConnectTimeout(3000); // 3 second timeout
-            connection.setReadTimeout(3000);
+            connection.setRequestProperty("User-Agent", "Pitkiot-Android-App");
+            connection.setConnectTimeout(5000); // 5 second timeout
+            connection.setReadTimeout(5000);
 
             int responseCode = connection.getResponseCode();
 
             if (responseCode == 200) {
                 java.io.BufferedReader reader = new java.io.BufferedReader(
                     new java.io.InputStreamReader(connection.getInputStream()));
-                String countryCode = reader.readLine().trim();
+                StringBuilder response = new StringBuilder();
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    response.append(line);
+                }
                 reader.close();
+
+                String jsonResponse = response.toString();
+
+                // Parse JSON manually to extract country_code
+                // Response format: {"country_code": "IL",...} or {"country_code": "US",...}
+                String countryCode = null;
+                if (jsonResponse.contains("\"country_code\"")) {
+                    int keyStart = jsonResponse.indexOf("\"country_code\"");
+                    int colonPos = jsonResponse.indexOf(":", keyStart);
+                    int start = jsonResponse.indexOf("\"", colonPos) + 1;
+                    int end = jsonResponse.indexOf("\"", start);
+                    if (start > 0 && end > start) {
+                        countryCode = jsonResponse.substring(start, end);
+                    }
+                }
 
                 // If Israel, return Hebrew, else English
                 if ("IL".equalsIgnoreCase(countryCode)) {
@@ -355,7 +376,6 @@ public class MainActivity extends AppCompatActivity {
             }
         } catch (Exception e) {
             // API failed, use fallback
-            e.printStackTrace();
         }
 
         // Fallback: use system locale
