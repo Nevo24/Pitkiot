@@ -5,6 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pitkiot - הוסף פתק</title>
     <style>
+        @font-face {
+            font-family: 'gan';
+            src: url('gan.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -12,7 +19,7 @@
         }
 
         body {
-            font-family: 'Tahoma', 'Arial', 'Helvetica', sans-serif;
+            font-family: 'gan', 'Tahoma', 'Arial', 'Helvetica', sans-serif;
             background: linear-gradient(135deg, #999ebc 0%, #7b82c4 50%, #C8E57B 100%);
             background-attachment: fixed;
             min-height: 100vh;
@@ -82,7 +89,7 @@
             padding: 8px 16px;
             border-radius: 10px;
             display: inline-block;
-            font-family: 'Courier New', monospace;
+            font-family: 'gan', 'Courier New', monospace;
             font-size: 18px;
             font-weight: bold;
             color: #11353D;
@@ -119,7 +126,7 @@
             border: 3px solid #CCCCCC;
             border-radius: 12px;
             font-size: 16px;
-            font-family: 'Tahoma', Arial, sans-serif;
+            font-family: 'gan', 'Tahoma', Arial, sans-serif;
             transition: border-color 0.3s, box-shadow 0.3s;
             background: white;
         }
