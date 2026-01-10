@@ -13,8 +13,11 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.Typeface;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.os.LocaleList;
+import android.util.TypedValue;
 import androidx.preference.PreferenceManager;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -275,17 +278,33 @@ public class NoteManagement extends AppCompatActivity {
         builder.setCancelable(false);
         AlertDialog dialog = builder.create();
 
-        // Make the positive button more prominent
+        // Make the positive button more prominent with bold dark green text
         dialog.setOnShowListener(dialogInterface -> {
             Button positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
             Button negativeButton = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
 
             if (positiveButton != null) {
-                positiveButton.setTextColor(getResources().getColor(R.color.colorAccent));
+                // Get the dark green color from colorAccent
+                int darkGreen = getResources().getColor(R.color.colorAccent);
+
+                // Bold text for emphasis (Material 3 Expressive)
+                positiveButton.setTypeface(null, Typeface.BOLD);
+
+                // Slightly larger text size for primary action
+                positiveButton.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
+
+                // Dark green text color (no background)
+                positiveButton.setTextColor(darkGreen);
+
+                // Add glowing effect using shadow layer
+                // Parameters: radius, dx, dy, color
+                positiveButton.setShadowLayer(8, 0, 0, darkGreen);
+
                 positiveButton.setAllCaps(false);
             }
             if (negativeButton != null) {
                 negativeButton.setAllCaps(false);
+                // Keep default style - no background, just text
             }
         });
 
@@ -454,15 +473,7 @@ public class NoteManagement extends AppCompatActivity {
                     itemContainer.addView(checkmarkPart);
 
                     if (isHebrew) {
-                        // For Hebrew: add count first, then name with RTL and colon before
-                        TextView countPart = new TextView(context);
-                        countPart.setText(count + " " + getString(R.string.notes_word) + " ");
-                        countPart.setTextSize(16);
-                        countPart.setTextColor(Color.parseColor("#406D3C"));
-                        countPart.setGravity(android.view.Gravity.CENTER_VERTICAL);
-                        countPart.setTextDirection(TextView.TEXT_DIRECTION_LTR);
-                        itemContainer.addView(countPart);
-
+                        // For Hebrew: display as "✓ name: X notes"
                         TextView namePart = new TextView(context);
                         namePart.setText(name + ": ");
                         namePart.setTextSize(16);
@@ -470,6 +481,15 @@ public class NoteManagement extends AppCompatActivity {
                         namePart.setGravity(android.view.Gravity.CENTER_VERTICAL);
                         namePart.setTextDirection(TextView.TEXT_DIRECTION_RTL);
                         itemContainer.addView(namePart);
+
+                        TextView countPart = new TextView(context);
+                        // Changed order: number first, then word
+                        countPart.setText(" " + count + " " + getString(R.string.notes_word));
+                        countPart.setTextSize(16);
+                        countPart.setTextColor(Color.parseColor("#406D3C"));
+                        countPart.setGravity(android.view.Gravity.CENTER_VERTICAL);
+                        countPart.setTextDirection(TextView.TEXT_DIRECTION_RTL);
+                        itemContainer.addView(countPart);
                     } else {
                         // For English: split name and colon
                         TextView namePart = new TextView(context);

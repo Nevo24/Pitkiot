@@ -5,7 +5,10 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
+import android.graphics.Typeface;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -65,25 +68,50 @@ public class MyDialogFragment extends DialogFragment {
         dialog.setOnShowListener(new DialogInterface.OnShowListener() {
             @Override
             public void onShow(DialogInterface dialogInterface) {
-                // Get the accent color (green) for the primary button
-                int accentColor = ContextCompat.getColor(context, nevo_mashiach.pitkiot.R.color.colorAccent);
+                // Get the dark green color from colorAccent
+                int darkGreen = ContextCompat.getColor(context, nevo_mashiach.pitkiot.R.color.colorAccent);
 
-                // Make positive button prominent with accent color
+                // Make positive button prominent with bold dark green text
                 Button positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
                 if (positiveButton != null) {
-                    positiveButton.setTextColor(accentColor);
+                    // Bold text for emphasis (Material 3 Expressive)
+                    positiveButton.setTypeface(null, Typeface.BOLD);
+
+                    // Slightly larger text size for primary action
+                    positiveButton.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
+
+                    // Dark green text color (no background)
+                    positiveButton.setTextColor(darkGreen);
+
+                    // Add glowing effect using shadow layer
+                    // Parameters: radius, dx, dy, color
+                    positiveButton.setShadowLayer(8, 0, 0, darkGreen);
+
                     positiveButton.setAllCaps(false); // Better readability for Hebrew
                 }
 
-                // Keep negative button less prominent (default gray)
+                // Keep negative button as text button (less prominent)
                 Button negativeButton = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
                 if (negativeButton != null) {
                     negativeButton.setAllCaps(false); // Better readability for Hebrew
+                    // Keep default style - no background, just text
                 }
 
-                // Keep neutral button standard
+                // Style neutral button as primary (for single-option dialogs)
                 Button neutralButton = dialog.getButton(AlertDialog.BUTTON_NEUTRAL);
                 if (neutralButton != null) {
+                    // Bold text for emphasis (Material 3 Expressive)
+                    neutralButton.setTypeface(null, Typeface.BOLD);
+
+                    // Slightly larger text size for primary action
+                    neutralButton.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
+
+                    // Dark green text color (no background)
+                    neutralButton.setTextColor(darkGreen);
+
+                    // Add glowing effect using shadow layer
+                    neutralButton.setShadowLayer(8, 0, 0, darkGreen);
+
                     neutralButton.setAllCaps(false); // Better readability for Hebrew
                 }
             }

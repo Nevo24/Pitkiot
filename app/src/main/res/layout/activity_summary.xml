@@ -126,6 +126,7 @@
         android:textSize="34sp"
         android:textColor="#B70004"
         android:gravity="right"
+        android:textDirection="ltr"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"/>
 
@@ -148,7 +149,7 @@
         android:id="@+id/pressHereFigure"
         android:layout_below="@+id/ready"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"/>
+        android:layoutDirection="ltr"/>
 
     <nevo_mashiach.pitkiot.NotActivities.MyTextView
         android:text="@string/mode_explain_without_word"
@@ -171,6 +172,7 @@
         android:textSize="34sp"
         android:textColor="#B70004"
         android:gravity="right"
+        android:textDirection="ltr"
         android:layout_below="@+id/ready"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"/>
@@ -185,6 +187,7 @@
         android:textSize="34sp"
         android:textColor="#B70004"
         android:gravity="right"
+        android:textDirection="ltr"
         android:layout_below="@+id/ready"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"

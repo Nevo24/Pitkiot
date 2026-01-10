@@ -44,9 +44,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/linearLayout"
         android:minHeight="55dp"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true">
+        android:layout_alignParentTop="true">
     </LinearLayout>
 
     <nevo_mashiach.pitkiot.NotActivities.MyButton
@@ -86,7 +84,7 @@
         android:layout_marginTop="10dp"
         android:layout_below="@+id/reminder"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"/>
+        android:layoutDirection="ltr"/>
 
     <nevo_mashiach.pitkiot.NotActivities.MyEditText
         android:id="@+id/typeDef"
@@ -101,7 +99,7 @@
         android:layout_alignTop="@+id/addDef"
         android:layout_alignBottom="@+id/addDef"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"/>
+        android:layoutDirection="ltr"/>
 
     <nevo_mashiach.pitkiot.NotActivities.MyTextView
         android:textSize="20sp"

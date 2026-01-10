@@ -23,7 +23,7 @@
         android:textSize="28sp"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"/>
+        android:layoutDirection="ltr"/>
 
     <nevo_mashiach.pitkiot.NotActivities.MyButton
         android:text="@string/gameplay_success_button"
@@ -34,7 +34,8 @@
         android:textColor="#ffffffff"
         android:textSize="28sp"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"/>
+        android:layout_alignParentRight="true"
+        android:layoutDirection="ltr"/>
 
     <nevo_mashiach.pitkiot.NotActivities.MyTextView
         android:text="@string/game_notes_remaining"
@@ -43,8 +44,6 @@
         android:id="@+id/editScoreHeadline"
         android:layout_marginTop="12dp"
         android:layout_below="@+id/teamNum"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
         android:textColor="#ffffffff"
         android:textSize="21sp"
         android:gravity="center"
@@ -70,9 +69,7 @@
         android:textColor="#ffffffff"
         android:textSize="21sp"
         android:gravity="center"
-        android:layout_below="@+id/editScoreHeadline"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"/>
+        android:layout_below="@+id/editScoreHeadline"/>
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -107,8 +104,6 @@
         android:text="@string/game_time_remaining"
         android:gravity="center"
         android:layout_above="@+id/next"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
         android:layout_marginBottom="35dp"/>
 
     <ImageView

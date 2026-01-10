@@ -23,12 +23,11 @@
         android:background="?attr/selectableItemBackgroundBorderless"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
         android:layout_marginTop="5dp"
         android:layout_marginLeft="5dp"
-        android:layout_marginStart="5dp"
         android:clickable="true"
         android:focusable="true"
+        android:layoutDirection="ltr"
         android:contentDescription="@string/button_settings"/>
 
     <TextView
@@ -41,12 +40,11 @@
         android:background="?attr/selectableItemBackgroundBorderless"
         android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
         android:layout_marginTop="5dp"
         android:layout_marginRight="5dp"
-        android:layout_marginEnd="5dp"
         android:clickable="true"
-        android:focusable="true"/>
+        android:focusable="true"
+        android:layoutDirection="ltr"/>
 
     <nevo_mashiach.pitkiot.NotActivities.MyButton
         android:text="@string/button_manage_notes"

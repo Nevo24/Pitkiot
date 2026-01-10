@@ -13,7 +13,8 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="nevo_mashiach.pitkiot.Settings"
-    android:background="@mipmap/cork_board">
+    android:background="@mipmap/cork_board"
+    android:layoutDirection="ltr">
 
     <androidx.percentlayout.widget.PercentRelativeLayout
         android:id="@+id/topLayout"
@@ -133,7 +134,7 @@
         android:theme="@style/MyCheckBox"
         android:textColor="@color/common_google_signin_btn_text_dark_default"
         android:button="@null"
-        android:drawableStart="?android:attr/listChoiceIndicatorMultiple"
+        android:drawableLeft="?android:attr/listChoiceIndicatorMultiple"
         android:text="@string/settings_auto_balance"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -143,7 +144,7 @@
         android:textStyle="normal|bold"
         android:gravity="start|center_vertical"
         android:layout_below="@+id/headline"
-        android:layout_alignParentStart="true"/>
+        android:layout_alignParentRight="true"/>
 
     <nevo_mashiach.pitkiot.NotActivities.MyTextView
         android:text="@string/settings_input_instruction"
@@ -197,7 +198,7 @@
         android:theme="@style/MyCheckBox"
         android:textColor="@color/common_google_signin_btn_text_dark_default"
         android:button="@null"
-        android:drawableStart="?android:attr/listChoiceIndicatorMultiple"
+        android:drawableLeft="?android:attr/listChoiceIndicatorMultiple"
         android:text="@string/settings_sound"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -207,7 +208,7 @@
         android:textStyle="normal|bold"
         android:gravity="start|center_vertical"
         android:layout_below="@+id/autoBalaceCheckBox"
-        android:layout_alignParentStart="true"
+        android:layout_alignParentRight="true"
         android:layout_marginTop="14dp"/>
 
     <nevo_mashiach.pitkiot.NotActivities.MyEditText
@@ -235,7 +236,7 @@
         android:id="@+id/balanceExplanation"
         android:textSize="24sp"
         android:layout_alignTop="@+id/autoBalaceCheckBox"
-        android:layout_alignParentEnd="true"/>
+        android:layout_alignParentLeft="true"/>
 
     <nevo_mashiach.pitkiot.NotActivities.MyTextView
         android:layout_width="wrap_content"

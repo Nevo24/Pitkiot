@@ -2,11 +2,15 @@ package nevo_mashiach.pitkiot;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import androidx.annotation.NonNull;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.graphics.Typeface;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.LocaleList;
 import androidx.preference.PreferenceManager;
 import android.view.KeyEvent;
 import android.view.View;
@@ -20,6 +24,9 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.RelativeLayout;
+
+import java.util.Locale;
 
 import androidx.appcompat.app.AppCompatActivity;
 import nevo_mashiach.pitkiot.databinding.ActivitySettingsBinding;
@@ -49,6 +56,33 @@ public class Settings extends AppCompatActivity {
     int selectedSpinner = 1;
     SharedPreferences prefs;
     SharedPreferences.Editor spEditor;
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(updateBaseContextLocale(base));
+    }
+
+    private Context updateBaseContextLocale(Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        String language = prefs.getString("app_language", "he");
+        Locale locale = new Locale(language);
+        Locale.setDefault(locale);
+
+        Resources resources = context.getResources();
+        Configuration config = new Configuration(resources.getConfiguration());
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            config.setLocale(locale);
+            LocaleList localeList = new LocaleList(locale);
+            LocaleList.setDefault(localeList);
+            config.setLocales(localeList);
+        } else {
+            config.locale = locale;
+        }
+
+        config.setLayoutDirection(locale);
+        return context.createConfigurationContext(config);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,6 +131,28 @@ public class Settings extends AppCompatActivity {
         dialogBag = new DialogBag(getSupportFragmentManager(), this);
         prefs = PreferenceManager.getDefaultSharedPreferences(context);
         spEditor = prefs.edit();
+
+        // Swap checkbox and button positions for English
+        String language = prefs.getString("app_language", "he");
+        if (language.equals("en")) {
+            // In English: swap to checkboxes LEFT, "?" RIGHT
+            RelativeLayout.LayoutParams checkboxParams1 = (RelativeLayout.LayoutParams) mAutoBalaceCheckBox.getLayoutParams();
+            RelativeLayout.LayoutParams checkboxParams2 = (RelativeLayout.LayoutParams) mSoundCheckBox.getLayoutParams();
+            RelativeLayout.LayoutParams buttonParams = (RelativeLayout.LayoutParams) mBalanceExplanation.getLayoutParams();
+
+            checkboxParams1.removeRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+            checkboxParams1.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+
+            checkboxParams2.removeRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+            checkboxParams2.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+
+            buttonParams.removeRule(RelativeLayout.ALIGN_PARENT_LEFT);
+            buttonParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+
+            mAutoBalaceCheckBox.setLayoutParams(checkboxParams1);
+            mSoundCheckBox.setLayoutParams(checkboxParams2);
+            mBalanceExplanation.setLayoutParams(buttonParams);
+        }
 
         Typeface tf = Typeface.createFromAsset(getAssets(), "gan.ttf");
         mAutoBalaceCheckBox.setTypeface(tf);
