@@ -419,8 +419,8 @@ public class NoteManagement extends AppCompatActivity {
             currentNotes.addAll(notes);
             submitterNoteCounts.put(submitterName, currentNotes);
 
-            // Update total count display (total unique notes and total people)
-            int totalPeople = submitterNoteCounts.size();
+            // Update total count display (total unique notes and total players)
+            int totalPlayers = submitterNoteCounts.size();
 
             // Calculate total unique notes across all submitters
             java.util.Set<String> allUniqueNotes = new java.util.HashSet<>();
@@ -429,9 +429,9 @@ public class NoteManagement extends AppCompatActivity {
             }
             int totalUniqueNotes = allUniqueNotes.size();
 
-            countText.setText(String.format(getString(R.string.received_notes_count), totalUniqueNotes, totalPeople));
+            countText.setText(String.format(getString(R.string.received_notes_count), totalUniqueNotes, totalPlayers));
 
-            android.util.Log.d("NoteManagement", "Updated count: " + totalUniqueNotes + " unique notes from " + totalPeople + " people");
+            android.util.Log.d("NoteManagement", "Updated count: " + totalUniqueNotes + " unique notes from " + totalPlayers + " people");
 
             // Rebuild the submitters list
             if (dialogView instanceof LinearLayout) {

@@ -304,8 +304,73 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void loadLanguagePreference() {
-        String language = prefs.getString("app_language", "he");
-        setLocale(language);
+        // Check if this is first launch (no language preference set)
+        if (!prefs.contains("app_language")) {
+            // First launch - detect location and set language
+            detectLocationAndSetLanguage();
+        } else {
+            // Use saved preference
+            String language = prefs.getString("app_language", "he");
+            setLocale(language);
+        }
+    }
+
+    private void detectLocationAndSetLanguage() {
+        // Try to detect country via IP geolocation
+        new Thread(() -> {
+            String detectedLanguage = detectCountryFromIP();
+
+            // Save and apply language on main thread
+            runOnUiThread(() -> {
+                spEditor.putString("app_language", detectedLanguage);
+                spEditor.commit();
+                setLocale(detectedLanguage);
+            });
+        }).start();
+    }
+
+    private String detectCountryFromIP() {
+        try {
+            // Use ipapi.co free API to detect country
+            java.net.URL url = new java.net.URL("https://ipapi.co/country/");
+            java.net.HttpURLConnection connection = (java.net.HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("GET");
+            connection.setConnectTimeout(3000); // 3 second timeout
+            connection.setReadTimeout(3000);
+
+            int responseCode = connection.getResponseCode();
+
+            if (responseCode == 200) {
+                java.io.BufferedReader reader = new java.io.BufferedReader(
+                    new java.io.InputStreamReader(connection.getInputStream()));
+                String countryCode = reader.readLine().trim();
+                reader.close();
+
+                // If Israel, return Hebrew, else English
+                if ("IL".equalsIgnoreCase(countryCode)) {
+                    return "he";
+                } else {
+                    return "en";
+                }
+            }
+        } catch (Exception e) {
+            // API failed, use fallback
+            e.printStackTrace();
+        }
+
+        // Fallback: use system locale
+        return detectLanguageFromSystemLocale();
+    }
+
+    private String detectLanguageFromSystemLocale() {
+        String countryCode = Locale.getDefault().getCountry();
+
+        // If Israel, return Hebrew, else English
+        if ("IL".equalsIgnoreCase(countryCode)) {
+            return "he";
+        } else {
+            return "en";
+        }
     }
 
     private void setLocale(String languageCode) {
