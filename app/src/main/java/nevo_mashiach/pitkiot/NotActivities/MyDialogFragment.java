@@ -4,13 +4,16 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
 
 /**
@@ -57,6 +60,35 @@ public class MyDialogFragment extends DialogFragment {
         if(negativeButtonText != null) builder.setNegativeButton(negativeButtonText, negativeButtonListener);
         if(naturalButtonText != null) builder.setNeutralButton(naturalButtonText, naturalButtonListener);
         AlertDialog dialog = builder.create();
+
+        // Make the positive button more prominent after dialog is shown
+        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialogInterface) {
+                // Get the accent color (green) for the primary button
+                int accentColor = ContextCompat.getColor(context, nevo_mashiach.pitkiot.R.color.colorAccent);
+
+                // Make positive button prominent with accent color
+                Button positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                if (positiveButton != null) {
+                    positiveButton.setTextColor(accentColor);
+                    positiveButton.setAllCaps(false); // Better readability for Hebrew
+                }
+
+                // Keep negative button less prominent (default gray)
+                Button negativeButton = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+                if (negativeButton != null) {
+                    negativeButton.setAllCaps(false); // Better readability for Hebrew
+                }
+
+                // Keep neutral button standard
+                Button neutralButton = dialog.getButton(AlertDialog.BUTTON_NEUTRAL);
+                if (neutralButton != null) {
+                    neutralButton.setAllCaps(false); // Better readability for Hebrew
+                }
+            }
+        });
+
         return dialog;
     }
 

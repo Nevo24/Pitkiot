@@ -151,7 +151,8 @@ public class DialogBag {
                 context.getString(nevo_mashiach.pitkiot.R.string.dialog_back_main_title),
                 context.getString(nevo_mashiach.pitkiot.R.string.dialog_back_main_msg)
         );
-        dialog = dialog.setPositiveButton(context.getString(nevo_mashiach.pitkiot.R.string.dialog_return_main), new DialogInterface.OnClickListener() {
+        dialog = dialog.setPositiveButton(context.getString(nevo_mashiach.pitkiot.R.string.dialog_continue_play), null);
+        dialog = dialog.setNegativeButton(context.getString(nevo_mashiach.pitkiot.R.string.dialog_return_main), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 if(currentActivity.equals("nevo_mashiach.pitkiot.GamePlay")) db.gamePlayIsPaused = true;
@@ -160,7 +161,6 @@ public class DialogBag {
                 context.startActivity(intent);
             }
         });
-        dialog = dialog.setNegativeButton(context.getString(nevo_mashiach.pitkiot.R.string.dialog_continue_play), null);
         dialog.show(fragmentManager, "BackToMainMenu"); //The second one is just a string tag that we can use to refer to it.
     }
 
@@ -169,13 +169,13 @@ public class DialogBag {
                 context.getString(nevo_mashiach.pitkiot.R.string.dialog_exit_game_title),
                 context.getString(nevo_mashiach.pitkiot.R.string.dialog_exit_game_msg)
         );
-        dialog = dialog.setPositiveButton(context.getString(nevo_mashiach.pitkiot.R.string.dialog_exit), new DialogInterface.OnClickListener() {
+        dialog = dialog.setPositiveButton(context.getString(nevo_mashiach.pitkiot.R.string.dialog_continue_play), null);
+        dialog = dialog.setNegativeButton(context.getString(nevo_mashiach.pitkiot.R.string.dialog_exit), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 MainActivity.appExit();
             }
         });
-        dialog = dialog.setNegativeButton(context.getString(nevo_mashiach.pitkiot.R.string.dialog_continue_play), null);
         dialog.show(fragmentManager, "ExitTheGame"); //The second one is just a string tag that we can use to refer to it.
     }
 
@@ -184,13 +184,13 @@ public class DialogBag {
                 context.getString(nevo_mashiach.pitkiot.R.string.dialog_delete_char_title),
                 context.getString(nevo_mashiach.pitkiot.R.string.dialog_delete_char_msg)
         );
-        dialog = dialog.setPositiveButton(context.getString(nevo_mashiach.pitkiot.R.string.dialog_yes), new DialogInterface.OnClickListener() {
+        dialog = dialog.setPositiveButton(context.getString(nevo_mashiach.pitkiot.R.string.dialog_no), null);
+        dialog = dialog.setNegativeButton(context.getString(nevo_mashiach.pitkiot.R.string.dialog_yes), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 task.run();
             }
         });
-        dialog = dialog.setNegativeButton(context.getString(nevo_mashiach.pitkiot.R.string.dialog_no), null);
         dialog.show(fragmentManager, "ConfirmCharacterRemove"); //The second one is just a string tag that we can use to refer to it.
     }
 
@@ -199,13 +199,13 @@ public class DialogBag {
                 context.getString(nevo_mashiach.pitkiot.R.string.dialog_delete_all_title),
                 context.getString(nevo_mashiach.pitkiot.R.string.dialog_delete_all_msg)
         );
-        dialog = dialog.setPositiveButton(context.getString(nevo_mashiach.pitkiot.R.string.dialog_yes), new DialogInterface.OnClickListener() {
+        dialog = dialog.setPositiveButton(context.getString(nevo_mashiach.pitkiot.R.string.dialog_no), null);
+        dialog = dialog.setNegativeButton(context.getString(nevo_mashiach.pitkiot.R.string.dialog_yes), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 task.run();
             }
         });
-        dialog = dialog.setNegativeButton(context.getString(nevo_mashiach.pitkiot.R.string.dialog_no), null);
         dialog.show(fragmentManager, "ConfirmCharacterRemove"); //The second one is just a string tag that we can use to refer to it.
     }
 
@@ -215,13 +215,13 @@ public class DialogBag {
                 context.getString(nevo_mashiach.pitkiot.R.string.dialog_reset_game_title),
                 context.getString(nevo_mashiach.pitkiot.R.string.dialog_reset_game_msg)
         );
-        dialog = dialog.setPositiveButton(context.getString(nevo_mashiach.pitkiot.R.string.dialog_yes), new DialogInterface.OnClickListener() {
+        dialog = dialog.setPositiveButton(context.getString(nevo_mashiach.pitkiot.R.string.dialog_no), null);
+        dialog = dialog.setNegativeButton(context.getString(nevo_mashiach.pitkiot.R.string.dialog_yes), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                task.run();
             }
         });
-        dialog = dialog.setNegativeButton(context.getString(nevo_mashiach.pitkiot.R.string.dialog_no), null);
         dialog.show(fragmentManager, "ResetGame"); //The second one is just a string tag that we can use to refer to it.
     }
 
@@ -230,13 +230,13 @@ public class DialogBag {
                 context.getString(nevo_mashiach.pitkiot.R.string.dialog_reset_settings_title),
                 context.getString(nevo_mashiach.pitkiot.R.string.dialog_reset_settings_msg)
         );
-        dialog = dialog.setPositiveButton(context.getString(nevo_mashiach.pitkiot.R.string.dialog_yes), new DialogInterface.OnClickListener() {
+        dialog = dialog.setPositiveButton(context.getString(nevo_mashiach.pitkiot.R.string.dialog_no), null);
+        dialog = dialog.setNegativeButton(context.getString(nevo_mashiach.pitkiot.R.string.dialog_yes), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 task.run();
             }
         });
-        dialog = dialog.setNegativeButton(context.getString(nevo_mashiach.pitkiot.R.string.dialog_no), null);
         dialog.show(fragmentManager, "ResetGame"); //The second one is just a string tag that we can use to refer to it.
     }
 
@@ -279,13 +279,13 @@ public class DialogBag {
                 context.getString(nevo_mashiach.pitkiot.R.string.dialog_close_collection_title),
                 context.getString(nevo_mashiach.pitkiot.R.string.dialog_close_collection_msg)
         );
-        dialog = dialog.setPositiveButton(context.getString(nevo_mashiach.pitkiot.R.string.dialog_close_without_saving), new DialogInterface.OnClickListener() {
+        dialog = dialog.setPositiveButton(context.getString(nevo_mashiach.pitkiot.R.string.dialog_stay_collecting), null);
+        dialog = dialog.setNegativeButton(context.getString(nevo_mashiach.pitkiot.R.string.dialog_close_without_saving), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 closeTask.run();
             }
         });
-        dialog = dialog.setNegativeButton(context.getString(nevo_mashiach.pitkiot.R.string.dialog_stay_collecting), null);
         dialog.show(fragmentManager, "ConfirmCloseCollection");
     }
 }

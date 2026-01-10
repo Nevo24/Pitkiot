@@ -274,6 +274,21 @@ public class NoteManagement extends AppCompatActivity {
 
         builder.setCancelable(false);
         AlertDialog dialog = builder.create();
+
+        // Make the positive button more prominent
+        dialog.setOnShowListener(dialogInterface -> {
+            Button positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+            Button negativeButton = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+
+            if (positiveButton != null) {
+                positiveButton.setTextColor(getResources().getColor(R.color.colorAccent));
+                positiveButton.setAllCaps(false);
+            }
+            if (negativeButton != null) {
+                negativeButton.setAllCaps(false);
+            }
+        });
+
         dialog.show();
     }
 
