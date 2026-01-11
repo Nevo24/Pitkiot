@@ -48,10 +48,10 @@
     <string name="web_header">📝 Pitkiot - Notes</string>
     <string name="web_label_name">Name / Nickname</string>
     <string name="web_placeholder_name">Your name</string>
-    <string name="web_helper_name">To identify who sent the note</string>
+    <string name="web_helper_name">* To identify who sent the note</string>
     <string name="web_label_notes">Your Characters</string>
     <string name="web_placeholder_notes">Character1, Character2, Character3...</string>
-    <string name="web_helper_notes">Separate with commas or lines. * Everyone must know the characters</string>
+    <string name="web_helper_notes">* Separate characters with commas or lines\n* Everyone must know the characters</string>
     <string name="web_button_submit">Send</string>
     <string name="web_button_submit_another">Send Another</string>
     <string name="web_loading">Loading...</string>
