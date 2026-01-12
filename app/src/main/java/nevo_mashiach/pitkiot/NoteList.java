@@ -72,8 +72,13 @@ public class NoteList extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.sample_main);
 
-        // Make navigation bar transparent
-        setupTransparentNavigationBar();
+        // Apply navigation bar settings after view is attached and insets are available
+        getWindow().getDecorView().post(new Runnable() {
+            @Override
+            public void run() {
+                setupTransparentNavigationBar();
+            }
+        });
 
         context = this;
         dialogBag = new DialogBag(getSupportFragmentManager(), this);

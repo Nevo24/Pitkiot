@@ -129,8 +129,13 @@ public class NoteManagement extends AppCompatActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-        // Make navigation bar transparent
-        setupTransparentNavigationBar();
+        // Apply navigation bar settings after view is attached and insets are available
+        getWindow().getDecorView().post(new Runnable() {
+            @Override
+            public void run() {
+                setupTransparentNavigationBar();
+            }
+        });
     }
 
 
