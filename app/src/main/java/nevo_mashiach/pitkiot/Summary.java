@@ -153,10 +153,7 @@ public class Summary extends AppCompatActivity {
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         // Make navigation bar transparent
-        getWindow().setNavigationBarColor(android.graphics.Color.TRANSPARENT);
-        getWindow().getDecorView().setSystemUiVisibility(
-                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
+        setupTransparentNavigationBar();
 
         onCreate = true;
     }
@@ -520,6 +517,34 @@ public class Summary extends AppCompatActivity {
         }
 
         return super.onKeyDown(keyCode, event);
+    }
+
+    private void setupTransparentNavigationBar() {
+        getWindow().setNavigationBarColor(android.graphics.Color.TRANSPARENT);
+
+        // Check if using gesture navigation (no buttons)
+        if (isGestureNavigationEnabled()) {
+            // For gesture navigation: extend content behind the navigation bar
+            getWindow().getDecorView().setSystemUiVisibility(
+                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
+        }
+        // For button navigation: content stops above buttons (no flags needed)
+    }
+
+    private boolean isGestureNavigationEnabled() {
+        // Check if gesture navigation is enabled by looking at navigation bar height
+        // In gesture mode, the navigation bar is much smaller (typically around 16-24dp)
+        // In button mode, it's larger (typically 48dp+)
+        int resourceId = getResources().getIdentifier("navigation_bar_height", "dimen", "android");
+        if (resourceId > 0) {
+            int navBarHeight = getResources().getDimensionPixelSize(resourceId);
+            float density = getResources().getDisplayMetrics().density;
+            int navBarHeightDp = (int) (navBarHeight / density);
+            // If navigation bar is less than 30dp, it's likely gesture navigation
+            return navBarHeightDp < 30;
+        }
+        return false;
     }
 
 }
