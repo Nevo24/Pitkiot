@@ -169,17 +169,21 @@
 
     <nevo_mashiach.pitkiot.NotActivities.MyEditText
         android:textColor="#88000000"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_width="120dp"
+        android:layout_height="48dp"
         android:inputType="textPersonName"
         android:ems="10"
         android:id="@+id/editNextTime"
         tools:text="10"
-        android:gravity="right"
+        android:gravity="center"
+        android:includeFontPadding="false"
+        android:paddingTop="4dp"
+        android:paddingBottom="0dp"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
         android:layout_below="@+id/team1Headline"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:background="@android:color/transparent"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/editable_field_background"
         android:textSize="24sp"/>
 
     <nevo_mashiach.pitkiot.NotActivities.MyTextView
@@ -213,18 +217,22 @@
 
     <nevo_mashiach.pitkiot.NotActivities.MyEditText
         android:textColor="#88000000"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_width="120dp"
+        android:layout_height="48dp"
         android:inputType="textPersonName"
         android:ems="10"
         android:id="@+id/editRoundTime"
         tools:text="60"
-        android:gravity="right"
-        android:background="@android:color/transparent"
+        android:gravity="center"
+        android:includeFontPadding="false"
+        android:paddingTop="4dp"
+        android:paddingBottom="0dp"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:background="@drawable/editable_field_background"
         android:textSize="24sp"
         android:layout_below="@+id/textView1"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"/>
+        android:layout_centerHorizontal="true"/>
 
     <nevo_mashiach.pitkiot.NotActivities.MyButton
         android:text=" ? "

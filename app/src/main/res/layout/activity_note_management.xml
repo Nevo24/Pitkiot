@@ -88,18 +88,17 @@
 
     <nevo_mashiach.pitkiot.NotActivities.MyEditText
         android:id="@+id/typeDef"
-        android:background="@android:color/transparent"
+        android:background="@drawable/editable_field_background"
         android:hint="@string/hint_enter_character"
         android:inputType="textPersonName"
-        android:textColor="@color/common_google_signin_btn_text_dark_default"
+        android:textColor="#000000"
         android:textColorHint="#88000000"
         android:textSize="21sp"
         android:gravity="center_vertical"
         app:layout_widthPercent="67%"
         android:layout_alignTop="@+id/addDef"
         android:layout_alignBottom="@+id/addDef"
-        android:layout_alignParentLeft="true"
-        android:layoutDirection="ltr"/>
+        android:layout_alignParentLeft="true"/>
 
     <nevo_mashiach.pitkiot.NotActivities.MyTextView
         android:textSize="20sp"
