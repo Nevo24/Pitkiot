@@ -218,6 +218,11 @@ public class DialogBag {
     }
 
     public void askResetGameAfterDelete(final Runnable resetGameTask) {
+        // Only show this dialog if there's a game running in the background
+        if (!db.gamePlayIsPaused && !db.summaryIsPaused) {
+            return;
+        }
+
         MyDialogFragment dialog = new MyDialogFragment(
                 context.getString(nevo_mashiach.pitkiot.R.string.dialog_notes_deleted_title),
                 context.getString(nevo_mashiach.pitkiot.R.string.dialog_notes_deleted_msg)
@@ -250,6 +255,11 @@ public class DialogBag {
     }
 
     public void askDeleteNotesAfterReset(final Runnable deleteNotesTask) {
+        // Only show this dialog if there are notes in the database
+        if (db.totalNoteAmount() == 0) {
+            return;
+        }
+
         MyDialogFragment dialog = new MyDialogFragment(
                 context.getString(nevo_mashiach.pitkiot.R.string.dialog_game_reset_title),
                 context.getString(nevo_mashiach.pitkiot.R.string.dialog_game_reset_msg)
