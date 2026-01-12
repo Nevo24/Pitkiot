@@ -467,34 +467,14 @@ public class MainActivity extends AppCompatActivity {
 
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
             android.view.WindowInsets insets = getWindow().getDecorView().getRootWindowInsets();
-            android.util.Log.d("NavigationBar", "WindowInsets available: " + (insets != null));
-
             if (insets != null) {
-                // Get navigation bar height
-                int navBarHeight = insets.getInsets(android.view.WindowInsets.Type.navigationBars()).bottom;
-                float density = getResources().getDisplayMetrics().density;
-                int navBarHeightDp = (int) (navBarHeight / density);
-
                 // Get system gesture insets (for edge back gestures)
                 int gestureLeft = insets.getInsets(android.view.WindowInsets.Type.systemGestures()).left;
                 int gestureRight = insets.getInsets(android.view.WindowInsets.Type.systemGestures()).right;
                 boolean hasGestureInsets = gestureLeft > 0 || gestureRight > 0;
 
                 // Only extend behind bar for TRUE gesture navigation (has gesture insets)
-                // Both 2-button and 3-button should NOT extend (content stops above)
-                boolean shouldExtend = hasGestureInsets;
-
-                android.util.Log.d("NavigationBar", "===== NAVIGATION BAR DETECTION =====");
-                android.util.Log.d("NavigationBar", "Height: " + navBarHeightDp + "dp (" + navBarHeight + "px)");
-                android.util.Log.d("NavigationBar", "Density: " + density);
-                android.util.Log.d("NavigationBar", "GestureInsets: left=" + gestureLeft + ", right=" + gestureRight);
-                android.util.Log.d("NavigationBar", "HasGestureInsets: " + hasGestureInsets);
-                android.util.Log.d("NavigationBar", "ShouldExtendBehind: " + shouldExtend + (hasGestureInsets ? " (GESTURE)" : " (BUTTONS)"));
-                android.util.Log.d("NavigationBar", "====================================");
-
-                return shouldExtend;
-            } else {
-                android.util.Log.w("NavigationBar", "WindowInsets is NULL - using fallback");
+                return hasGestureInsets;
             }
         }
 
@@ -505,11 +485,8 @@ public class MainActivity extends AppCompatActivity {
             int navBarHeight = getResources().getDimensionPixelSize(resourceId);
             float density = getResources().getDisplayMetrics().density;
             int navBarHeightDp = (int) (navBarHeight / density);
-            boolean shouldExtend = navBarHeightDp < 20; // Only very thin bars (gesture)
-            android.util.Log.d("NavigationBar", "FALLBACK - Height: " + navBarHeightDp + "dp, ShouldExtend: " + shouldExtend);
-            return shouldExtend;
+            return navBarHeightDp < 20; // Only very thin bars (gesture)
         }
-        android.util.Log.w("NavigationBar", "No navigation bar height available");
         return false;
     }
 }

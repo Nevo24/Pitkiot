@@ -184,8 +184,8 @@ public class Settings extends AppCompatActivity {
         super.onResume();
 
         // Adjust checkbox and button positions based on locale
-        String language = getResources().getConfiguration().locale.getLanguage();
-        boolean isHebrew = language.equals("iw") || language.equals("he");
+        String language = prefs.getString("app_language", "he");
+        boolean isHebrew = language.equals("he");
 
         androidx.percentlayout.widget.PercentRelativeLayout.LayoutParams checkboxParams =
             (androidx.percentlayout.widget.PercentRelativeLayout.LayoutParams) mAutoBalaceCheckBox.getLayoutParams();
