@@ -93,13 +93,37 @@ public class NoteList extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                Runnable task = new Runnable() {
+                Runnable deleteTask = new Runnable() {
                     public void run() {
                         deleteAllNotes();
                         reloadActivityWithoutAnimation();
                     }
                 };
-                dialogBag.confirmDeleteAll(task);
+
+                Runnable resetGameTask = new Runnable() {
+                    public void run() {
+                        // Reset the game
+                        db.resetGame();
+
+                        // Reset game state in SharedPreferences
+                        Set<String> set = new HashSet<String>();
+                        spEditor.putStringSet("temp", set);
+                        for (int i = 0; i < 24; i++) {
+                            spEditor.putStringSet("team" + i + "Notes", set);
+                            spEditor.putInt("team" + i + "RoundNum", 0);
+                            spEditor.putInt("team" + i + "Score", 0);
+                        }
+                        spEditor.putInt("totalRoundNumber", 0);
+                        spEditor.putInt("currentSuccessNum", 0);
+                        spEditor.putInt("currentPlaying", 0);
+                        spEditor.putLong("mMillisUntilFinished", db.timePerRound * 1000L);
+                        spEditor.putBoolean("summaryIsPaused", false);
+                        spEditor.putBoolean("gamePlayIsPaused", false);
+                        spEditor.commit();
+                    }
+                };
+
+                dialogBag.confirmDeleteAll(deleteTask, resetGameTask);
             }
         });
 

@@ -43,7 +43,14 @@ public class DialogBag {
                 context.getString(nevo_mashiach.pitkiot.R.string.dialog_no_notes_title),
                 context.getString(nevo_mashiach.pitkiot.R.string.dialog_no_notes_msg)
         );
-        dialog = dialog.setNaturalButton(context.getString(nevo_mashiach.pitkiot.R.string.dialog_return_main), null);
+        dialog = dialog.setPositiveButton(context.getString(nevo_mashiach.pitkiot.R.string.dialog_go_to_notes_management), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Intent intent = new Intent(context, nevo_mashiach.pitkiot.NoteManagement.class);
+                context.startActivity(intent);
+            }
+        });
+        dialog = dialog.setNegativeButton(context.getString(nevo_mashiach.pitkiot.R.string.dialog_stay_here), null);
         dialog.show(fragmentManager, "OutOfNotes");
     }
 
@@ -194,7 +201,7 @@ public class DialogBag {
         dialog.show(fragmentManager, "ConfirmCharacterRemove"); //The second one is just a string tag that we can use to refer to it.
     }
 
-    public void confirmDeleteAll(final Runnable task) {
+    public void confirmDeleteAll(final Runnable deleteTask, final Runnable resetGameTask) {
         MyDialogFragment dialog = new MyDialogFragment(
                 context.getString(nevo_mashiach.pitkiot.R.string.dialog_delete_all_title),
                 context.getString(nevo_mashiach.pitkiot.R.string.dialog_delete_all_msg)
@@ -203,14 +210,30 @@ public class DialogBag {
         dialog = dialog.setNegativeButton(context.getString(nevo_mashiach.pitkiot.R.string.dialog_yes), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                task.run();
+                deleteTask.run();
+                askResetGameAfterDelete(resetGameTask);
             }
         });
-        dialog.show(fragmentManager, "ConfirmCharacterRemove"); //The second one is just a string tag that we can use to refer to it.
+        dialog.show(fragmentManager, "ConfirmDeleteAll");
+    }
+
+    public void askResetGameAfterDelete(final Runnable resetGameTask) {
+        MyDialogFragment dialog = new MyDialogFragment(
+                context.getString(nevo_mashiach.pitkiot.R.string.dialog_notes_deleted_title),
+                context.getString(nevo_mashiach.pitkiot.R.string.dialog_notes_deleted_msg)
+        );
+        dialog = dialog.setPositiveButton(context.getString(nevo_mashiach.pitkiot.R.string.dialog_reset_game_yes), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                resetGameTask.run();
+            }
+        });
+        dialog = dialog.setNegativeButton(context.getString(nevo_mashiach.pitkiot.R.string.dialog_keep_game), null);
+        dialog.show(fragmentManager, "AskResetGameAfterDelete");
     }
 
 
-    public void resetGame(final Runnable task) {
+    public void resetGame(final Runnable resetTask, final Runnable deleteNotesTask) {
         MyDialogFragment dialog = new MyDialogFragment(
                 context.getString(nevo_mashiach.pitkiot.R.string.dialog_reset_game_title),
                 context.getString(nevo_mashiach.pitkiot.R.string.dialog_reset_game_msg)
@@ -219,10 +242,26 @@ public class DialogBag {
         dialog = dialog.setNegativeButton(context.getString(nevo_mashiach.pitkiot.R.string.dialog_yes), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-               task.run();
+               resetTask.run();
+               askDeleteNotesAfterReset(deleteNotesTask);
             }
         });
         dialog.show(fragmentManager, "ResetGame"); //The second one is just a string tag that we can use to refer to it.
+    }
+
+    public void askDeleteNotesAfterReset(final Runnable deleteNotesTask) {
+        MyDialogFragment dialog = new MyDialogFragment(
+                context.getString(nevo_mashiach.pitkiot.R.string.dialog_game_reset_title),
+                context.getString(nevo_mashiach.pitkiot.R.string.dialog_game_reset_msg)
+        );
+        dialog = dialog.setPositiveButton(context.getString(nevo_mashiach.pitkiot.R.string.dialog_delete_notes), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                deleteNotesTask.run();
+            }
+        });
+        dialog = dialog.setNegativeButton(context.getString(nevo_mashiach.pitkiot.R.string.dialog_keep_notes), null);
+        dialog.show(fragmentManager, "AskDeleteNotesAfterReset");
     }
 
     public void resetSettings(final Runnable task) {

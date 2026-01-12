@@ -249,7 +249,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void resetDialogBag() {
-        Runnable task = new Runnable() {
+        Runnable resetTask = new Runnable() {
             public void run() {
                 db.resetGame();
                 mPlayGame.setText(getString(R.string.button_start_new_game));
@@ -271,7 +271,29 @@ public class MainActivity extends AppCompatActivity {
                 spEditor.commit();
             }
         };
-        dialogBag.resetGame(task);
+
+        Runnable deleteNotesTask = new Runnable() {
+            public void run() {
+                // Delete all notes from database
+                db.defs.clear();
+                db.temp.clear();
+                for (int i = 0; i < 24; i++) {
+                    db.teamsNotes[i].clear();
+                }
+                Set<String> set = new HashSet<String>();
+                spEditor.putStringSet("defs", set);
+                spEditor.putStringSet("temp", set);
+                for (int i = 0; i < 24; i++) {
+                    spEditor.putStringSet("team" + i + "Notes", set);
+                }
+                spEditor.commit();
+
+                // Update the note count display
+                mNoteCount.setText(String.format(getString(R.string.note_count_database), 0));
+            }
+        };
+
+        dialogBag.resetGame(resetTask, deleteNotesTask);
     }
 
     public void beHappy() {
