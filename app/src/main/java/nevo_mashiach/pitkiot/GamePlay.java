@@ -139,6 +139,12 @@ public class GamePlay extends AppCompatActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
+        // Make navigation bar transparent
+        getWindow().setNavigationBarColor(android.graphics.Color.TRANSPARENT);
+        getWindow().getDecorView().setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
+
         // Set up click listeners
         binding.next.setOnClickListener(v -> removeDefFromDB());
         binding.success.setOnClickListener(v -> addingDefToTeam());
