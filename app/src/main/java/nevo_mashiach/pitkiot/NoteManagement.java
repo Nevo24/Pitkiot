@@ -113,6 +113,23 @@ public class NoteManagement extends AppCompatActivity {
 
         binding.collectNotesOnline.setOnClickListener(this::startOnlineNoteCollection);
         binding.collectNotesOnline.setOnTouchListener(touchListener);
+
+        // Handle hint visibility on focus change
+        mTypeDef.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus) {
+                    // Clear hint when field gets focus
+                    mTypeDef.setHint("");
+                } else {
+                    // Restore hint when field loses focus and is empty
+                    if (mTypeDef.getText().toString().trim().isEmpty()) {
+                        mTypeDef.setHint(R.string.hint_enter_character);
+                    }
+                }
+            }
+        });
+
         mTypeDef.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -183,6 +200,8 @@ public class NoteManagement extends AppCompatActivity {
             add(note);
         }
         mTypeDef.setText("");
+        // Restore hint after adding
+        mTypeDef.setHint(R.string.hint_enter_character);
     }
 
 

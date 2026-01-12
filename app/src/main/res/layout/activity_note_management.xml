@@ -95,6 +95,8 @@
         android:textColorHint="#88000000"
         android:textSize="21sp"
         android:gravity="center_vertical"
+        android:paddingLeft="12dp"
+        android:paddingRight="12dp"
         app:layout_widthPercent="67%"
         android:layout_alignTop="@+id/addDef"
         android:layout_alignBottom="@+id/addDef"

@@ -198,6 +198,10 @@ public class Settings extends AppCompatActivity {
             (androidx.percentlayout.widget.PercentRelativeLayout.LayoutParams) mSoundCheckBox.getLayoutParams();
         androidx.percentlayout.widget.PercentRelativeLayout.LayoutParams buttonParams =
             (androidx.percentlayout.widget.PercentRelativeLayout.LayoutParams) mBalanceExplanation.getLayoutParams();
+        androidx.percentlayout.widget.PercentRelativeLayout.LayoutParams editRoundTimeParams =
+            (androidx.percentlayout.widget.PercentRelativeLayout.LayoutParams) mEditRoundTime.getLayoutParams();
+        androidx.percentlayout.widget.PercentRelativeLayout.LayoutParams editNextTimeParams =
+            (androidx.percentlayout.widget.PercentRelativeLayout.LayoutParams) mEditNextTime.getLayoutParams();
 
         if (isHebrew) {
             // Hebrew: checkboxes on right, button on left, checkbox icon on right of text
@@ -218,6 +222,14 @@ public class Settings extends AppCompatActivity {
             if (checkboxDrawable2 != null) checkboxDrawable2 = checkboxDrawable2.mutate();
             mAutoBalaceCheckBox.setCompoundDrawablesWithIntrinsicBounds(null, null, checkboxDrawable1, null);
             mSoundCheckBox.setCompoundDrawablesWithIntrinsicBounds(null, null, checkboxDrawable2, null);
+
+            // Hebrew: number fields on right, text aligned right
+            editRoundTimeParams.addRule(androidx.percentlayout.widget.PercentRelativeLayout.ALIGN_PARENT_END);
+            editRoundTimeParams.removeRule(androidx.percentlayout.widget.PercentRelativeLayout.ALIGN_PARENT_START);
+            editNextTimeParams.addRule(androidx.percentlayout.widget.PercentRelativeLayout.ALIGN_PARENT_END);
+            editNextTimeParams.removeRule(androidx.percentlayout.widget.PercentRelativeLayout.ALIGN_PARENT_START);
+            mEditRoundTime.setGravity(android.view.Gravity.CENTER_VERTICAL | android.view.Gravity.END);
+            mEditNextTime.setGravity(android.view.Gravity.CENTER_VERTICAL | android.view.Gravity.END);
         } else {
             // English: checkboxes on left, button on right, checkbox icon on left of text
             checkboxParams.addRule(androidx.percentlayout.widget.PercentRelativeLayout.ALIGN_PARENT_START);
@@ -237,11 +249,21 @@ public class Settings extends AppCompatActivity {
             if (checkboxDrawable2 != null) checkboxDrawable2 = checkboxDrawable2.mutate();
             mAutoBalaceCheckBox.setCompoundDrawablesWithIntrinsicBounds(checkboxDrawable1, null, null, null);
             mSoundCheckBox.setCompoundDrawablesWithIntrinsicBounds(checkboxDrawable2, null, null, null);
+
+            // English: number fields on left, text aligned left
+            editRoundTimeParams.addRule(androidx.percentlayout.widget.PercentRelativeLayout.ALIGN_PARENT_START);
+            editRoundTimeParams.removeRule(androidx.percentlayout.widget.PercentRelativeLayout.ALIGN_PARENT_END);
+            editNextTimeParams.addRule(androidx.percentlayout.widget.PercentRelativeLayout.ALIGN_PARENT_START);
+            editNextTimeParams.removeRule(androidx.percentlayout.widget.PercentRelativeLayout.ALIGN_PARENT_END);
+            mEditRoundTime.setGravity(android.view.Gravity.CENTER_VERTICAL | android.view.Gravity.START);
+            mEditNextTime.setGravity(android.view.Gravity.CENTER_VERTICAL | android.view.Gravity.START);
         }
 
         mAutoBalaceCheckBox.setLayoutParams(checkboxParams);
         mSoundCheckBox.setLayoutParams(soundParams);
         mBalanceExplanation.setLayoutParams(buttonParams);
+        mEditRoundTime.setLayoutParams(editRoundTimeParams);
+        mEditNextTime.setLayoutParams(editNextTimeParams);
 
         // Temporarily remove listeners to avoid triggering them during initialization
         mAutoBalaceCheckBox.setOnCheckedChangeListener(null);
