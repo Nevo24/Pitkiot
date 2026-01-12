@@ -39,6 +39,7 @@ public class NoteList extends AppCompatActivity {
 
     DialogBag dialogBag;
     ListView listView;
+    View deleteAllButton;
 
     @Override
     protected void attachBaseContext(Context base) {
@@ -89,7 +90,8 @@ public class NoteList extends AppCompatActivity {
         listView = findViewById(android.R.id.list);
         listView.setAdapter(mListAdapter);
 
-        findViewById(R.id.deleteAll).setOnClickListener(new View.OnClickListener() {
+        deleteAllButton = findViewById(R.id.deleteAll);
+        deleteAllButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
@@ -129,6 +131,19 @@ public class NoteList extends AppCompatActivity {
 
         notes = db.allNotes();
         Collections.sort(notes);
+
+        // Update delete button state based on whether there are notes
+        updateDeleteButtonState();
+    }
+
+    private void updateDeleteButtonState() {
+        if (notes.isEmpty()) {
+            deleteAllButton.setEnabled(false);
+            deleteAllButton.setAlpha(0.5f);
+        } else {
+            deleteAllButton.setEnabled(true);
+            deleteAllButton.setAlpha(1.0f);
+        }
     }
 
 
@@ -240,6 +255,9 @@ public class NoteList extends AppCompatActivity {
         notes.addAll(db.allNotes());
         Collections.sort(notes);
         mListAdapter.notifyDataSetChanged();
+
+        // Update delete button state
+        updateDeleteButtonState();
     }
 
     private void setupTransparentNavigationBar() {

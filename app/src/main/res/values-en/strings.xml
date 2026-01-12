@@ -100,6 +100,8 @@
     <string name="dialog_notes_deleted_msg">Would you also like to reset the running game?</string>
     <string name="dialog_reset_game_title">Reset Game</string>
     <string name="dialog_reset_game_msg">Are you sure you want to reset the running game?</string>
+    <string name="dialog_no_game_running_title">No Game Running</string>
+    <string name="dialog_no_game_running_msg">There is no game running in the background.\n\nWould you like to delete the notes from the database?</string>
     <string name="dialog_game_reset_title">Game Reset!</string>
     <string name="dialog_game_reset_msg">Would you also like to delete the notes from the database?</string>
     <string name="dialog_delete_notes">Yes, Delete Notes</string>

@@ -254,6 +254,26 @@ public class DialogBag {
         dialog.show(fragmentManager, "ResetGame"); //The second one is just a string tag that we can use to refer to it.
     }
 
+    public void noGameRunning(final Runnable deleteNotesTask) {
+        // Only show this dialog if there are notes in the database
+        if (db.totalNoteAmount() == 0) {
+            return;
+        }
+
+        MyDialogFragment dialog = new MyDialogFragment(
+                context.getString(nevo_mashiach.pitkiot.R.string.dialog_no_game_running_title),
+                context.getString(nevo_mashiach.pitkiot.R.string.dialog_no_game_running_msg)
+        );
+        dialog = dialog.setPositiveButton(context.getString(nevo_mashiach.pitkiot.R.string.dialog_no), null);
+        dialog = dialog.setNegativeButton(context.getString(nevo_mashiach.pitkiot.R.string.dialog_yes), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                deleteNotesTask.run();
+            }
+        });
+        dialog.show(fragmentManager, "NoGameRunning");
+    }
+
     public void askDeleteNotesAfterReset(final Runnable deleteNotesTask) {
         // Only show this dialog if there are notes in the database
         if (db.totalNoteAmount() == 0) {

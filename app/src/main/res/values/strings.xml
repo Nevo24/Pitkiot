@@ -100,6 +100,8 @@
     <string name="dialog_notes_deleted_msg">האם ברצונך גם לאפס את המשחק שמתנהל ברקע?</string>
     <string name="dialog_reset_game_title">איפוס משחק</string>
     <string name="dialog_reset_game_msg">האם אתה בטוח שברצונך לאפס את המשחק שמתנהל ברקע?</string>
+    <string name="dialog_no_game_running_title">אין משחק מתנהל</string>
+    <string name="dialog_no_game_running_msg">אין משחק שמתנהל ברקע.\n\nהאם ברצונך למחוק את הפתקים שבמאגר?</string>
     <string name="dialog_game_reset_title">המשחק אופס!</string>
     <string name="dialog_game_reset_msg">האם ברצונך גם למחוק את הפתקים מהמאגר?</string>
     <string name="dialog_delete_notes">כן, מחק את הפתקים</string>

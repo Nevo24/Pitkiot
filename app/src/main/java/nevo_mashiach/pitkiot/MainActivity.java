@@ -42,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
 
     TextView mNoteCount;
     MyButton mPlayGame;
+    MyButton mReset;
     ImageView mAnimationFigure;
     ImageView mGamePlayFigureHappy;
     TextView mSettingsIcon;
@@ -76,6 +77,7 @@ public class MainActivity extends AppCompatActivity {
         // Initialize view references
         mNoteCount = binding.noteCount;
         mPlayGame = binding.playGame;
+        mReset = binding.reset;
         mAnimationFigure = binding.animationFigure;
         mGamePlayFigureHappy = binding.gamePlayFigureHappy;
         mSettingsIcon = binding.settingsIcon;
@@ -132,8 +134,25 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         mNoteCount.setText(String.format(getString(R.string.note_count_database), db.totalNoteAmount()));
-        if (db.gamePlayIsPaused || db.summaryIsPaused) mPlayGame.setText(getString(R.string.button_return_to_game));
-        else mPlayGame.setText(getString(R.string.button_start_new_game));
+
+        // Check if there's an active game (paused or has started)
+        boolean hasActiveGame = db.gamePlayIsPaused || db.summaryIsPaused || db.totalRoundNumber > 0;
+        boolean hasNotes = db.totalNoteAmount() > 0;
+
+        if (hasActiveGame) {
+            mPlayGame.setText(getString(R.string.button_return_to_game));
+        } else {
+            mPlayGame.setText(getString(R.string.button_start_new_game));
+        }
+
+        // Reset button is enabled if there's an active game OR there are notes
+        if (hasActiveGame || hasNotes) {
+            mReset.setEnabled(true);
+            mReset.setAlpha(1.0f);
+        } else {
+            mReset.setEnabled(false);
+            mReset.setAlpha(0.5f);
+        }
 
         mAnimationFigure.setBackgroundResource(R.drawable.animation_breathe);
         AnimationDrawable anim = (AnimationDrawable) mAnimationFigure.getBackground();
@@ -249,6 +268,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void resetDialogBag() {
+        // Check if there's an active game
+        boolean hasActiveGame = db.gamePlayIsPaused || db.summaryIsPaused || db.totalRoundNumber > 0;
+
         Runnable resetTask = new Runnable() {
             public void run() {
                 db.resetGame();
@@ -290,10 +312,23 @@ public class MainActivity extends AppCompatActivity {
 
                 // Update the note count display
                 mNoteCount.setText(String.format(getString(R.string.note_count_database), 0));
+
+                // Update reset button state (no game and no notes = disabled)
+                boolean hasActiveGame = db.gamePlayIsPaused || db.summaryIsPaused || db.totalRoundNumber > 0;
+                if (!hasActiveGame) {
+                    mReset.setEnabled(false);
+                    mReset.setAlpha(0.5f);
+                }
             }
         };
 
-        dialogBag.resetGame(resetTask, deleteNotesTask);
+        if (!hasActiveGame) {
+            // No game running - ask if user wants to delete notes
+            dialogBag.noGameRunning(deleteNotesTask);
+        } else {
+            // Game is running - normal reset flow
+            dialogBag.resetGame(resetTask, deleteNotesTask);
+        }
     }
 
     public void beHappy() {
