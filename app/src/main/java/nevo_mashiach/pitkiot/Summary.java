@@ -520,29 +520,45 @@ public class Summary extends AppCompatActivity {
     }
 
     private void setupTransparentNavigationBar() {
-        getWindow().setNavigationBarColor(android.graphics.Color.TRANSPARENT);
-
-        // Check if using gesture navigation (no buttons)
-        if (isGestureNavigationEnabled()) {
-            // For gesture navigation: extend content behind the navigation bar
+        // Check if we should extend content behind the navigation bar
+        if (shouldExtendBehindNavigationBar()) {
+            // For gesture navigation: set transparent and extend content behind
+            getWindow().setNavigationBarColor(android.graphics.Color.TRANSPARENT);
             getWindow().getDecorView().setSystemUiVisibility(
                     View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                     | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
+        } else {
+            // For 2-button & 3-button navigation: use system default color, content stops above
+            // Don't set color - let system handle it
         }
-        // For button navigation: content stops above buttons (no flags needed)
     }
 
-    private boolean isGestureNavigationEnabled() {
-        // Check if gesture navigation is enabled by looking at navigation bar height
-        // In gesture mode, the navigation bar is much smaller (typically around 16-24dp)
-        // In button mode, it's larger (typically 48dp+)
+    private boolean shouldExtendBehindNavigationBar() {
+        // Use system gesture insets to distinguish between navigation modes:
+        // - Gesture navigation: has left/right gesture insets (edge back gesture) → EXTEND
+        // - 2-button navigation: no gesture insets, thin bar (~24-30dp) → DON'T EXTEND
+        // - 3-button navigation: no gesture insets, tall bar (~48dp) → DON'T EXTEND
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
+            android.view.WindowInsets insets = getWindow().getDecorView().getRootWindowInsets();
+            if (insets != null) {
+                // Get system gesture insets (for edge back gestures)
+                int gestureLeft = insets.getInsets(android.view.WindowInsets.Type.systemGestures()).left;
+                int gestureRight = insets.getInsets(android.view.WindowInsets.Type.systemGestures()).right;
+                boolean hasGestureInsets = gestureLeft > 0 || gestureRight > 0;
+
+                // Only extend behind bar for TRUE gesture navigation (has gesture insets)
+                return hasGestureInsets;
+            }
+        }
+        // Fallback for older Android versions
+        // Use height-based detection: only extend if very thin (< 20dp = likely gesture)
         int resourceId = getResources().getIdentifier("navigation_bar_height", "dimen", "android");
         if (resourceId > 0) {
             int navBarHeight = getResources().getDimensionPixelSize(resourceId);
             float density = getResources().getDisplayMetrics().density;
             int navBarHeightDp = (int) (navBarHeight / density);
-            // If navigation bar is less than 30dp, it's likely gesture navigation
-            return navBarHeightDp < 30;
+            return navBarHeightDp < 20; // Only very thin bars (gesture)
         }
         return false;
     }

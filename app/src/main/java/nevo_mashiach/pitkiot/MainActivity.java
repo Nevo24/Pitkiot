@@ -86,8 +86,13 @@ public class MainActivity extends AppCompatActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-        // Make navigation bar transparent
-        setupTransparentNavigationBar();
+        // Apply navigation bar settings after view is attached and insets are available
+        getWindow().getDecorView().post(new Runnable() {
+            @Override
+            public void run() {
+                applyNavigationBarSettings();
+            }
+        });
 
         db.getInstance();
 
@@ -440,31 +445,71 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void setupTransparentNavigationBar() {
-        getWindow().setNavigationBarColor(android.graphics.Color.TRANSPARENT);
-
-        // Check if using gesture navigation (no buttons)
-        if (isGestureNavigationEnabled()) {
-            // For gesture navigation: extend content behind the navigation bar
+    private void applyNavigationBarSettings() {
+        // Check if we should extend content behind the navigation bar
+        if (shouldExtendBehindNavigationBar()) {
+            // For gesture navigation: set transparent and extend content behind
+            getWindow().setNavigationBarColor(android.graphics.Color.TRANSPARENT);
             getWindow().getDecorView().setSystemUiVisibility(
                     View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                     | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
+        } else {
+            // For 2-button & 3-button navigation: use system default color, content stops above
+            // Don't set color - let system handle it
         }
-        // For button navigation: content stops above buttons (no flags needed)
     }
 
-    private boolean isGestureNavigationEnabled() {
-        // Check if gesture navigation is enabled by looking at navigation bar height
-        // In gesture mode, the navigation bar is much smaller (typically around 16-24dp)
-        // In button mode, it's larger (typically 48dp+)
+    private boolean shouldExtendBehindNavigationBar() {
+        // Use system gesture insets to distinguish between navigation modes:
+        // - Gesture navigation: has left/right gesture insets (edge back gesture) → EXTEND
+        // - 2-button navigation: no gesture insets, thin bar (~24-30dp) → DON'T EXTEND
+        // - 3-button navigation: no gesture insets, tall bar (~48dp) → DON'T EXTEND
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
+            android.view.WindowInsets insets = getWindow().getDecorView().getRootWindowInsets();
+            android.util.Log.d("NavigationBar", "WindowInsets available: " + (insets != null));
+
+            if (insets != null) {
+                // Get navigation bar height
+                int navBarHeight = insets.getInsets(android.view.WindowInsets.Type.navigationBars()).bottom;
+                float density = getResources().getDisplayMetrics().density;
+                int navBarHeightDp = (int) (navBarHeight / density);
+
+                // Get system gesture insets (for edge back gestures)
+                int gestureLeft = insets.getInsets(android.view.WindowInsets.Type.systemGestures()).left;
+                int gestureRight = insets.getInsets(android.view.WindowInsets.Type.systemGestures()).right;
+                boolean hasGestureInsets = gestureLeft > 0 || gestureRight > 0;
+
+                // Only extend behind bar for TRUE gesture navigation (has gesture insets)
+                // Both 2-button and 3-button should NOT extend (content stops above)
+                boolean shouldExtend = hasGestureInsets;
+
+                android.util.Log.d("NavigationBar", "===== NAVIGATION BAR DETECTION =====");
+                android.util.Log.d("NavigationBar", "Height: " + navBarHeightDp + "dp (" + navBarHeight + "px)");
+                android.util.Log.d("NavigationBar", "Density: " + density);
+                android.util.Log.d("NavigationBar", "GestureInsets: left=" + gestureLeft + ", right=" + gestureRight);
+                android.util.Log.d("NavigationBar", "HasGestureInsets: " + hasGestureInsets);
+                android.util.Log.d("NavigationBar", "ShouldExtendBehind: " + shouldExtend + (hasGestureInsets ? " (GESTURE)" : " (BUTTONS)"));
+                android.util.Log.d("NavigationBar", "====================================");
+
+                return shouldExtend;
+            } else {
+                android.util.Log.w("NavigationBar", "WindowInsets is NULL - using fallback");
+            }
+        }
+
+        // Fallback for older Android versions
+        // Use height-based detection: only extend if very thin (< 20dp = likely gesture)
         int resourceId = getResources().getIdentifier("navigation_bar_height", "dimen", "android");
         if (resourceId > 0) {
             int navBarHeight = getResources().getDimensionPixelSize(resourceId);
             float density = getResources().getDisplayMetrics().density;
             int navBarHeightDp = (int) (navBarHeight / density);
-            // If navigation bar is less than 30dp, it's likely gesture navigation
-            return navBarHeightDp < 30;
+            boolean shouldExtend = navBarHeightDp < 20; // Only very thin bars (gesture)
+            android.util.Log.d("NavigationBar", "FALLBACK - Height: " + navBarHeightDp + "dp, ShouldExtend: " + shouldExtend);
+            return shouldExtend;
         }
+        android.util.Log.w("NavigationBar", "No navigation bar height available");
         return false;
     }
 }
