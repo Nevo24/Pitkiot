@@ -113,7 +113,7 @@
     <string name="dialog_resume_game_title">חזרה למשחק מתנהל</string>
     <string name="dialog_resume_game_msg">שים לב, אתה עומד לחזור למשחק שמתנהל. אם ברצונך להתחיל משחק חדש הישאר בעמוד הראשי ולחץ על \"איפוס משחק\".</string>
     <string name="dialog_resume_game_btn">חזור למשחק מתנהל</string>
-    <string name="dialog_stay_main">הישאר בעמוד ראשי</string>
+    <string name="dialog_stay_main">הישאר</string>
     <string name="dialog_cannot_edit_score_title">לא ניתן לערוך נקודות</string>
     <string name="dialog_cannot_edit_score_msg">אין משחק שמתנהל ברקע. על מנת לערוך ניקוד קבוצות ראשית התחל משחק חדש ולאחר מכן חזור לחלון ההגדרות.</string>
     <string name="dialog_cannot_edit_teams_title">לא ניתן לערוך מספר קבוצות</string>

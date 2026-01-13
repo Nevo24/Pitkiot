@@ -113,7 +113,7 @@
     <string name="dialog_resume_game_title">Return to Running Game</string>
     <string name="dialog_resume_game_msg">Note, you are about to return to a running game. If you want to start a new game, stay on the main page and press \"Reset Game\".</string>
     <string name="dialog_resume_game_btn">Return to Running Game</string>
-    <string name="dialog_stay_main">Stay on Main Page</string>
+    <string name="dialog_stay_main">Stay</string>
     <string name="dialog_cannot_edit_score_title">Cannot Edit Points</string>
     <string name="dialog_cannot_edit_score_msg">There is no game running in the background. To edit team scores, first start a new game and then return to the settings window.</string>
     <string name="dialog_cannot_edit_teams_title">Cannot Edit Number of Teams</string>
