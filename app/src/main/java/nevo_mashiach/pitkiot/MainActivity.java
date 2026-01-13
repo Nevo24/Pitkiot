@@ -265,6 +265,7 @@ public class MainActivity extends AppCompatActivity {
             };
             dialogBag.resumeGame(task);
         } else {
+            db.resetRound();  // Collect all notes into defs before shuffling
             Collections.shuffle(db.defs);
             Intent intent = new Intent(context, GamePlay.class);
             startActivity(intent);
