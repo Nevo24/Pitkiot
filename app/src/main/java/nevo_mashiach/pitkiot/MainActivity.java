@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -103,7 +104,11 @@ public class MainActivity extends AppCompatActivity {
 
         if (firstLaunch) {
             loadDb();
-            mNoteCount.setText(String.format(getString(R.string.note_count_database), db.totalNoteAmount()));
+            int totalNotes = db.totalNoteAmount();
+            String noteCountText = totalNotes == 1
+                ? getString(R.string.note_count_database_single)
+                : String.format(getString(R.string.note_count_database_plural), totalNotes);
+            mNoteCount.setText(noteCountText);
             firstLaunch = false;
         }
 
@@ -133,7 +138,11 @@ public class MainActivity extends AppCompatActivity {
 
     protected void onResume() {
         super.onResume();
-        mNoteCount.setText(String.format(getString(R.string.note_count_database), db.totalNoteAmount()));
+        int totalNotes = db.totalNoteAmount();
+        String noteCountText = totalNotes == 1
+            ? getString(R.string.note_count_database_single)
+            : String.format(getString(R.string.note_count_database_plural), totalNotes);
+        mNoteCount.setText(noteCountText);
 
         // Check if there's an active game (paused or has started)
         boolean hasActiveGame = db.gamePlayIsPaused || db.summaryIsPaused || db.totalRoundNumber > 0;
@@ -291,6 +300,8 @@ public class MainActivity extends AppCompatActivity {
                 spEditor.putBoolean("summaryIsPaused", false);
                 spEditor.putBoolean("gamePlayIsPaused", false);
                 spEditor.commit();
+
+                Toast.makeText(context, getString(R.string.toast_game_reset), Toast.LENGTH_SHORT).show();
             }
         };
 
@@ -310,8 +321,10 @@ public class MainActivity extends AppCompatActivity {
                 }
                 spEditor.commit();
 
-                // Update the note count display
-                mNoteCount.setText(String.format(getString(R.string.note_count_database), 0));
+                Toast.makeText(context, getString(R.string.toast_all_notes_deleted), Toast.LENGTH_SHORT).show();
+
+                // Update the note count display (0 uses plural form)
+                mNoteCount.setText(String.format(getString(R.string.note_count_database_plural), 0));
 
                 // Update reset button state (no game and no notes = disabled)
                 boolean hasActiveGame = db.gamePlayIsPaused || db.summaryIsPaused || db.totalRoundNumber > 0;

@@ -9,7 +9,8 @@
     <string name="button_add">הוספה</string>
     <string name="hint_enter_character">הזן דמות</string>
     <string name="note_count">מספר הפתקים: %d</string>
-    <string name="note_count_database">מספר פתקים במאגר: %d</string>
+    <string name="note_count_database_single">במאגר: פתק אחד</string>
+    <string name="note_count_database_plural">מספר פתקים במאגר: %d</string>
 
     <!-- MainActivity buttons -->
     <string name="button_play_game">שחק  ▶️</string>
@@ -37,11 +38,16 @@
     <string name="button_go_back">חזור</string>
 
     <!-- Toast Messages -->
-    <string name="toast_new_note_received">פתק חדש התקבל מ%s</string>
+    <string name="toast_new_note_received_single">פתק אחד התקבל מ%s</string>
+    <string name="toast_new_note_received_plural">%1$d פתקים התקבלו מ%2$s</string>
     <string name="toast_error">שגיאה: %s</string>
     <string name="toast_qr_error">שגיאה ביצירת QR</string>
     <string name="toast_link_copied">הקישור הועתק!</string>
-    <string name="toast_notes_added">%d פתקים נוספו למאגר</string>
+    <string name="toast_notes_added_single">פתק אחד נוסף למאגר</string>
+    <string name="toast_notes_added_plural">%d פתקים נוספו למאגר</string>
+    <string name="toast_note_deleted">פתק נמחק</string>
+    <string name="toast_all_notes_deleted">כל הפתקים נמחקו מהמאגר</string>
+    <string name="toast_game_reset">המשחק אופס</string>
 
     <!-- Web Form (for reference) -->
     <string name="web_title">Pitkiot - הוסף פתק</string>

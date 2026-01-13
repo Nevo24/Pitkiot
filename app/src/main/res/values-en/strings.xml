@@ -9,7 +9,8 @@
     <string name="button_add">Add</string>
     <string name="hint_enter_character">Enter character</string>
     <string name="note_count">Number of notes: %d</string>
-    <string name="note_count_database">Number of notes in database: %d</string>
+    <string name="note_count_database_single">In database: one note</string>
+    <string name="note_count_database_plural">Number of notes in database: %d</string>
 
     <!-- MainActivity buttons -->
     <string name="button_play_game">▶️  Play</string>
@@ -37,11 +38,16 @@
     <string name="button_go_back">Go Back</string>
 
     <!-- Toast Messages -->
-    <string name="toast_new_note_received">New note received from %s</string>
+    <string name="toast_new_note_received_single">One note received from %s</string>
+    <string name="toast_new_note_received_plural">%1$d notes received from %2$s</string>
     <string name="toast_error">Error: %s</string>
     <string name="toast_qr_error">Error creating QR code</string>
     <string name="toast_link_copied">Link copied!</string>
-    <string name="toast_notes_added">%d notes added to database</string>
+    <string name="toast_notes_added_single">One note added to database</string>
+    <string name="toast_notes_added_plural">%d notes added to database</string>
+    <string name="toast_note_deleted">Note deleted</string>
+    <string name="toast_all_notes_deleted">All notes deleted from database</string>
+    <string name="toast_game_reset">Game reset</string>
 
     <!-- Web Form (for reference) -->
     <string name="web_title">Pitkiot - Add Note</string>

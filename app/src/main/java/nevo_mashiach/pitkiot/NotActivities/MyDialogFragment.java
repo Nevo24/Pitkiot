@@ -4,15 +4,21 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -64,10 +70,56 @@ public class MyDialogFragment extends DialogFragment {
         if(naturalButtonText != null) builder.setNeutralButton(naturalButtonText, naturalButtonListener);
         AlertDialog dialog = builder.create();
 
+        // Get app language from SharedPreferences
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        String appLanguage = prefs.getString("app_language", "he");
+        boolean isRTL = appLanguage.equals("he");
+
+        // Set dialog window layout direction
+        Window window = dialog.getWindow();
+        if (window != null) {
+            if (isRTL) {
+                window.getDecorView().setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
+            } else {
+                window.getDecorView().setLayoutDirection(View.LAYOUT_DIRECTION_LTR);
+            }
+        }
+
         // Make the positive button more prominent after dialog is shown
         dialog.setOnShowListener(new DialogInterface.OnShowListener() {
             @Override
             public void onShow(DialogInterface dialogInterface) {
+                // Set text alignment for title and message
+                int textGravity = isRTL ? Gravity.RIGHT : Gravity.LEFT;
+
+                // Find and set gravity for title TextView
+                int titleId = context.getResources().getIdentifier("alertTitle", "id", "android");
+                if (titleId > 0) {
+                    TextView titleView = dialog.findViewById(titleId);
+                    if (titleView != null) {
+                        titleView.setGravity(textGravity | Gravity.CENTER_VERTICAL);
+                    }
+                }
+
+                // Find and set gravity for message TextView
+                TextView messageView = dialog.findViewById(android.R.id.message);
+                if (messageView != null) {
+                    messageView.setGravity(textGravity);
+                }
+
+                // Set button panel gravity using absolute positioning
+                // Hebrew (RTL): want RIGHT, so use absolute RIGHT
+                // English (LTR): want LEFT, so use absolute LEFT
+                int buttonPanelId = context.getResources().getIdentifier("buttonPanel", "id", "android");
+                if (buttonPanelId > 0) {
+                    View buttonPanel = dialog.findViewById(buttonPanelId);
+                    if (buttonPanel != null && buttonPanel instanceof LinearLayout) {
+                        LinearLayout buttonPanelLayout = (LinearLayout) buttonPanel;
+                        int gravity = isRTL ? Gravity.RIGHT : Gravity.LEFT;
+                        buttonPanelLayout.setGravity(gravity);
+                    }
+                }
+
                 // Get the dark green color from colorAccent
                 int darkGreen = ContextCompat.getColor(context, nevo_mashiach.pitkiot.R.color.colorAccent);
 

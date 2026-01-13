@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -98,6 +99,7 @@ public class NoteList extends AppCompatActivity {
                 Runnable deleteTask = new Runnable() {
                     public void run() {
                         deleteAllNotes();
+                        Toast.makeText(context, getString(R.string.toast_all_notes_deleted), Toast.LENGTH_SHORT).show();
                         reloadActivityWithoutAnimation();
                     }
                 };
@@ -122,6 +124,8 @@ public class NoteList extends AppCompatActivity {
                         spEditor.putBoolean("summaryIsPaused", false);
                         spEditor.putBoolean("gamePlayIsPaused", false);
                         spEditor.commit();
+
+                        Toast.makeText(context, getString(R.string.toast_game_reset), Toast.LENGTH_SHORT).show();
                     }
                 };
 
@@ -189,6 +193,7 @@ public class NoteList extends AppCompatActivity {
                             Runnable task = new Runnable() {
                                 public void run() {
                                     deleteNote(noteText);
+                                    Toast.makeText(context, getString(R.string.toast_note_deleted), Toast.LENGTH_SHORT).show();
                                     reloadActivityWithoutAnimation();
                                 }
                             };

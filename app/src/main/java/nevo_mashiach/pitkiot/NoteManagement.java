@@ -77,6 +77,9 @@ public class NoteManagement extends AppCompatActivity {
     private long lastActivityLaunchTime = 0;
     private static final long ACTIVITY_LAUNCH_COOLDOWN = 500; // milliseconds
 
+    // Toast for showing feedback messages
+    private Toast currentToast;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -158,7 +161,11 @@ public class NoteManagement extends AppCompatActivity {
 
     protected void onResume() {
         super.onResume();
-        mNoteCount.setText(String.format(getString(R.string.note_count_database), db.totalNoteAmount()));
+        int totalNotes = db.totalNoteAmount();
+        String noteCountText = totalNotes == 1
+            ? getString(R.string.note_count_database_single)
+            : String.format(getString(R.string.note_count_database_plural), totalNotes);
+        mNoteCount.setText(noteCountText);
     }
 
 
@@ -175,13 +182,19 @@ public class NoteManagement extends AppCompatActivity {
 
 
 
-    private void add(String name) {
+    private boolean add(String name) {
         name = name.trim();
         if (!db.noteExists(name) && !name.isEmpty()) {
             defs.add(name);
             saveNotes();
-            mNoteCount.setText(String.format(getString(R.string.note_count_database), db.totalNoteAmount()));
+            int totalNotes = db.totalNoteAmount();
+            String noteCountText = totalNotes == 1
+                ? getString(R.string.note_count_database_single)
+                : String.format(getString(R.string.note_count_database_plural), totalNotes);
+            mNoteCount.setText(noteCountText);
+            return true;
         }
+        return false;
     }
 
     private void saveNotes() {
@@ -196,12 +209,23 @@ public class NoteManagement extends AppCompatActivity {
     public void addingDefToDb(View view) {
         String input = mTypeDef.getText().toString();
         List<String> notes = parseNotes(input);
+        int addedCount = 0;
         for (String note : notes) {
-            add(note);
+            if (add(note)) {
+                addedCount++;
+            }
         }
         mTypeDef.setText("");
         // Restore hint after adding
         mTypeDef.setHint(R.string.hint_enter_character);
+
+        // Show toast notification if notes were added
+        if (addedCount > 0) {
+            String message = addedCount == 1
+                ? getString(R.string.toast_notes_added_single)
+                : String.format(getString(R.string.toast_notes_added_plural), addedCount);
+            showToast(message);
+        }
     }
 
 
@@ -265,6 +289,12 @@ public class NoteManagement extends AppCompatActivity {
                     // Parse and add notes from submission
                     List<String> notes = parseNotes(noteContent);
                     android.util.Log.d("NoteManagement", "Parsed " + notes.size() + " notes");
+
+                    // Count unique notes in this submission (ignore duplicates within the message)
+                    java.util.Set<String> uniqueNotes = new java.util.HashSet<>(notes);
+                    int uniqueCount = uniqueNotes.size();
+
+                    // Add notes to database
                     for (String note : notes) {
                         add(note);
                     }
@@ -273,14 +303,21 @@ public class NoteManagement extends AppCompatActivity {
                     receivedNotesCount += notes.size();
                     android.util.Log.d("NoteManagement", "Total notes received: " + receivedNotesCount);
                     updateCollectionDialogUI(submitterName, noteContent);
-                    Toast.makeText(context, String.format(getString(R.string.toast_new_note_received), submitterName), Toast.LENGTH_SHORT).show();
+
+                    // Show toast with unique note count from this submission
+                    if (uniqueCount > 0) {
+                        String message = uniqueCount == 1
+                            ? String.format(getString(R.string.toast_new_note_received_single), submitterName)
+                            : String.format(getString(R.string.toast_new_note_received_plural), uniqueCount, submitterName);
+                        showToast(message);
+                    }
                 });
             }
 
             @Override
             public void onError(String error) {
                 runOnUiThread(() -> {
-                    Toast.makeText(context, String.format(getString(R.string.toast_error), error), Toast.LENGTH_SHORT).show();
+                    showToast(String.format(getString(R.string.toast_error), error));
                 });
             }
         });
@@ -305,8 +342,51 @@ public class NoteManagement extends AppCompatActivity {
         builder.setCancelable(false);
         AlertDialog dialog = builder.create();
 
+        // Get app language from SharedPreferences
+        String appLanguage = prefs.getString("app_language", "he");
+        boolean isRTL = appLanguage.equals("he");
+
+        // Set dialog window layout direction
+        android.view.Window window = dialog.getWindow();
+        if (window != null) {
+            if (isRTL) {
+                window.getDecorView().setLayoutDirection(android.view.View.LAYOUT_DIRECTION_RTL);
+            } else {
+                window.getDecorView().setLayoutDirection(android.view.View.LAYOUT_DIRECTION_LTR);
+            }
+        }
+
         // Make the positive button more prominent with bold dark green text
         dialog.setOnShowListener(dialogInterface -> {
+            // Set text alignment for title and message
+            int textGravity = isRTL ? android.view.Gravity.RIGHT : android.view.Gravity.LEFT;
+
+            // Find and set gravity for title TextView
+            int titleId = context.getResources().getIdentifier("alertTitle", "id", "android");
+            if (titleId > 0) {
+                android.widget.TextView titleView = dialog.findViewById(titleId);
+                if (titleView != null) {
+                    titleView.setGravity(textGravity | android.view.Gravity.CENTER_VERTICAL);
+                }
+            }
+
+            // Find and set gravity for message TextView
+            android.widget.TextView messageView = dialog.findViewById(android.R.id.message);
+            if (messageView != null) {
+                messageView.setGravity(textGravity);
+            }
+
+            // Set button panel gravity using absolute positioning
+            int buttonPanelId = context.getResources().getIdentifier("buttonPanel", "id", "android");
+            if (buttonPanelId > 0) {
+                android.view.View buttonPanel = dialog.findViewById(buttonPanelId);
+                if (buttonPanel != null && buttonPanel instanceof android.widget.LinearLayout) {
+                    android.widget.LinearLayout buttonPanelLayout = (android.widget.LinearLayout) buttonPanel;
+                    int gravity = isRTL ? android.view.Gravity.RIGHT : android.view.Gravity.LEFT;
+                    buttonPanelLayout.setGravity(gravity);
+                }
+            }
+
             Button positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
             Button negativeButton = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
 
@@ -348,6 +428,18 @@ public class NoteManagement extends AppCompatActivity {
         collectionDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
         collectionDialog.setCancelable(false); // Prevent automatic dismissal on back press
 
+        // Set dialog layout direction based on app language
+        String appLanguage = prefs.getString("app_language", "he");
+        boolean isRTL = appLanguage.equals("he");
+        android.view.Window window = collectionDialog.getWindow();
+        if (window != null) {
+            if (isRTL) {
+                window.getDecorView().setLayoutDirection(android.view.View.LAYOUT_DIRECTION_RTL);
+            } else {
+                window.getDecorView().setLayoutDirection(android.view.View.LAYOUT_DIRECTION_LTR);
+            }
+        }
+
         // Handle back button press
         collectionDialog.setOnKeyListener((dialog, keyCode, event) -> {
             if (keyCode == android.view.KeyEvent.KEYCODE_BACK && event.getAction() == android.view.KeyEvent.ACTION_UP) {
@@ -387,7 +479,7 @@ public class NoteManagement extends AppCompatActivity {
             Bitmap qrBitmap = generateQRCode(url);
             qrCodeImage.setImageBitmap(qrBitmap);
         } catch (WriterException e) {
-            Toast.makeText(context, getString(R.string.toast_qr_error), Toast.LENGTH_SHORT).show();
+            showToast(getString(R.string.toast_qr_error));
         }
 
         // Copy URL button
@@ -395,7 +487,7 @@ public class NoteManagement extends AppCompatActivity {
             ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
             ClipData clip = ClipData.newPlainText("Pitkiot URL", url);
             clipboard.setPrimaryClip(clip);
-            Toast.makeText(context, getString(R.string.toast_link_copied), Toast.LENGTH_SHORT).show();
+            showToast(getString(R.string.toast_link_copied));
         });
         @SuppressLint("ClickableViewAccessibility")
         View.OnTouchListener touchListener = (v, motion) -> db.onTouch(context, v, motion);
@@ -415,7 +507,10 @@ public class NoteManagement extends AppCompatActivity {
             int totalUniqueNotes = allUniqueNotes.size();
 
             collectionDialog.dismiss();
-            Toast.makeText(context, String.format(getString(R.string.toast_notes_added), totalUniqueNotes), Toast.LENGTH_SHORT).show();
+            String message = totalUniqueNotes == 1
+                ? getString(R.string.toast_notes_added_single)
+                : String.format(getString(R.string.toast_notes_added_plural), totalUniqueNotes);
+            showToast(message);
             receivedNotesCount = 0;
             submitterNoteCounts.clear();
         });
@@ -595,6 +690,15 @@ public class NoteManagement extends AppCompatActivity {
             }
         }
         return notes;
+    }
+
+    private void showToast(String message) {
+        // Cancel any existing toast to prevent queueing
+        if (currentToast != null) {
+            currentToast.cancel();
+        }
+        currentToast = Toast.makeText(context, message, Toast.LENGTH_SHORT);
+        currentToast.show();
     }
 
     boolean onTouchCollectOnline(View view, MotionEvent motion) {

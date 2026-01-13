@@ -286,7 +286,11 @@ public class Settings extends AppCompatActivity {
         if(db.scores[selectedSpinner] == 0) mDecrease2.setEnabled(false);
 
         // Update note count display
-        mNoteCount.setText(String.format(getString(R.string.note_count_database), db.totalNoteAmount()));
+        int totalNotes = db.totalNoteAmount();
+        String noteCountText = totalNotes == 1
+            ? getString(R.string.note_count_database_single)
+            : String.format(getString(R.string.note_count_database_plural), totalNotes);
+        mNoteCount.setText(noteCountText);
     }
 
     private void createGroupSpinner() {

@@ -3,6 +3,7 @@ package nevo_mashiach.pitkiot.NotActivities;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.widget.Toast;
 
 import androidx.fragment.app.FragmentManager;
 
@@ -57,6 +58,7 @@ public class DialogBag {
     public void normalGameOver(int winningTeam, int winningTotal, int loserTotal) {
         db.gameOverDialogActivated = true;
         db.resetGame();
+        Toast.makeText(context, context.getString(nevo_mashiach.pitkiot.R.string.toast_game_reset), Toast.LENGTH_SHORT).show();
         MyDialogFragment dialog = new MyDialogFragment(
                 context.getString(nevo_mashiach.pitkiot.R.string.dialog_game_over_title),
                 String.format(context.getString(nevo_mashiach.pitkiot.R.string.dialog_team_won), winningTeam, winningTotal, loserTotal)
@@ -75,6 +77,7 @@ public class DialogBag {
     public void drawGameOver(int score) {
         db.gameOverDialogActivated = true;
         db.resetGame();
+        Toast.makeText(context, context.getString(nevo_mashiach.pitkiot.R.string.toast_game_reset), Toast.LENGTH_SHORT).show();
         MyDialogFragment dialog = new MyDialogFragment(
                 context.getString(nevo_mashiach.pitkiot.R.string.dialog_game_over_title),
                 String.format(context.getString(nevo_mashiach.pitkiot.R.string.dialog_draw), score, score)
@@ -93,6 +96,7 @@ public class DialogBag {
     public void multiGameOver(final int[] scores) {
         db.gameOverDialogActivated = true;
         db.resetGame();
+        Toast.makeText(context, context.getString(nevo_mashiach.pitkiot.R.string.toast_game_reset), Toast.LENGTH_SHORT).show();
         MyDialogFragment dialog = new MyDialogFragment(
                 context.getString(nevo_mashiach.pitkiot.R.string.dialog_game_over_title),
                 ""
