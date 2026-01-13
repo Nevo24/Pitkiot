@@ -404,7 +404,7 @@ public class Summary extends AppCompatActivity {
         spEditor.putInt("nextTeamForButton", nextTeamForButton);
         // Note: Scores, rounds, and round mode are saved via db state and regenerated from there
 
-        spEditor.commit();
+        spEditor.apply();
     }
 
     private void twoTeamsVisibility(boolean visible) {
@@ -508,6 +508,8 @@ public class Summary extends AppCompatActivity {
         // Clear indicator tracking since we're starting a new turn
         teamThatJustPlayed = -1;
         successCountForTeamThatJustPlayed = 0;
+        // Reset pause flag so next Summary will display results properly
+        db.summaryIsPaused = false;
         Collections.shuffle(db.defs);
         Intent intent = new Intent(context, GamePlay.class);
         startActivity(intent);

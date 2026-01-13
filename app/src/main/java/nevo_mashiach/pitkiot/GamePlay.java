@@ -197,7 +197,7 @@ public class GamePlay extends AppCompatActivity {
         spEditor.putString("currentDef", currentDef);  // The actual note content (not a localizable string)
         spEditor.putLong("fixedMillisUntilFinished", fixedMillisUntilFinished);
         spEditor.putString("currentDefString", currentDef);
-        spEditor.commit();
+        spEditor.apply();
     }
 
     @SuppressLint("SetTextI18n")
@@ -365,6 +365,11 @@ public class GamePlay extends AppCompatActivity {
         happyAanim.start();
         db.currentSuccessNum++;
         db.increaseScore();
+
+        // Immediate save to prevent data loss if app is backgrounded
+        spEditor.putInt("currentSuccessNum", db.currentSuccessNum);
+        spEditor.apply();
+
         mCurrentSuccess.setText(getString(R.string.game_successes_this_round) + db.currentSuccessNum);
 
         db.defTransfer("success", currentDef);
