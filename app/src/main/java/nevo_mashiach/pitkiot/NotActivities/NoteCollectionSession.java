@@ -1,6 +1,7 @@
 package nevo_mashiach.pitkiot.NotActivities;
 
 import android.content.Context;
+import android.provider.Settings;
 import android.util.Log;
 
 import com.google.firebase.firestore.DocumentChange;
@@ -26,6 +27,7 @@ public class NoteCollectionSession {
     private final FirebaseFirestore firestore;
     private final Context context;
     private String sessionId;
+    private String deviceId;
     private ListenerRegistration listenerRegistration;
     private OnNoteReceivedListener noteReceivedListener;
 
@@ -37,33 +39,50 @@ public class NoteCollectionSession {
     public NoteCollectionSession(Context context) {
         this.context = context;
         firestore = FirebaseFirestore.getInstance();
+        deviceId = getDeviceId();
     }
 
     /**
-     * Creates a new collection session with a unique 4-digit code
-     * @return The session ID (e.g., "1234")
+     * Gets the device ID (Android ID) for this device
+     * @return The device ID
+     */
+    private String getDeviceId() {
+        String androidId = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
+        // Use first 8 characters for brevity
+        return androidId != null && androidId.length() >= 8 ? androidId.substring(0, 8) : "default";
+    }
+
+    /**
+     * Creates a new collection session with a unique 3-digit code combined with device ID
+     * @return The session ID (e.g., "123")
      */
     public String createSession() {
-        // Generate a 4-digit random session code
+        // Generate a 3-digit random session code
         Random random = new Random();
-        sessionId = String.format("%04d", random.nextInt(10000));
+        String shortCode = String.format("%03d", random.nextInt(1000));
 
-        Log.d(TAG, "Created session: " + sessionId);
-        return sessionId;
+        // Combine with device ID for uniqueness
+        sessionId = deviceId + "_" + shortCode;
+
+        Log.d(TAG, "Created session: " + sessionId + " (short code: " + shortCode + ")");
+        return shortCode; // Return only the short code for display purposes
     }
 
     /**
-     * Gets the current session ID
+     * Gets the current full session ID (with device ID)
      */
     public String getSessionId() {
         return sessionId;
     }
 
     /**
-     * Sets an existing session ID (for reconnecting)
+     * Gets the short code (3 digits only) for display
      */
-    public void setSessionId(String sessionId) {
-        this.sessionId = sessionId;
+    public String getShortCode() {
+        if (sessionId != null && sessionId.contains("_")) {
+            return sessionId.split("_")[1];
+        }
+        return sessionId;
     }
 
     /**
@@ -74,7 +93,8 @@ public class NoteCollectionSession {
         if (sessionId == null) {
             throw new IllegalStateException("Session not created. Call createSession() first.");
         }
-        return baseUrl + "/submit?s=" + sessionId;
+        String shortCode = getShortCode();
+        return baseUrl + "/submit?d=" + deviceId + "&s=" + shortCode;
     }
 
     /**

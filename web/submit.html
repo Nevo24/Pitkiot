@@ -398,9 +398,13 @@
 
         // Get session ID and language from URL
         const urlParams = new URLSearchParams(window.location.search);
-        const sessionId = urlParams.get('session') || urlParams.get('s');
+        const deviceId = urlParams.get('d');
+        const shortCode = urlParams.get('session') || urlParams.get('s');
         const lang = urlParams.get('lang') || 'he'; // Default to Hebrew
         const t = translations[lang] || translations.he;
+
+        // Combine device ID and short code to create full session ID
+        const sessionId = deviceId && shortCode ? deviceId + '_' + shortCode : shortCode;
 
         // Apply language settings
         document.documentElement.lang = lang;
@@ -433,7 +437,8 @@
         if (!sessionId) {
             showError(t.errorNoSession);
         } else {
-            sessionDisplay.textContent = t.sessionCode + sessionId;
+            // Display only the short code to the user (4 digits)
+            sessionDisplay.textContent = t.sessionCode + shortCode;
             loadingScreen.style.display = 'none';
             mainContent.style.display = 'block';
         }

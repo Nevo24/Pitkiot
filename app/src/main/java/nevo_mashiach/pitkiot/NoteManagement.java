@@ -271,14 +271,14 @@ public class NoteManagement extends AppCompatActivity {
         receivedNotesCount = 0;
         submitterNoteCounts.clear();
 
-        // Create a new collection session
+        // Create a new collection session every time
         noteCollectionSession = new NoteCollectionSession(context);
-        String sessionId = noteCollectionSession.createSession();
+        String shortCode = noteCollectionSession.createSession();
         String currentLang = prefs.getString("app_language", "he");
         String url = noteCollectionSession.getSubmissionUrl(FIREBASE_HOSTING_URL) + "&lang=" + currentLang;
 
         // Show the collection dialog
-        showNoteCollectionDialog(sessionId, url);
+        showNoteCollectionDialog(shortCode, url);
 
         // Start listening for incoming notes
         noteCollectionSession.startListening(new NoteCollectionSession.OnNoteReceivedListener() {
