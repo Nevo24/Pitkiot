@@ -145,7 +145,7 @@
     <ImageView
         app:layout_widthPercent="45%"
         app:layout_heightPercent="40%"
-        app:srcCompat="@mipmap/press_here"
+        app:srcCompat="@drawable/press_here"
         android:id="@+id/pressHereFigure"
         android:layout_below="@+id/ready"
         android:layout_alignParentLeft="true"

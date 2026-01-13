@@ -1,19 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <animation-list xmlns:android="http://schemas.android.com/apk/res/android"
                 android:oneshot="true">
-    <item android:drawable="@mipmap/basic_figure" android:duration="1" />
-    <item android:drawable="@mipmap/happy_1" android:duration="100" />
-    <item android:drawable="@mipmap/happy_2" android:duration="100" />
-    <item android:drawable="@mipmap/happy_3" android:duration="100" />
-    <item android:drawable="@mipmap/happy_4" android:duration="100" />
-    <item android:drawable="@mipmap/happy_5" android:duration="100" />
-    <item android:drawable="@mipmap/happy_6" android:duration="100" />
-    <item android:drawable="@mipmap/happy_7" android:duration="100" />
-    <item android:drawable="@mipmap/happy_8" android:duration="100" />
-    <item android:drawable="@mipmap/happy_9" android:duration="100" />
-    <item android:drawable="@mipmap/happy_10" android:duration="100" />
-    <item android:drawable="@mipmap/happy_3" android:duration="100" />
-    <item android:drawable="@mipmap/happy_2" android:duration="100" />
-    <item android:drawable="@mipmap/happy_1" android:duration="100" />
-    <item android:drawable="@mipmap/basic_figure" android:duration="1" />
+    <item android:drawable="@drawable/basic_figure" android:duration="1" />
+    <item android:drawable="@drawable/happy_1" android:duration="100" />
+    <item android:drawable="@drawable/happy_2" android:duration="100" />
+    <item android:drawable="@drawable/happy_3" android:duration="100" />
+    <item android:drawable="@drawable/happy_4" android:duration="100" />
+    <item android:drawable="@drawable/happy_5" android:duration="100" />
+    <item android:drawable="@drawable/happy_6" android:duration="100" />
+    <item android:drawable="@drawable/happy_7" android:duration="100" />
+    <item android:drawable="@drawable/happy_8" android:duration="100" />
+    <item android:drawable="@drawable/happy_9" android:duration="100" />
+    <item android:drawable="@drawable/happy_10" android:duration="100" />
+    <item android:drawable="@drawable/happy_11" android:duration="100" />
+    <item android:drawable="@drawable/happy_3" android:duration="100" />
+    <item android:drawable="@drawable/happy_2" android:duration="100" />
+    <item android:drawable="@drawable/happy_1" android:duration="100" />
+    <item android:drawable="@drawable/basic_figure" android:duration="1" />
 </animation-list>
