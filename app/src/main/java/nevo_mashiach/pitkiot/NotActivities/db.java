@@ -218,9 +218,14 @@ public class db {
     }
 
     public static boolean onTouchExplanation(Context context, View view, MotionEvent motion) {
+        // Convert dp to pixels for proper padding
+        float density = context.getResources().getDisplayMetrics().density;
+        int paddingTopPx = (int) (4 * density);  // Normal state
+        int paddingTopPressedPx = (int) (6 * density);  // Pressed state (4 + 2 for movement)
+
         if (motion.getAction() == MotionEvent.ACTION_UP) {
             view.setPressed(false);
-            view.setPadding(17, 0, 0, 0);
+            view.setPadding(0, paddingTopPx, 0, 0);
             view.performClick();
             return true; // Consume the event to prevent double-click
         }
@@ -228,11 +233,12 @@ public class db {
             Rect rect = new Rect(view.getLeft(), view.getTop(), view.getRight(), view.getBottom());
             if(!rect.contains(view.getLeft() + (int) motion.getX(), view.getTop() + (int) motion.getY())) {
                 view.setPressed(false);
-                view.setPadding(17, 0, 0, 0);
+                view.setPadding(0, paddingTopPx, 0, 0);
             }
         }
         else if(motion.getAction() == MotionEvent.ACTION_DOWN) {
-            view.setPadding(17, 20, 20, 0);
+            view.setPressed(true);
+            view.setPadding(0, paddingTopPressedPx, 0, 0);  // Add 2dp movement when pressed
             makeSound(context, R.raw.button_press_sound);
         }
         return false;

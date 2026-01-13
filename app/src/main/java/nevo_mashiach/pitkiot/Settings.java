@@ -427,7 +427,6 @@ public class Settings extends AppCompatActivity {
         mPassTimeValue.setText(String.valueOf(db.timeDownOnNext));
         mAmountOfTeams.setText(String.valueOf(db.amountOfTeams));
         mTeamEditableScore.setText(String.valueOf(db.scores[0]));
-        mBalanceExplanation.setPadding(17, 0, 0, 0);
         createGroupSpinner();
         if(db.amountOfTeams == 2) mDecrease1.setEnabled(false);
         else if(db.amountOfTeams == 24) mIncrease1.setEnabled(false);

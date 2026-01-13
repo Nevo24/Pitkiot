@@ -334,6 +334,9 @@
         android:textStyle="bold"
         android:id="@+id/balanceExplanation"
         android:textSize="24sp"
+        android:gravity="center"
+        android:includeFontPadding="false"
+        android:paddingTop="4dp"
         android:layout_alignTop="@+id/autoBalaceCheckBox"
         android:layout_alignParentLeft="true"/>
 
