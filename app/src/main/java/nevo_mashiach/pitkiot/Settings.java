@@ -43,7 +43,7 @@ public class Settings extends AppCompatActivity {
     CheckBox mSoundCheckBox;
     MyEditText mRoundTimeValue;
     MyEditText mPassTimeValue;
-    MyEditText mAmountOfTeams;
+    TextView mAmountOfTeams;
     TextView mTeamEditableScore;
     TextView mBalanceExplanation;
     TextView mNoteCount;
