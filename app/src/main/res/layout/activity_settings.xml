@@ -13,7 +13,7 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="nevo_mashiach.pitkiot.Settings"
-    android:background="@mipmap/cork_board"
+    android:background="@drawable/cork_board"
     android:layoutDirection="ltr">
 
     <androidx.percentlayout.widget.PercentRelativeLayout
@@ -44,6 +44,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:baselineAligned="false"
             android:layout_below="@+id/team1Text"
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
@@ -65,7 +67,8 @@
                 android:text="0"
                 android:textSize="32sp"
                 android:textStyle="bold"
-                android:textColor="#88000000"/>
+                android:textColor="#88000000"
+                android:paddingTop="6dp"/>
 
             <nevo_mashiach.pitkiot.NotActivities.MyButton
                 android:id="@+id/increase1"
@@ -116,6 +119,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:baselineAligned="false"
             android:layout_below="@+id/settingsSpinner"
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
@@ -137,7 +142,8 @@
                 android:text="0"
                 android:textSize="32sp"
                 android:textStyle="bold"
-                android:textColor="#88000000"/>
+                android:textColor="#88000000"
+                android:paddingTop="6dp"/>
 
             <nevo_mashiach.pitkiot.NotActivities.MyButton
                 android:id="@+id/increase2"
@@ -184,6 +190,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:baselineAligned="false"
         android:layout_below="@+id/textView1"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
@@ -209,7 +217,8 @@
             android:background="@android:color/transparent"
             android:textColor="#88000000"
             android:selectAllOnFocus="true"
-            android:maxLength="3"/>
+            android:maxLength="3"
+            android:paddingTop="6dp"/>
 
         <nevo_mashiach.pitkiot.NotActivities.MyButton
             android:id="@+id/increaseRoundTime"
@@ -249,6 +258,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:baselineAligned="false"
         android:layout_below="@+id/team1Headline"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
@@ -274,7 +285,8 @@
             android:background="@android:color/transparent"
             android:textColor="#88000000"
             android:selectAllOnFocus="true"
-            android:maxLength="3"/>
+            android:maxLength="3"
+            android:paddingTop="6dp"/>
 
         <nevo_mashiach.pitkiot.NotActivities.MyButton
             android:id="@+id/increasePassTime"
