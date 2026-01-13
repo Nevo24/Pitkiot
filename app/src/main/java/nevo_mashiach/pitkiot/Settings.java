@@ -41,16 +41,27 @@ public class Settings extends AppCompatActivity {
 
     CheckBox mAutoBalaceCheckBox;
     CheckBox mSoundCheckBox;
-    MyEditText mEditRoundTime;
-    MyEditText mEditNextTime;
-    TextView mAmountOfTeams;
+    MyEditText mRoundTimeValue;
+    MyEditText mPassTimeValue;
+    MyEditText mAmountOfTeams;
     TextView mTeamEditableScore;
     TextView mBalanceExplanation;
     TextView mNoteCount;
+    TextView mRoundTimeConstraint;
+    TextView mPassTimeConstraint;
+    TextView mTeamsConstraint;
+    TextView mTeam1Text;
+    TextView mEditScoreHeadline;
+    TextView mTextView1;
+    TextView mTeam1Headline;
 
     Button mIncrease1;
     Button mDecrease1;
     Button mDecrease2;
+    Button mIncreaseRoundTime;
+    Button mDecreaseRoundTime;
+    Button mIncreasePassTime;
+    Button mDecreasePassTime;
 
     int num;
     int selectedSpinner = 1;
@@ -93,27 +104,64 @@ public class Settings extends AppCompatActivity {
         // Initialize view references
         mAutoBalaceCheckBox = binding.autoBalaceCheckBox;
         mSoundCheckBox = binding.soundCheckBox;
-        mEditRoundTime = binding.editRoundTime;
-        mEditNextTime = binding.editNextTime;
+        mRoundTimeValue = binding.roundTimeValue;
+        mPassTimeValue = binding.passTimeValue;
         mAmountOfTeams = binding.amoutOfTeams;
         mTeamEditableScore = binding.teamEditableScore;
         mBalanceExplanation = binding.balanceExplanation;
         mNoteCount = binding.noteCount;
+        mRoundTimeConstraint = binding.roundTimeConstraint;
+        mPassTimeConstraint = binding.passTimeConstraint;
+        mTeamsConstraint = binding.teamsConstraint;
+        mTeam1Text = binding.team1Text;
+        mEditScoreHeadline = binding.editScoreHeadline;
+        mTextView1 = binding.textView1;
+        mTeam1Headline = binding.team1Headline;
         mIncrease1 = binding.increase1;
         mDecrease1 = binding.decrease1;
         mDecrease2 = binding.decrease2;
-        
+        mIncreaseRoundTime = binding.increaseRoundTime;
+        mDecreaseRoundTime = binding.decreaseRoundTime;
+        mIncreasePassTime = binding.increasePassTime;
+        mDecreasePassTime = binding.decreasePassTime;
+
         // Set up listeners
         mAutoBalaceCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> onAutoBalanceChecked(isChecked));
         mSoundCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> onSoundChecked(isChecked));
         mBalanceExplanation.setOnClickListener(this::explanationBalanceDialog);
-        mEditRoundTime.setOnFocusChangeListener((v, hasFocus) -> focusChangedEditRoundTime(hasFocus));
-        mEditNextTime.setOnFocusChangeListener((v, hasFocus) -> focusChangedEditNextTime(hasFocus));
         binding.resetSettings.setOnClickListener(this::resetAllSettings);
         mIncrease1.setOnClickListener(this::increaseTeam1Score);
         binding.increase2.setOnClickListener(this::increaseTeam2Score);
         mDecrease1.setOnClickListener(this::decreaseTeam1Score);
         mDecrease2.setOnClickListener(this::decreaseTeam2Score);
+        mIncreaseRoundTime.setOnClickListener(this::increaseRoundTime);
+        mDecreaseRoundTime.setOnClickListener(this::decreaseRoundTime);
+        mIncreasePassTime.setOnClickListener(this::increasePassTime);
+        mDecreasePassTime.setOnClickListener(this::decreasePassTime);
+
+        // Set up focus listeners for direct editing
+        mRoundTimeValue.setOnFocusChangeListener((v, hasFocus) -> focusChangedRoundTimeValue(hasFocus));
+        mPassTimeValue.setOnFocusChangeListener((v, hasFocus) -> focusChangedPassTimeValue(hasFocus));
+        mAmountOfTeams.setOnFocusChangeListener((v, hasFocus) -> focusChangedAmountOfTeams(hasFocus));
+
+        // Set up editor action listeners to close keyboard on done
+        TextView.OnEditorActionListener doneListener = (v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                v.clearFocus();
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+                return true;
+            }
+            return false;
+        };
+        mRoundTimeValue.setOnEditorActionListener(doneListener);
+        mPassTimeValue.setOnEditorActionListener(doneListener);
+        mAmountOfTeams.setOnEditorActionListener(doneListener);
+
+        // Set up input filters to prevent invalid values during typing
+        mRoundTimeValue.setFilters(new android.text.InputFilter[] { new InputFilterMinMax(1, 300) });
+        mPassTimeValue.setFilters(new android.text.InputFilter[] { new InputFilterMinMax(1, 300) });
+        mAmountOfTeams.setFilters(new android.text.InputFilter[] { new InputFilterMinMax(2, 24) });
 
         // Set up touch listeners - Note: db.onTouch()/onTouchExplanation() internally call view.performClick()
         @SuppressLint("ClickableViewAccessibility")
@@ -158,18 +206,6 @@ public class Settings extends AppCompatActivity {
         mAutoBalaceCheckBox.setTypeface(tf);
         mSoundCheckBox.setTypeface(tf);
 
-
-        mEditNextTime.setOnEditorActionListener((v, actionId, event) -> {
-            if (actionId == EditorInfo.IME_ACTION_DONE) {
-                mEditRoundTime.clearFocus();
-                mEditNextTime.clearFocus();
-
-                //Closing keyboard:
-                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
-            }
-            return false;
-        });
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
@@ -198,10 +234,33 @@ public class Settings extends AppCompatActivity {
             (androidx.percentlayout.widget.PercentRelativeLayout.LayoutParams) mSoundCheckBox.getLayoutParams();
         androidx.percentlayout.widget.PercentRelativeLayout.LayoutParams buttonParams =
             (androidx.percentlayout.widget.PercentRelativeLayout.LayoutParams) mBalanceExplanation.getLayoutParams();
-        androidx.percentlayout.widget.PercentRelativeLayout.LayoutParams editRoundTimeParams =
-            (androidx.percentlayout.widget.PercentRelativeLayout.LayoutParams) mEditRoundTime.getLayoutParams();
-        androidx.percentlayout.widget.PercentRelativeLayout.LayoutParams editNextTimeParams =
-            (androidx.percentlayout.widget.PercentRelativeLayout.LayoutParams) mEditNextTime.getLayoutParams();
+
+        // Get layout params for plus-minus controls and constraints
+        View roundTimeControls = findViewById(R.id.roundTimeControls);
+        View passTimeControls = findViewById(R.id.passTimeControls);
+        View team1Controls = findViewById(R.id.team1Controls);
+        View team2Controls = findViewById(R.id.team2Controls);
+        Spinner settingsSpinner = findViewById(R.id.settingsSpinner);
+        View topLayout = findViewById(R.id.topLayout);
+        View bottomLayout = findViewById(R.id.bottomLayout);
+
+        androidx.percentlayout.widget.PercentRelativeLayout.LayoutParams roundTimeControlsParams =
+            (androidx.percentlayout.widget.PercentRelativeLayout.LayoutParams) roundTimeControls.getLayoutParams();
+        androidx.percentlayout.widget.PercentRelativeLayout.LayoutParams passTimeControlsParams =
+            (androidx.percentlayout.widget.PercentRelativeLayout.LayoutParams) passTimeControls.getLayoutParams();
+        androidx.percentlayout.widget.PercentRelativeLayout.LayoutParams team1ControlsParams =
+            (androidx.percentlayout.widget.PercentRelativeLayout.LayoutParams) team1Controls.getLayoutParams();
+        androidx.percentlayout.widget.PercentRelativeLayout.LayoutParams team2ControlsParams =
+            (androidx.percentlayout.widget.PercentRelativeLayout.LayoutParams) team2Controls.getLayoutParams();
+
+        androidx.percentlayout.widget.PercentRelativeLayout.LayoutParams roundTimeConstraintParams =
+            (androidx.percentlayout.widget.PercentRelativeLayout.LayoutParams) mRoundTimeConstraint.getLayoutParams();
+        androidx.percentlayout.widget.PercentRelativeLayout.LayoutParams passTimeConstraintParams =
+            (androidx.percentlayout.widget.PercentRelativeLayout.LayoutParams) mPassTimeConstraint.getLayoutParams();
+        androidx.percentlayout.widget.PercentRelativeLayout.LayoutParams teamsConstraintParams =
+            (androidx.percentlayout.widget.PercentRelativeLayout.LayoutParams) mTeamsConstraint.getLayoutParams();
+        androidx.percentlayout.widget.PercentRelativeLayout.LayoutParams spinnerParams =
+            (androidx.percentlayout.widget.PercentRelativeLayout.LayoutParams) settingsSpinner.getLayoutParams();
 
         if (isHebrew) {
             // Hebrew: checkboxes on right, button on left, checkbox icon on right of text
@@ -223,13 +282,40 @@ public class Settings extends AppCompatActivity {
             mAutoBalaceCheckBox.setCompoundDrawablesWithIntrinsicBounds(null, null, checkboxDrawable1, null);
             mSoundCheckBox.setCompoundDrawablesWithIntrinsicBounds(null, null, checkboxDrawable2, null);
 
-            // Hebrew: number fields on right, text aligned right
-            editRoundTimeParams.addRule(androidx.percentlayout.widget.PercentRelativeLayout.ALIGN_PARENT_END);
-            editRoundTimeParams.removeRule(androidx.percentlayout.widget.PercentRelativeLayout.ALIGN_PARENT_START);
-            editNextTimeParams.addRule(androidx.percentlayout.widget.PercentRelativeLayout.ALIGN_PARENT_END);
-            editNextTimeParams.removeRule(androidx.percentlayout.widget.PercentRelativeLayout.ALIGN_PARENT_START);
-            mEditRoundTime.setGravity(android.view.Gravity.CENTER_VERTICAL | android.view.Gravity.END);
-            mEditNextTime.setGravity(android.view.Gravity.CENTER_VERTICAL | android.view.Gravity.END);
+            // Hebrew: align all plus-minus controls and constraints to the right
+            roundTimeControlsParams.addRule(androidx.percentlayout.widget.PercentRelativeLayout.ALIGN_PARENT_END);
+            roundTimeControlsParams.removeRule(androidx.percentlayout.widget.PercentRelativeLayout.ALIGN_PARENT_START);
+            passTimeControlsParams.addRule(androidx.percentlayout.widget.PercentRelativeLayout.ALIGN_PARENT_END);
+            passTimeControlsParams.removeRule(androidx.percentlayout.widget.PercentRelativeLayout.ALIGN_PARENT_START);
+            team1ControlsParams.addRule(androidx.percentlayout.widget.PercentRelativeLayout.ALIGN_PARENT_END);
+            team1ControlsParams.removeRule(androidx.percentlayout.widget.PercentRelativeLayout.ALIGN_PARENT_START);
+            team2ControlsParams.addRule(androidx.percentlayout.widget.PercentRelativeLayout.ALIGN_PARENT_END);
+            team2ControlsParams.removeRule(androidx.percentlayout.widget.PercentRelativeLayout.ALIGN_PARENT_START);
+
+            roundTimeConstraintParams.addRule(androidx.percentlayout.widget.PercentRelativeLayout.ALIGN_PARENT_END);
+            roundTimeConstraintParams.removeRule(androidx.percentlayout.widget.PercentRelativeLayout.ALIGN_PARENT_START);
+            passTimeConstraintParams.addRule(androidx.percentlayout.widget.PercentRelativeLayout.ALIGN_PARENT_END);
+            passTimeConstraintParams.removeRule(androidx.percentlayout.widget.PercentRelativeLayout.ALIGN_PARENT_START);
+            teamsConstraintParams.addRule(androidx.percentlayout.widget.PercentRelativeLayout.ALIGN_PARENT_END);
+            teamsConstraintParams.removeRule(androidx.percentlayout.widget.PercentRelativeLayout.ALIGN_PARENT_START);
+
+            // Hebrew: spinner on right
+            spinnerParams.addRule(androidx.percentlayout.widget.PercentRelativeLayout.ALIGN_PARENT_END);
+            spinnerParams.removeRule(androidx.percentlayout.widget.PercentRelativeLayout.ALIGN_PARENT_START);
+
+            // Hebrew: align layout contents to the right
+            if (topLayout instanceof androidx.percentlayout.widget.PercentRelativeLayout) {
+                ((androidx.percentlayout.widget.PercentRelativeLayout) topLayout).setGravity(android.view.Gravity.RIGHT | android.view.Gravity.CENTER_VERTICAL);
+            }
+            if (bottomLayout instanceof androidx.percentlayout.widget.PercentRelativeLayout) {
+                ((androidx.percentlayout.widget.PercentRelativeLayout) bottomLayout).setGravity(android.view.Gravity.RIGHT | android.view.Gravity.CENTER_VERTICAL);
+            }
+
+            // Hebrew: align title texts to the right
+            mTeam1Text.setGravity(android.view.Gravity.RIGHT | android.view.Gravity.CENTER_VERTICAL);
+            mEditScoreHeadline.setGravity(android.view.Gravity.RIGHT | android.view.Gravity.CENTER_VERTICAL);
+            mTextView1.setGravity(android.view.Gravity.RIGHT | android.view.Gravity.CENTER_VERTICAL);
+            mTeam1Headline.setGravity(android.view.Gravity.RIGHT | android.view.Gravity.CENTER_VERTICAL);
         } else {
             // English: checkboxes on left, button on right, checkbox icon on left of text
             checkboxParams.addRule(androidx.percentlayout.widget.PercentRelativeLayout.ALIGN_PARENT_START);
@@ -250,20 +336,82 @@ public class Settings extends AppCompatActivity {
             mAutoBalaceCheckBox.setCompoundDrawablesWithIntrinsicBounds(checkboxDrawable1, null, null, null);
             mSoundCheckBox.setCompoundDrawablesWithIntrinsicBounds(checkboxDrawable2, null, null, null);
 
-            // English: number fields on left, text aligned left
-            editRoundTimeParams.addRule(androidx.percentlayout.widget.PercentRelativeLayout.ALIGN_PARENT_START);
-            editRoundTimeParams.removeRule(androidx.percentlayout.widget.PercentRelativeLayout.ALIGN_PARENT_END);
-            editNextTimeParams.addRule(androidx.percentlayout.widget.PercentRelativeLayout.ALIGN_PARENT_START);
-            editNextTimeParams.removeRule(androidx.percentlayout.widget.PercentRelativeLayout.ALIGN_PARENT_END);
-            mEditRoundTime.setGravity(android.view.Gravity.CENTER_VERTICAL | android.view.Gravity.START);
-            mEditNextTime.setGravity(android.view.Gravity.CENTER_VERTICAL | android.view.Gravity.START);
+            // English: align all plus-minus controls and constraints to the left
+            roundTimeControlsParams.addRule(androidx.percentlayout.widget.PercentRelativeLayout.ALIGN_PARENT_START);
+            roundTimeControlsParams.removeRule(androidx.percentlayout.widget.PercentRelativeLayout.ALIGN_PARENT_END);
+            passTimeControlsParams.addRule(androidx.percentlayout.widget.PercentRelativeLayout.ALIGN_PARENT_START);
+            passTimeControlsParams.removeRule(androidx.percentlayout.widget.PercentRelativeLayout.ALIGN_PARENT_END);
+            team1ControlsParams.addRule(androidx.percentlayout.widget.PercentRelativeLayout.ALIGN_PARENT_START);
+            team1ControlsParams.removeRule(androidx.percentlayout.widget.PercentRelativeLayout.ALIGN_PARENT_END);
+            team2ControlsParams.addRule(androidx.percentlayout.widget.PercentRelativeLayout.ALIGN_PARENT_START);
+            team2ControlsParams.removeRule(androidx.percentlayout.widget.PercentRelativeLayout.ALIGN_PARENT_END);
+
+            roundTimeConstraintParams.addRule(androidx.percentlayout.widget.PercentRelativeLayout.ALIGN_PARENT_START);
+            roundTimeConstraintParams.removeRule(androidx.percentlayout.widget.PercentRelativeLayout.ALIGN_PARENT_END);
+            passTimeConstraintParams.addRule(androidx.percentlayout.widget.PercentRelativeLayout.ALIGN_PARENT_START);
+            passTimeConstraintParams.removeRule(androidx.percentlayout.widget.PercentRelativeLayout.ALIGN_PARENT_END);
+            teamsConstraintParams.addRule(androidx.percentlayout.widget.PercentRelativeLayout.ALIGN_PARENT_START);
+            teamsConstraintParams.removeRule(androidx.percentlayout.widget.PercentRelativeLayout.ALIGN_PARENT_END);
+
+            // English: spinner on left
+            spinnerParams.addRule(androidx.percentlayout.widget.PercentRelativeLayout.ALIGN_PARENT_START);
+            spinnerParams.removeRule(androidx.percentlayout.widget.PercentRelativeLayout.ALIGN_PARENT_END);
+
+            // English: align layout contents to the left
+            if (topLayout instanceof androidx.percentlayout.widget.PercentRelativeLayout) {
+                ((androidx.percentlayout.widget.PercentRelativeLayout) topLayout).setGravity(android.view.Gravity.LEFT | android.view.Gravity.CENTER_VERTICAL);
+            }
+            if (bottomLayout instanceof androidx.percentlayout.widget.PercentRelativeLayout) {
+                ((androidx.percentlayout.widget.PercentRelativeLayout) bottomLayout).setGravity(android.view.Gravity.LEFT | android.view.Gravity.CENTER_VERTICAL);
+            }
+
+            // English: align title texts to the left
+            mTeam1Text.setGravity(android.view.Gravity.LEFT | android.view.Gravity.CENTER_VERTICAL);
+            mEditScoreHeadline.setGravity(android.view.Gravity.LEFT | android.view.Gravity.CENTER_VERTICAL);
+            mTextView1.setGravity(android.view.Gravity.LEFT | android.view.Gravity.CENTER_VERTICAL);
+            mTeam1Headline.setGravity(android.view.Gravity.LEFT | android.view.Gravity.CENTER_VERTICAL);
         }
 
         mAutoBalaceCheckBox.setLayoutParams(checkboxParams);
         mSoundCheckBox.setLayoutParams(soundParams);
         mBalanceExplanation.setLayoutParams(buttonParams);
-        mEditRoundTime.setLayoutParams(editRoundTimeParams);
-        mEditNextTime.setLayoutParams(editNextTimeParams);
+
+        // Apply layout params for controls and constraints
+        roundTimeControls.setLayoutParams(roundTimeControlsParams);
+        passTimeControls.setLayoutParams(passTimeControlsParams);
+        team1Controls.setLayoutParams(team1ControlsParams);
+        team2Controls.setLayoutParams(team2ControlsParams);
+        settingsSpinner.setLayoutParams(spinnerParams);
+
+        mRoundTimeConstraint.setLayoutParams(roundTimeConstraintParams);
+        mPassTimeConstraint.setLayoutParams(passTimeConstraintParams);
+        mTeamsConstraint.setLayoutParams(teamsConstraintParams);
+
+        // Make all title texts the same size - measure and use the largest
+        TextView[] titleTexts = {mTextView1, mTeam1Headline, mTeam1Text, mEditScoreHeadline};
+
+        // Measure the text width for each title
+        float maxWidth = 0f;
+        float maxTextSize = 24f; // Default size in sp
+
+        for (TextView tv : titleTexts) {
+            if (tv != null) {
+                android.text.TextPaint paint = tv.getPaint();
+                String text = tv.getText().toString();
+                float width = paint.measureText(text);
+                if (width > maxWidth) {
+                    maxWidth = width;
+                    maxTextSize = tv.getTextSize() / getResources().getDisplayMetrics().scaledDensity;
+                }
+            }
+        }
+
+        // Set all titles to the same text size
+        for (TextView tv : titleTexts) {
+            if (tv != null) {
+                tv.setTextSize(android.util.TypedValue.COMPLEX_UNIT_SP, 24f); // Ensure uniform size
+            }
+        }
 
         // Temporarily remove listeners to avoid triggering them during initialization
         mAutoBalaceCheckBox.setOnCheckedChangeListener(null);
@@ -275,8 +423,8 @@ public class Settings extends AppCompatActivity {
         // Re-add listeners after setting initial state
         mAutoBalaceCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> onAutoBalanceChecked(isChecked));
         mSoundCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> onSoundChecked(isChecked));
-        mEditRoundTime.setText(String.valueOf(db.timePerRound));
-        mEditNextTime.setText(String.valueOf(db.timeDownOnNext));
+        mRoundTimeValue.setText(String.valueOf(db.timePerRound));
+        mPassTimeValue.setText(String.valueOf(db.timeDownOnNext));
         mAmountOfTeams.setText(String.valueOf(db.amountOfTeams));
         mTeamEditableScore.setText(String.valueOf(db.scores[0]));
         mBalanceExplanation.setPadding(17, 0, 0, 0);
@@ -284,6 +432,12 @@ public class Settings extends AppCompatActivity {
         if(db.amountOfTeams == 2) mDecrease1.setEnabled(false);
         else if(db.amountOfTeams == 24) mIncrease1.setEnabled(false);
         if(db.scores[selectedSpinner] == 0) mDecrease2.setEnabled(false);
+
+        // Enable/disable round time and pass time buttons based on current values
+        if(db.timePerRound <= 1) mDecreaseRoundTime.setEnabled(false);
+        else if(db.timePerRound >= 300) mIncreaseRoundTime.setEnabled(false);
+        if(db.timeDownOnNext <= 1) mDecreasePassTime.setEnabled(false);
+        else if(db.timeDownOnNext >= 300) mIncreasePassTime.setEnabled(false);
 
         // Update note count display
         int totalNotes = db.totalNoteAmount();
@@ -371,56 +525,52 @@ public class Settings extends AppCompatActivity {
     }
 
 
-    void focusChangedEditRoundTime(boolean hasFocus) {
-        if (!hasFocus) {
-            if (mEditRoundTime.getText().toString().isEmpty()) {
-                mEditRoundTime.setText(String.valueOf(db.timePerRound));
-                return;
-            }
-            try {
-                num = Integer.parseInt(mEditRoundTime.getText().toString());
-            } catch (NumberFormatException e) {
-                dialogBag.invalidInput();
-                mEditRoundTime.setText(String.valueOf(db.timePerRound));
-                return;
-            }
-            if (num > 300 || num < 1) {
-                dialogBag.invalidInput();
-                mEditRoundTime.setText(String.valueOf(db.timePerRound));
-                return;
-            }
-            db.timePerRound = num;
-            mEditRoundTime.setText(String.valueOf(db.timePerRound));
-            //save roundTime to shared preferences
-            spEditor.putInt("timePerRoundBackup", num);
-            spEditor.commit();
-        } else mEditRoundTime.setText("");
+    public void increaseRoundTime(View view) {
+        if (db.timePerRound >= 300) return;
+        db.timePerRound++;
+        mRoundTimeValue.setText(String.valueOf(db.timePerRound));
+        spEditor.putInt("timePerRoundBackup", db.timePerRound);
+        spEditor.commit();
+
+        // Update button states
+        mDecreaseRoundTime.setEnabled(true);
+        if (db.timePerRound >= 300) mIncreaseRoundTime.setEnabled(false);
     }
 
-    void focusChangedEditNextTime(boolean hasFocus) {
-        if (!hasFocus) {
-            if (mEditNextTime.getText().toString().isEmpty()) {
-                mEditNextTime.setText(String.valueOf(db.timeDownOnNext));
-                return;
-            }
-            try {
-                num = Integer.parseInt(mEditNextTime.getText().toString());
-            } catch (NumberFormatException e) {
-                dialogBag.invalidInput();
-                mEditNextTime.setText(String.valueOf(db.timeDownOnNext));
-                return;
-            }
-            if (num > 300 || num < 1) {
-                dialogBag.invalidInput();
-                mEditNextTime.setText(String.valueOf(db.timeDownOnNext));
-                return;
-            }
-            db.timeDownOnNext = num;
-            mEditNextTime.setText(String.valueOf(db.timeDownOnNext));
-            //save nextTime to shared preferences
-            spEditor.putInt("timeDownOnNextBackup", num);
-            spEditor.commit();
-        } else mEditNextTime.setText("");
+    public void decreaseRoundTime(View view) {
+        if (db.timePerRound <= 1) return;
+        db.timePerRound--;
+        mRoundTimeValue.setText(String.valueOf(db.timePerRound));
+        spEditor.putInt("timePerRoundBackup", db.timePerRound);
+        spEditor.commit();
+
+        // Update button states
+        mIncreaseRoundTime.setEnabled(true);
+        if (db.timePerRound <= 1) mDecreaseRoundTime.setEnabled(false);
+    }
+
+    public void increasePassTime(View view) {
+        if (db.timeDownOnNext >= 300) return;
+        db.timeDownOnNext++;
+        mPassTimeValue.setText(String.valueOf(db.timeDownOnNext));
+        spEditor.putInt("timeDownOnNextBackup", db.timeDownOnNext);
+        spEditor.commit();
+
+        // Update button states
+        mDecreasePassTime.setEnabled(true);
+        if (db.timeDownOnNext >= 300) mIncreasePassTime.setEnabled(false);
+    }
+
+    public void decreasePassTime(View view) {
+        if (db.timeDownOnNext <= 1) return;
+        db.timeDownOnNext--;
+        mPassTimeValue.setText(String.valueOf(db.timeDownOnNext));
+        spEditor.putInt("timeDownOnNextBackup", db.timeDownOnNext);
+        spEditor.commit();
+
+        // Update button states
+        mIncreasePassTime.setEnabled(true);
+        if (db.timeDownOnNext <= 1) mDecreasePassTime.setEnabled(false);
     }
 
     public void resetAllSettings(View view) {
@@ -438,8 +588,14 @@ public class Settings extends AppCompatActivity {
 
                 mAutoBalaceCheckBox.setChecked(true);
                 mSoundCheckBox.setChecked(true);
-                mEditRoundTime.setText(String.valueOf(60));
-                mEditNextTime.setText(String.valueOf(5));
+                mRoundTimeValue.setText(String.valueOf(60));
+                mPassTimeValue.setText(String.valueOf(5));
+
+                // Update button states
+                mIncreaseRoundTime.setEnabled(true);
+                mDecreaseRoundTime.setEnabled(true);
+                mIncreasePassTime.setEnabled(true);
+                mDecreasePassTime.setEnabled(true);
             }
         };
         dialogBag.resetSettings(task);
@@ -500,6 +656,101 @@ public class Settings extends AppCompatActivity {
         mTeamEditableScore.setText(String.valueOf(db.scores[selectedSpinner]));
     }
 
+    // Direct editing focus change handlers
+    void focusChangedRoundTimeValue(boolean hasFocus) {
+        if (!hasFocus) {
+            String text = mRoundTimeValue.getText().toString();
+            if (text.isEmpty()) {
+                mRoundTimeValue.setText(String.valueOf(db.timePerRound));
+                return;
+            }
+            try {
+                int value = Integer.parseInt(text);
+                if (value < 1 || value > 300) {
+                    dialogBag.invalidInput();
+                    mRoundTimeValue.setText(String.valueOf(db.timePerRound));
+                    return;
+                }
+                db.timePerRound = value;
+                spEditor.putInt("timePerRoundBackup", value);
+                spEditor.commit();
+                mRoundTimeValue.setText(String.valueOf(value));
+
+                // Update button states
+                mDecreaseRoundTime.setEnabled(value > 1);
+                mIncreaseRoundTime.setEnabled(value < 300);
+            } catch (NumberFormatException e) {
+                dialogBag.invalidInput();
+                mRoundTimeValue.setText(String.valueOf(db.timePerRound));
+            }
+        }
+    }
+
+    void focusChangedPassTimeValue(boolean hasFocus) {
+        if (!hasFocus) {
+            String text = mPassTimeValue.getText().toString();
+            if (text.isEmpty()) {
+                mPassTimeValue.setText(String.valueOf(db.timeDownOnNext));
+                return;
+            }
+            try {
+                int value = Integer.parseInt(text);
+                if (value < 1 || value > 300) {
+                    dialogBag.invalidInput();
+                    mPassTimeValue.setText(String.valueOf(db.timeDownOnNext));
+                    return;
+                }
+                db.timeDownOnNext = value;
+                spEditor.putInt("timeDownOnNextBackup", value);
+                spEditor.commit();
+                mPassTimeValue.setText(String.valueOf(value));
+
+                // Update button states
+                mDecreasePassTime.setEnabled(value > 1);
+                mIncreasePassTime.setEnabled(value < 300);
+            } catch (NumberFormatException e) {
+                dialogBag.invalidInput();
+                mPassTimeValue.setText(String.valueOf(db.timeDownOnNext));
+            }
+        }
+    }
+
+    void focusChangedAmountOfTeams(boolean hasFocus) {
+        if (!hasFocus) {
+            String text = mAmountOfTeams.getText().toString();
+            if (text.isEmpty()) {
+                mAmountOfTeams.setText(String.valueOf(db.amountOfTeams));
+                return;
+            }
+            try {
+                int value = Integer.parseInt(text);
+                if (value < 2 || value > 24) {
+                    // Show custom dialog for teams
+                    dialogBag.invalidInput();
+                    mAmountOfTeams.setText(String.valueOf(db.amountOfTeams));
+                    return;
+                }
+                if (db.gamePlayIsPaused || db.summaryIsPaused) {
+                    dialogBag.cannotEditTeamsAmount();
+                    mAmountOfTeams.setText(String.valueOf(db.amountOfTeams));
+                    return;
+                }
+                db.amountOfTeams = value;
+                spEditor.putInt("amountOfTeams", value);
+                spEditor.commit();
+                mAmountOfTeams.setText(String.valueOf(value));
+                createGroupSpinner();
+
+                // Update button states
+                mDecrease1.setEnabled(value > 2);
+                mIncrease1.setEnabled(value < 24);
+            } catch (NumberFormatException e) {
+                dialogBag.invalidInput();
+                mAmountOfTeams.setText(String.valueOf(db.amountOfTeams));
+            }
+        }
+    }
+
     private void setupTransparentNavigationBar() {
         // Check if we should extend content behind the navigation bar
         if (shouldExtendBehindNavigationBar()) {
@@ -542,5 +793,41 @@ public class Settings extends AppCompatActivity {
             return navBarHeightDp < 20; // Only very thin bars (gesture)
         }
         return false;
+    }
+
+    // Input filter to restrict number input to a range
+    private static class InputFilterMinMax implements android.text.InputFilter {
+        private final int min;
+        private final int max;
+
+        public InputFilterMinMax(int min, int max) {
+            this.min = min;
+            this.max = max;
+        }
+
+        @Override
+        public CharSequence filter(CharSequence source, int start, int end, android.text.Spanned dest, int dstart, int dend) {
+            try {
+                // Build the resulting string after this edit
+                String newVal = dest.subSequence(0, dstart).toString() + source.subSequence(start, end) + dest.subSequence(dend, dest.length());
+
+                // Allow empty string (user is deleting)
+                if (newVal.isEmpty()) {
+                    return null;
+                }
+
+                int input = Integer.parseInt(newVal);
+                if (isInRange(min, max, input)) {
+                    return null; // Accept the input
+                }
+            } catch (NumberFormatException e) {
+                // Invalid number format - reject
+            }
+            return ""; // Reject the input
+        }
+
+        private boolean isInRange(int a, int b, int c) {
+            return c >= a && c <= b;
+        }
     }
 }

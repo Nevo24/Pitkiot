@@ -163,6 +163,8 @@
     <string name="settings_input_instruction">הזן שניות בין 1 ל- 300</string>
     <string name="settings_edit_team_scores">עריכת ניקוד קבוצות</string>
     <string name="settings_reset_button">איפוס הגדרות  🔄</string>
+    <string name="constraint_seconds_1_300">* בין 1 ל-300</string>
+    <string name="constraint_teams_2_24">* בין 2 ל-24</string>
 
     <!-- Game play screen -->
     <string name="gameplay_pass_button">עבור</string>

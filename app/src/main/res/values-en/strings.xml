@@ -163,6 +163,8 @@
     <string name="settings_input_instruction">Enter seconds between 1 and 300</string>
     <string name="settings_edit_team_scores">Edit team scores</string>
     <string name="settings_reset_button">🔄  Reset Settings</string>
+    <string name="constraint_seconds_1_300">* between 1 and 300</string>
+    <string name="constraint_teams_2_24">* between 2 and 24</string>
 
     <!-- Game play screen -->
     <string name="gameplay_pass_button">Pass</string>
