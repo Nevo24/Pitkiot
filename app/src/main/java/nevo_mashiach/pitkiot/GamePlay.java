@@ -9,6 +9,9 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Typeface;
 import android.graphics.drawable.AnimationDrawable;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.style.ForegroundColorSpan;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -59,6 +62,8 @@ public class GamePlay extends AppCompatActivity {
     boolean firstTime = true;
     AnimationDrawable happyAanim;
     AnimationDrawable sadAanim;
+    // Custom red color - darker and semi-transparent to match app style
+    int countdownRedColor = android.graphics.Color.argb(200, 180, 0, 0);
 
     SharedPreferences prefs;
     SharedPreferences.Editor spEditor;
@@ -250,7 +255,8 @@ public class GamePlay extends AppCompatActivity {
                 db.mMillisUntilFinished = millisUntilFinished;
                 if (millisUntilFinished / 1000 == oldMillis / 1000) return;
                 sec = (int) millisUntilFinished / 1000 + 1;
-                mTime.setText(getString(R.string.game_time_remaining) + sec);
+                setTimeText(sec);
+
                 if ((sec <= 10) && (sec > 0)) db.makeSound(context, R.raw.tick_sound);
             }
 
@@ -258,7 +264,7 @@ public class GamePlay extends AppCompatActivity {
                 if (!db.defs.isEmpty()) {
                     mSuccess.setEnabled(false);
                     mNext.setEnabled(false);
-                    mTime.setText(getString(R.string.game_time_remaining) + "0");
+                    setTimeText(0);
                     db.makeSound(context, R.raw.time_is_up_sound);
                     vibrate();
                     int turn = ((db.currentPlaying + 1) % db.amountOfTeams) + 1;
@@ -267,7 +273,28 @@ public class GamePlay extends AppCompatActivity {
             }
         }.start();
         sec = (int) fixedMillisUntilFinished / 1000;
-        mTime.setText(getString(R.string.game_time_remaining) + sec);
+        setTimeText(sec);
+    }
+
+    private void setTimeText(int seconds) {
+        String timeLabel = getString(R.string.game_time_remaining);
+        String fullText = timeLabel + seconds;
+
+        // For the last 10 seconds, color only the number part red
+        if (seconds <= 10) {
+            SpannableString spannableString = new SpannableString(fullText);
+            int numberStart = timeLabel.length();
+            int numberEnd = fullText.length();
+            spannableString.setSpan(
+                new ForegroundColorSpan(countdownRedColor),
+                numberStart,
+                fullText.length(),
+                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+            );
+            mTime.setText(spannableString);
+        } else {
+            mTime.setText(fullText);
+        }
     }
 
     public void summaryDisplay(String headline, String buttonText) {
