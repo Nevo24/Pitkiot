@@ -466,7 +466,7 @@ public class NoteManagement extends AppCompatActivity {
 
         // Set values
         sessionUrlText.setText(url);
-        receivedNotesCountText.setText(String.format(getString(R.string.received_notes_count), 0, 0));
+        receivedNotesCountText.setText(getString(R.string.received_notes_count_zero));
 
         // Make URL clickable
         sessionUrlText.setOnClickListener(v -> {
@@ -551,7 +551,16 @@ public class NoteManagement extends AppCompatActivity {
             }
             int totalUniqueNotes = allUniqueNotes.size();
 
-            countText.setText(String.format(getString(R.string.received_notes_count), totalUniqueNotes, totalPlayers));
+            // Set the appropriate text based on count
+            if (totalUniqueNotes == 0) {
+                countText.setText(getString(R.string.received_notes_count_zero));
+            } else if (totalUniqueNotes == 1 && totalPlayers == 1) {
+                countText.setText(getString(R.string.received_notes_count_single));
+            } else if (totalPlayers == 1) {
+                countText.setText(String.format(getString(R.string.received_notes_count_one_player), totalUniqueNotes));
+            } else {
+                countText.setText(String.format(getString(R.string.received_notes_count), totalUniqueNotes, totalPlayers));
+            }
 
             android.util.Log.d("NoteManagement", "Updated count: " + totalUniqueNotes + " unique notes from " + totalPlayers + " people");
 
@@ -587,8 +596,13 @@ public class NoteManagement extends AppCompatActivity {
                     // Check if name is entirely Hebrew (no Latin characters) - for layout direction
                     boolean isNameHebrew = name.matches("[\\u0590-\\u05FF\\s]+");
 
+                    // Special case: detect mixed Hebrew and numbers
+                    boolean hasHebrewChars = name.matches(".*[\\u0590-\\u05FF].*");
+                    boolean hasNumbers = name.matches(".*\\d.*");
+                    boolean isMixedHebrewAndNumbers = hasHebrewChars && hasNumbers;
+
                     // Set layout direction based on name language
-                    if (isNameHebrew) {
+                    if (isNameHebrew || isMixedHebrewAndNumbers) {
                         itemContainer.setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
                     } else {
                         itemContainer.setLayoutDirection(View.LAYOUT_DIRECTION_LTR);
@@ -606,7 +620,7 @@ public class NoteManagement extends AppCompatActivity {
                             LinearLayout.LayoutParams.WRAP_CONTENT,
                             LinearLayout.LayoutParams.WRAP_CONTENT
                     );
-                    if (isNameHebrew) {
+                    if (isNameHebrew || isMixedHebrewAndNumbers) {
                         checkParams.setMarginEnd(10); // Space on the left side (visual) in RTL
                     } else {
                         checkParams.setMarginEnd(10); // Space on the right side in LTR
@@ -618,16 +632,30 @@ public class NoteManagement extends AppCompatActivity {
                     if (isGameInHebrew) {
                         // Hebrew game mode: display as "✓ name: X פתקים"
                         TextView namePart = new TextView(context);
-                        namePart.setText(name + ": ");
+
+                        // Special handling for mixed Hebrew and numbers
+                        if (isMixedHebrewAndNumbers) {
+                            // Use RLE (Right-to-Left Embedding) and PDF (Pop Directional Formatting)
+                            // to force the name to display as a single RTL unit with proper ordering
+                            namePart.setText("\u202B" + name + "\u202C: ");
+                            namePart.setTextDirection(TextView.TEXT_DIRECTION_RTL);
+                        } else {
+                            namePart.setText(name + ": ");
+                            namePart.setTextDirection(isNameHebrew ? TextView.TEXT_DIRECTION_RTL : TextView.TEXT_DIRECTION_FIRST_STRONG);
+                        }
+
                         namePart.setTextSize(16);
                         namePart.setTextColor(Color.parseColor("#406D3C"));
                         namePart.setGravity(android.view.Gravity.CENTER_VERTICAL);
-                        namePart.setTextDirection(isNameHebrew ? TextView.TEXT_DIRECTION_RTL : TextView.TEXT_DIRECTION_FIRST_STRONG);
                         itemContainer.addView(namePart);
 
                         TextView countPart = new TextView(context);
                         // Hebrew game mode: number first, then word
-                        countPart.setText(count + " " + getString(R.string.notes_word));
+                        if (count == 1) {
+                            countPart.setText("פתק אחד");
+                        } else {
+                            countPart.setText(count + " " + getString(R.string.notes_word));
+                        }
                         countPart.setTextSize(16);
                         countPart.setTextColor(Color.parseColor("#406D3C"));
                         countPart.setGravity(android.view.Gravity.CENTER_VERTICAL);
@@ -652,7 +680,11 @@ public class NoteManagement extends AppCompatActivity {
 
                         TextView countPart = new TextView(context);
                         // English game mode: number first, then word
-                        countPart.setText(count + " " + getString(R.string.notes_word));
+                        if (count == 1) {
+                            countPart.setText("one note");
+                        } else {
+                            countPart.setText(count + " " + getString(R.string.notes_word));
+                        }
                         countPart.setTextSize(16);
                         countPart.setTextColor(Color.parseColor("#406D3C"));
                         countPart.setGravity(android.view.Gravity.CENTER_VERTICAL);

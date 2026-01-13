@@ -26,6 +26,9 @@
     <string name="button_copy_link">Copy Link</string>
     <string name="button_finish_save">Finish and Save Notes</string>
     <string name="section_received_notes">Received Notes:</string>
+    <string name="received_notes_count_zero">No notes received</string>
+    <string name="received_notes_count_single">One note received from one player</string>
+    <string name="received_notes_count_one_player">%d notes received from one player</string>
     <string name="received_notes_count">%1$d notes received from %2$d players</string>
     <string name="waiting_for_notes">Waiting for notes...</string>
     <string name="submitter_item">✓ %1$s: %2$d notes</string>
