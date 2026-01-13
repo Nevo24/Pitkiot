@@ -46,7 +46,6 @@ public class Settings extends AppCompatActivity {
     TextView mAmountOfTeams;
     TextView mTeamEditableScore;
     TextView mBalanceExplanation;
-    TextView mNoteCount;
     TextView mRoundTimeConstraint;
     TextView mPassTimeConstraint;
     TextView mTeamsConstraint;
@@ -109,7 +108,6 @@ public class Settings extends AppCompatActivity {
         mAmountOfTeams = binding.amoutOfTeams;
         mTeamEditableScore = binding.teamEditableScore;
         mBalanceExplanation = binding.balanceExplanation;
-        mNoteCount = binding.noteCount;
         mRoundTimeConstraint = binding.roundTimeConstraint;
         mPassTimeConstraint = binding.passTimeConstraint;
         mTeamsConstraint = binding.teamsConstraint;
@@ -447,13 +445,6 @@ public class Settings extends AppCompatActivity {
         else if(db.timePerRound >= 300) mIncreaseRoundTime.setEnabled(false);
         if(db.timeDownOnNext <= 1) mDecreasePassTime.setEnabled(false);
         else if(db.timeDownOnNext >= 300) mIncreasePassTime.setEnabled(false);
-
-        // Update note count display
-        int totalNotes = db.totalNoteAmount();
-        String noteCountText = totalNotes == 1
-            ? getString(R.string.note_count_database_single)
-            : String.format(getString(R.string.note_count_database_plural), totalNotes);
-        mNoteCount.setText(noteCountText);
     }
 
     private void createGroupSpinner() {
