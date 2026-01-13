@@ -303,6 +303,11 @@ public class Settings extends AppCompatActivity {
             spinnerParams.addRule(androidx.percentlayout.widget.PercentRelativeLayout.ALIGN_PARENT_END);
             spinnerParams.removeRule(androidx.percentlayout.widget.PercentRelativeLayout.ALIGN_PARENT_START);
 
+            // Hebrew: set spinner layout direction to LTR (arrow on the right)
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                settingsSpinner.setLayoutDirection(android.view.View.LAYOUT_DIRECTION_LTR);
+            }
+
             // Hebrew: align layout contents to the right
             if (topLayout instanceof androidx.percentlayout.widget.PercentRelativeLayout) {
                 ((androidx.percentlayout.widget.PercentRelativeLayout) topLayout).setGravity(android.view.Gravity.RIGHT | android.view.Gravity.CENTER_VERTICAL);
@@ -356,6 +361,11 @@ public class Settings extends AppCompatActivity {
             // English: spinner on left
             spinnerParams.addRule(androidx.percentlayout.widget.PercentRelativeLayout.ALIGN_PARENT_START);
             spinnerParams.removeRule(androidx.percentlayout.widget.PercentRelativeLayout.ALIGN_PARENT_END);
+
+            // English: set spinner layout direction to RTL (arrow on the right)
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                settingsSpinner.setLayoutDirection(android.view.View.LAYOUT_DIRECTION_RTL);
+            }
 
             // English: align layout contents to the left
             if (topLayout instanceof androidx.percentlayout.widget.PercentRelativeLayout) {
