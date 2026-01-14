@@ -196,6 +196,15 @@ public class NoteManagement extends AppCompatActivity {
     }
 
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        // Dismiss dialog to prevent leaks
+        if (collectionDialog != null && collectionDialog.isShowing()) {
+            collectionDialog.dismiss();
+        }
+    }
+
     public void onDestroy() {
         super.onDestroy();
         // Clean up Firebase session
@@ -442,7 +451,10 @@ public class NoteManagement extends AppCompatActivity {
             }
         });
 
-        dialog.show();
+        // Check lifecycle before showing dialog
+        if (!isFinishing() && !isDestroyed()) {
+            dialog.show();
+        }
     }
 
     private void showNoteCollectionDialog(String sessionId, String url) {
@@ -543,7 +555,10 @@ public class NoteManagement extends AppCompatActivity {
         });
         closeSessionButton.setOnTouchListener(touchListener);
 
-        collectionDialog.show();
+        // Check lifecycle before showing dialog
+        if (!isFinishing() && !isDestroyed()) {
+            collectionDialog.show();
+        }
     }
 
     private void updateCollectionDialogUI(String submitterName, String noteContent) {

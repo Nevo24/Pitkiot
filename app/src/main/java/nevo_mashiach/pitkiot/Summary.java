@@ -280,14 +280,14 @@ public class Summary extends AppCompatActivity {
             // Restore indicator when returning from main menu
             if (db.amountOfTeams == 2) {
                 // Restore 2-team indicators from saved state
-                if (teamThatJustPlayed == 0 && successCountForTeamThatJustPlayed > 0) {
+                if (teamThatJustPlayed == 0 && successCountForTeamThatJustPlayed >= 0) {
                     mT1Plus.setText(String.format(Locale.US, "+%d", successCountForTeamThatJustPlayed));
                     mT1Plus.setVisibility(View.VISIBLE);
                 } else {
                     mT1Plus.setText("");
                     mT1Plus.setVisibility(View.INVISIBLE);
                 }
-                if (teamThatJustPlayed == 1 && successCountForTeamThatJustPlayed > 0) {
+                if (teamThatJustPlayed == 1 && successCountForTeamThatJustPlayed >= 0) {
                     mT2Plus.setText(String.format(Locale.US, "+%d", successCountForTeamThatJustPlayed));
                     mT2Plus.setVisibility(View.VISIBLE);
                 } else {
@@ -296,7 +296,7 @@ public class Summary extends AppCompatActivity {
                 }
             } else {
                 // Restore multi-team indicator
-                if (teamThatJustPlayed == db.currentPlaying && successCountForTeamThatJustPlayed > 0) {
+                if (teamThatJustPlayed == db.currentPlaying && successCountForTeamThatJustPlayed >= 0) {
                     mMultiTeamsPlus.setText(String.format(Locale.US, "+%d", successCountForTeamThatJustPlayed));
                     mMultiTeamsPlus.setVisibility(View.VISIBLE);
                 } else {
@@ -311,14 +311,14 @@ public class Summary extends AppCompatActivity {
             mT1Total.setText(getString(R.string.game_total_score, db.scores[0]));
             mT2Total.setText(getString(R.string.game_total_score, db.scores[1]));
             // Restore 2-team indicators after activity destruction
-            if (teamThatJustPlayed == 0 && successCountForTeamThatJustPlayed > 0) {
+            if (teamThatJustPlayed == 0 && successCountForTeamThatJustPlayed >= 0) {
                 mT1Plus.setText(String.format(Locale.US, "+%d", successCountForTeamThatJustPlayed));
                 mT1Plus.setVisibility(View.VISIBLE);
             } else {
                 mT1Plus.setText("");
                 mT1Plus.setVisibility(View.INVISIBLE);
             }
-            if (teamThatJustPlayed == 1 && successCountForTeamThatJustPlayed > 0) {
+            if (teamThatJustPlayed == 1 && successCountForTeamThatJustPlayed >= 0) {
                 mT2Plus.setText(String.format(Locale.US, "+%d", successCountForTeamThatJustPlayed));
                 mT2Plus.setVisibility(View.VISIBLE);
             } else {
@@ -331,7 +331,7 @@ public class Summary extends AppCompatActivity {
             createGroupSpinner();
             mMultiTeamTotalScore.setText(getString(R.string.game_total_score, db.scores[db.currentPlaying]));
             // Restore indicator if viewing the team that just played
-            if (teamThatJustPlayed == db.currentPlaying && successCountForTeamThatJustPlayed > 0) {
+            if (teamThatJustPlayed == db.currentPlaying && successCountForTeamThatJustPlayed >= 0) {
                 mMultiTeamsPlus.setText(String.format(Locale.US, "+%d", successCountForTeamThatJustPlayed));
                 mMultiTeamsPlus.setVisibility(View.VISIBLE);
             } else {
@@ -587,6 +587,17 @@ public class Summary extends AppCompatActivity {
         int selection = (db.currentPlaying >= 0 && db.currentPlaying < db.amountOfTeams) ? db.currentPlaying : 0;
         spinner.setSelection(selection);
 
+        // Set spinner layout direction to show arrow on correct side
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            if (language.equals("he")) {
+                // Hebrew: set spinner layout direction to LTR (arrow on the right)
+                spinner.setLayoutDirection(android.view.View.LAYOUT_DIRECTION_LTR);
+            } else {
+                // English: set spinner layout direction to RTL (arrow on the left)
+                spinner.setLayoutDirection(android.view.View.LAYOUT_DIRECTION_RTL);
+            }
+        }
+
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
@@ -595,7 +606,7 @@ public class Summary extends AppCompatActivity {
                 mMultiTeamRound.setText(getString(R.string.game_number_of_rounds, db.teamsRoundNum[selectedSpinner]));
 
                 // Show indicator only if this is the team that just played
-                if (teamThatJustPlayed == selectedSpinner && successCountForTeamThatJustPlayed > 0) {
+                if (teamThatJustPlayed == selectedSpinner && successCountForTeamThatJustPlayed >= 0) {
                     mMultiTeamsPlus.setText(String.format(Locale.US, "+%d", successCountForTeamThatJustPlayed));
                     mMultiTeamsPlus.setVisibility(View.VISIBLE);
                 } else {

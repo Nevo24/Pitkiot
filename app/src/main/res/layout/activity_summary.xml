@@ -124,12 +124,12 @@
         android:id="@+id/t2Plus"
         tools:text="+7"
         android:textSize="34sp"
-        android:textColor="#B70004"
+        android:textColor="#51894C"
         android:gravity="center"
         android:textDirection="ltr"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:background="@drawable/circle_border_red"
+        android:background="@drawable/circle_border_green"
         android:visibility="invisible"/>
 
     <nevo_mashiach.pitkiot.NotActivities.MyButton
@@ -172,13 +172,13 @@
         android:id="@+id/t1Plus"
         tools:text="+8"
         android:textSize="34sp"
-        android:textColor="#B70004"
+        android:textColor="#51894C"
         android:gravity="center"
         android:textDirection="ltr"
         android:layout_below="@+id/ready"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:background="@drawable/circle_border_red"
+        android:background="@drawable/circle_border_green"
         android:visibility="invisible"/>
 
     <!--Summary for more than 2 teams-->
@@ -189,27 +189,27 @@
         android:id="@+id/multiTeamsPlus"
         tools:text="+X"
         android:textSize="34sp"
-        android:textColor="#B70004"
+        android:textColor="#51894C"
         android:gravity="center"
         android:textDirection="ltr"
         android:layout_below="@+id/ready"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_marginTop="50dp"
-        android:background="@drawable/circle_border_red"
+        android:background="@drawable/circle_border_green"
         android:visibility="invisible"/>
 
     <Spinner
         android:textColor="@color/common_google_signin_btn_text_dark_default"
         android:text="@string/summary_team_x"
-        android:layout_marginTop="40dp"
-        android:layout_width="match_parent"
+        android:layout_marginTop="8dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/summarySpinner"
         android:textStyle="normal|bold"
         android:textSize="28sp"
         android:gravity="right"
-        android:layout_below="@+id/t1Plus"
+        android:spinnerMode="dropdown"
+        android:layout_below="@+id/multiTeamsPlus"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"/>
 
@@ -218,9 +218,9 @@
         android:text="@string/game_total_score"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="67dp"
+        android:layout_marginTop="17dp"
         android:id="@+id/multiTeamTotalScore"
-        android:layout_below="@+id/team1Headline"
+        android:layout_below="@+id/summarySpinner"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
         android:textSize="21sp"
@@ -232,10 +232,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/multiTeamRound"
-        android:layout_marginTop="65dp"
+        android:layout_marginTop="15dp"
         android:textSize="21sp"
         android:gravity="right"
-        android:layout_below="@+id/t1Total"
+        android:layout_below="@+id/multiTeamTotalScore"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"/>
 

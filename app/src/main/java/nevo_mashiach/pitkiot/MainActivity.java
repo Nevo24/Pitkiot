@@ -284,6 +284,10 @@ public class MainActivity extends AppCompatActivity {
         if (db.summaryIsPaused || db.gamePlayIsPaused) {
             Runnable task = new Runnable() {
                 public void run() {
+                    // Check if activity is still valid
+                    if (isFinishing() || isDestroyed()) {
+                        return;
+                    }
                     if (db.summaryIsPaused) {
                         Intent intent = new Intent(context, Summary.class);
                         startActivity(intent);
@@ -313,6 +317,10 @@ public class MainActivity extends AppCompatActivity {
 
         Runnable resetTask = new Runnable() {
             public void run() {
+                // Check if activity is still valid
+                if (isFinishing() || isDestroyed()) {
+                    return;
+                }
                 db.resetGame();
                 mPlayGame.setText(getString(R.string.button_start_new_game));
 
@@ -338,6 +346,10 @@ public class MainActivity extends AppCompatActivity {
 
         Runnable deleteNotesTask = new Runnable() {
             public void run() {
+                // Check if activity is still valid
+                if (isFinishing() || isDestroyed()) {
+                    return;
+                }
                 // Delete all notes from database
                 db.defs.clear();
                 db.temp.clear();
@@ -443,8 +455,14 @@ public class MainActivity extends AppCompatActivity {
 
             // Save and apply language on main thread
             runOnUiThread(() -> {
-                spEditor.putString("app_language", detectedLanguage);
-                spEditor.commit();
+                // Check if activity is still valid
+                if (isFinishing() || isDestroyed()) {
+                    return;
+                }
+                // Use new editor instance for thread safety
+                SharedPreferences.Editor editor = prefs.edit();
+                editor.putString("app_language", detectedLanguage);
+                editor.apply(); // Use apply() instead of commit() to avoid blocking
                 setLocale(detectedLanguage);
                 recreate(); // Recreate activity to apply the new locale
             });
