@@ -208,13 +208,21 @@ public class Summary extends AppCompatActivity {
 
             if (mSummaryHeadline.getText().equals(getString(R.string.game_time_up))) { //If we are here because of time out
                 if(db.amountOfTeams == 2){
-                    if (db.currentPlaying == 0) mT1Plus.setText(String.format(Locale.US, "+%d", db.currentSuccessNum));
-                    else mT2Plus.setText(String.format(Locale.US, "+%d", db.currentSuccessNum));
+                    if (db.currentPlaying == 0) {
+                        mT1Plus.setText(String.format(Locale.US, "+%d", db.currentSuccessNum));
+                        mT1Plus.setVisibility(View.VISIBLE);
+                        mT2Plus.setVisibility(View.INVISIBLE);
+                    } else {
+                        mT2Plus.setText(String.format(Locale.US, "+%d", db.currentSuccessNum));
+                        mT2Plus.setVisibility(View.VISIBLE);
+                        mT1Plus.setVisibility(View.INVISIBLE);
+                    }
                     teamThatJustPlayed = db.currentPlaying;
                     successCountForTeamThatJustPlayed = db.currentSuccessNum;
                 }
                 else{
                     mMultiTeamsPlus.setText(String.format(Locale.US, "+%d", db.currentSuccessNum));
+                    mMultiTeamsPlus.setVisibility(View.VISIBLE);
                     teamThatJustPlayed = db.currentPlaying;
                     successCountForTeamThatJustPlayed = db.currentSuccessNum;
                 }
@@ -230,13 +238,21 @@ public class Summary extends AppCompatActivity {
                 } else {
                     // Notes finished mid-round - still show the indicator!
                     if(db.amountOfTeams == 2){
-                        if (db.currentPlaying == 0) mT1Plus.setText(String.format(Locale.US, "+%d", db.currentSuccessNum));
-                        else mT2Plus.setText(String.format(Locale.US, "+%d", db.currentSuccessNum));
+                        if (db.currentPlaying == 0) {
+                            mT1Plus.setText(String.format(Locale.US, "+%d", db.currentSuccessNum));
+                            mT1Plus.setVisibility(View.VISIBLE);
+                            mT2Plus.setVisibility(View.INVISIBLE);
+                        } else {
+                            mT2Plus.setText(String.format(Locale.US, "+%d", db.currentSuccessNum));
+                            mT2Plus.setVisibility(View.VISIBLE);
+                            mT1Plus.setVisibility(View.INVISIBLE);
+                        }
                         teamThatJustPlayed = db.currentPlaying;
                         successCountForTeamThatJustPlayed = db.currentSuccessNum;
                     }
                     else{
                         mMultiTeamsPlus.setText(String.format(Locale.US, "+%d", db.currentSuccessNum));
+                        mMultiTeamsPlus.setVisibility(View.VISIBLE);
                         teamThatJustPlayed = db.currentPlaying;
                         successCountForTeamThatJustPlayed = db.currentSuccessNum;
                     }
@@ -265,16 +281,26 @@ public class Summary extends AppCompatActivity {
                 // Restore 2-team indicators from saved state
                 if (teamThatJustPlayed == 0 && successCountForTeamThatJustPlayed > 0) {
                     mT1Plus.setText(String.format(Locale.US, "+%d", successCountForTeamThatJustPlayed));
+                    mT1Plus.setVisibility(View.VISIBLE);
+                } else {
+                    mT1Plus.setText("");
+                    mT1Plus.setVisibility(View.INVISIBLE);
                 }
                 if (teamThatJustPlayed == 1 && successCountForTeamThatJustPlayed > 0) {
                     mT2Plus.setText(String.format(Locale.US, "+%d", successCountForTeamThatJustPlayed));
+                    mT2Plus.setVisibility(View.VISIBLE);
+                } else {
+                    mT2Plus.setText("");
+                    mT2Plus.setVisibility(View.INVISIBLE);
                 }
             } else {
                 // Restore multi-team indicator
                 if (teamThatJustPlayed == db.currentPlaying && successCountForTeamThatJustPlayed > 0) {
                     mMultiTeamsPlus.setText(String.format(Locale.US, "+%d", successCountForTeamThatJustPlayed));
+                    mMultiTeamsPlus.setVisibility(View.VISIBLE);
                 } else {
                     mMultiTeamsPlus.setText("");
+                    mMultiTeamsPlus.setVisibility(View.INVISIBLE);
                 }
             }
         }
@@ -286,9 +312,17 @@ public class Summary extends AppCompatActivity {
             // Restore 2-team indicators after activity destruction
             if (teamThatJustPlayed == 0 && successCountForTeamThatJustPlayed > 0) {
                 mT1Plus.setText(String.format(Locale.US, "+%d", successCountForTeamThatJustPlayed));
+                mT1Plus.setVisibility(View.VISIBLE);
+            } else {
+                mT1Plus.setText("");
+                mT1Plus.setVisibility(View.INVISIBLE);
             }
             if (teamThatJustPlayed == 1 && successCountForTeamThatJustPlayed > 0) {
                 mT2Plus.setText(String.format(Locale.US, "+%d", successCountForTeamThatJustPlayed));
+                mT2Plus.setVisibility(View.VISIBLE);
+            } else {
+                mT2Plus.setText("");
+                mT2Plus.setVisibility(View.INVISIBLE);
             }
         } else {
             multiTeamsVisibility(true);
@@ -298,8 +332,10 @@ public class Summary extends AppCompatActivity {
             // Restore indicator if viewing the team that just played
             if (teamThatJustPlayed == db.currentPlaying && successCountForTeamThatJustPlayed > 0) {
                 mMultiTeamsPlus.setText(String.format(Locale.US, "+%d", successCountForTeamThatJustPlayed));
+                mMultiTeamsPlus.setVisibility(View.VISIBLE);
             } else {
                 mMultiTeamsPlus.setText("");
+                mMultiTeamsPlus.setVisibility(View.INVISIBLE);
             }
         }
         onCreate = false;
@@ -379,6 +415,12 @@ public class Summary extends AppCompatActivity {
     private void adjustLayoutForLanguage(String language) {
         android.widget.RelativeLayout.LayoutParams imageParams =
             (android.widget.RelativeLayout.LayoutParams) mPressHereFigure.getLayoutParams();
+        android.widget.RelativeLayout.LayoutParams t1PlusParams =
+            (android.widget.RelativeLayout.LayoutParams) mT1Plus.getLayoutParams();
+        android.widget.RelativeLayout.LayoutParams t2PlusParams =
+            (android.widget.RelativeLayout.LayoutParams) mT2Plus.getLayoutParams();
+        android.widget.RelativeLayout.LayoutParams multiTeamsPlusParams =
+            (android.widget.RelativeLayout.LayoutParams) mMultiTeamsPlus.getLayoutParams();
 
         if (language.equals("en")) {
             // English: align all text to the left
@@ -388,11 +430,16 @@ public class Summary extends AppCompatActivity {
             mT2Total.setGravity(android.view.Gravity.LEFT);
             mT1Round.setGravity(android.view.Gravity.LEFT);
             mT2Round.setGravity(android.view.Gravity.LEFT);
-            mT1Plus.setGravity(android.view.Gravity.LEFT);
-            mT2Plus.setGravity(android.view.Gravity.LEFT);
-            mMultiTeamsPlus.setGravity(android.view.Gravity.LEFT);
             mMultiTeamTotalScore.setGravity(android.view.Gravity.LEFT);
             mMultiTeamRound.setGravity(android.view.Gravity.LEFT);
+
+            // Circle badges stay centered but align left in layout
+            t1PlusParams.removeRule(android.widget.RelativeLayout.ALIGN_PARENT_RIGHT);
+            t1PlusParams.addRule(android.widget.RelativeLayout.ALIGN_PARENT_LEFT);
+            t2PlusParams.removeRule(android.widget.RelativeLayout.ALIGN_PARENT_RIGHT);
+            t2PlusParams.addRule(android.widget.RelativeLayout.ALIGN_PARENT_LEFT);
+            multiTeamsPlusParams.removeRule(android.widget.RelativeLayout.ALIGN_PARENT_RIGHT);
+            multiTeamsPlusParams.addRule(android.widget.RelativeLayout.ALIGN_PARENT_LEFT);
 
             // Move image to the right and flip it horizontally
             imageParams.removeRule(android.widget.RelativeLayout.ALIGN_PARENT_LEFT);
@@ -406,11 +453,16 @@ public class Summary extends AppCompatActivity {
             mT2Total.setGravity(android.view.Gravity.RIGHT);
             mT1Round.setGravity(android.view.Gravity.RIGHT);
             mT2Round.setGravity(android.view.Gravity.RIGHT);
-            mT1Plus.setGravity(android.view.Gravity.RIGHT);
-            mT2Plus.setGravity(android.view.Gravity.RIGHT);
-            mMultiTeamsPlus.setGravity(android.view.Gravity.RIGHT);
             mMultiTeamTotalScore.setGravity(android.view.Gravity.RIGHT);
             mMultiTeamRound.setGravity(android.view.Gravity.RIGHT);
+
+            // Circle badges stay centered but align right in layout
+            t1PlusParams.removeRule(android.widget.RelativeLayout.ALIGN_PARENT_LEFT);
+            t1PlusParams.addRule(android.widget.RelativeLayout.ALIGN_PARENT_RIGHT);
+            t2PlusParams.removeRule(android.widget.RelativeLayout.ALIGN_PARENT_LEFT);
+            t2PlusParams.addRule(android.widget.RelativeLayout.ALIGN_PARENT_RIGHT);
+            multiTeamsPlusParams.removeRule(android.widget.RelativeLayout.ALIGN_PARENT_LEFT);
+            multiTeamsPlusParams.addRule(android.widget.RelativeLayout.ALIGN_PARENT_RIGHT);
 
             // Move image to the left
             imageParams.removeRule(android.widget.RelativeLayout.ALIGN_PARENT_RIGHT);
@@ -419,6 +471,9 @@ public class Summary extends AppCompatActivity {
         }
 
         mPressHereFigure.setLayoutParams(imageParams);
+        mT1Plus.setLayoutParams(t1PlusParams);
+        mT2Plus.setLayoutParams(t2PlusParams);
+        mMultiTeamsPlus.setLayoutParams(multiTeamsPlusParams);
     }
 
     @Override
@@ -540,8 +595,10 @@ public class Summary extends AppCompatActivity {
                 // Show indicator only if this is the team that just played
                 if (teamThatJustPlayed == selectedSpinner && successCountForTeamThatJustPlayed > 0) {
                     mMultiTeamsPlus.setText(String.format(Locale.US, "+%d", successCountForTeamThatJustPlayed));
+                    mMultiTeamsPlus.setVisibility(View.VISIBLE);
                 } else {
                     mMultiTeamsPlus.setText("");
+                    mMultiTeamsPlus.setVisibility(View.INVISIBLE);
                 }
             }
 

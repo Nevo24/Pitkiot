@@ -27,7 +27,7 @@
     <nevo_mashiach.pitkiot.NotActivities.MyTextView
         android:textColor="@color/common_google_signin_btn_text_dark_default"
         android:text="@string/summary_team_1"
-        android:layout_marginTop="-10dp"
+        android:layout_marginTop="8dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/team1Headline"
@@ -54,7 +54,7 @@
     <nevo_mashiach.pitkiot.NotActivities.MyTextView
         android:textColor="@color/common_google_signin_btn_text_dark_default"
         android:text="@string/summary_team_2"
-        android:layout_marginTop="-10dp"
+        android:layout_marginTop="8dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/team2Headline"
@@ -119,16 +119,18 @@
     <nevo_mashiach.pitkiot.NotActivities.MyTextView
         android:layout_marginTop="10dp"
         android:layout_below="@+id/t1Round"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/t2Plus"
         tools:text="+7"
         android:textSize="34sp"
         android:textColor="#B70004"
-        android:gravity="right"
+        android:gravity="center"
         android:textDirection="ltr"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"/>
+        android:layout_alignParentStart="true"
+        android:background="@drawable/circle_border_red"
+        android:visibility="invisible"/>
 
     <nevo_mashiach.pitkiot.NotActivities.MyButton
         android:text="@string/summary_ready_button"
@@ -165,33 +167,37 @@
         android:layout_marginTop="11dp"/>
 
     <nevo_mashiach.pitkiot.NotActivities.MyTextView
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/t1Plus"
         tools:text="+8"
         android:textSize="34sp"
         android:textColor="#B70004"
-        android:gravity="right"
+        android:gravity="center"
         android:textDirection="ltr"
         android:layout_below="@+id/ready"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"/>
+        android:layout_alignParentStart="true"
+        android:background="@drawable/circle_border_red"
+        android:visibility="invisible"/>
 
     <!--Summary for more than 2 teams-->
 
     <nevo_mashiach.pitkiot.NotActivities.MyTextView
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/multiTeamsPlus"
         tools:text="+X"
         android:textSize="34sp"
         android:textColor="#B70004"
-        android:gravity="right"
+        android:gravity="center"
         android:textDirection="ltr"
         android:layout_below="@+id/ready"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_marginTop="50dp"/>
+        android:layout_marginTop="50dp"
+        android:background="@drawable/circle_border_red"
+        android:visibility="invisible"/>
 
     <Spinner
         android:textColor="@color/common_google_signin_btn_text_dark_default"
