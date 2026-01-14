@@ -201,7 +201,8 @@ public class MainActivity extends AppCompatActivity {
             db.temp = new ArrayList<>(set);
         } catch (Exception ignored) {
         }
-        for (int i = 0; i < 24; i++) {
+        // Only load data for active teams to avoid using stale data
+        for (int i = 0; i < db.amountOfTeams; i++) {
             try {
                 set = prefs.getStringSet("team" + i + "Notes", null);
                 db.teamsNotes[i] = new ArrayList<>(set);
@@ -298,7 +299,7 @@ public class MainActivity extends AppCompatActivity {
                 spEditor.putLong("mMillisUntilFinished", db.timePerRound * 1000L);
                 spEditor.putBoolean("summaryIsPaused", false);
                 spEditor.putBoolean("gamePlayIsPaused", false);
-                spEditor.commit();
+                spEditor.apply();
 
                 Toast.makeText(context, getString(R.string.toast_game_reset), Toast.LENGTH_SHORT).show();
             }
@@ -318,7 +319,7 @@ public class MainActivity extends AppCompatActivity {
                 for (int i = 0; i < 24; i++) {
                     spEditor.putStringSet("team" + i + "Notes", set);
                 }
-                spEditor.commit();
+                spEditor.apply();
 
                 Toast.makeText(context, getString(R.string.toast_all_notes_deleted), Toast.LENGTH_SHORT).show();
 
@@ -420,10 +421,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private String detectCountryFromIP() {
+        java.net.HttpURLConnection connection = null;
+        java.io.BufferedReader reader = null;
         try {
             // Use ipapi.co free API to detect country (30k requests/month free)
             java.net.URL url = new java.net.URL("https://ipapi.co/json/");
-            java.net.HttpURLConnection connection = (java.net.HttpURLConnection) url.openConnection();
+            connection = (java.net.HttpURLConnection) url.openConnection();
             connection.setRequestMethod("GET");
             connection.setRequestProperty("User-Agent", "Pitkiot-Android-App");
             connection.setConnectTimeout(5000); // 5 second timeout
@@ -432,14 +435,13 @@ public class MainActivity extends AppCompatActivity {
             int responseCode = connection.getResponseCode();
 
             if (responseCode == 200) {
-                java.io.BufferedReader reader = new java.io.BufferedReader(
+                reader = new java.io.BufferedReader(
                     new java.io.InputStreamReader(connection.getInputStream()));
                 StringBuilder response = new StringBuilder();
                 String line;
                 while ((line = reader.readLine()) != null) {
                     response.append(line);
                 }
-                reader.close();
 
                 String jsonResponse = response.toString();
 
@@ -465,6 +467,18 @@ public class MainActivity extends AppCompatActivity {
             }
         } catch (Exception e) {
             // API failed, use fallback
+        } finally {
+            // Properly close resources
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (Exception e) {
+                    // Ignore close errors
+                }
+            }
+            if (connection != null) {
+                connection.disconnect();
+            }
         }
 
         // Fallback: use system locale

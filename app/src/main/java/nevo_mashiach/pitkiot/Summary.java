@@ -473,7 +473,9 @@ public class Summary extends AppCompatActivity {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         Spinner spinner = findViewById(R.id.summarySpinner);
         spinner.setAdapter(adapter);
-        spinner.setSelection(db.currentPlaying);
+        // Ensure currentPlaying is within valid range
+        int selection = (db.currentPlaying >= 0 && db.currentPlaying < db.amountOfTeams) ? db.currentPlaying : 0;
+        spinner.setSelection(selection);
 
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override

@@ -68,7 +68,7 @@ public class db {
         }
     }
 
-    public static void initializeSounds(Context context) {
+    public static synchronized void initializeSounds(Context context) {
         if (soundPool == null) {
             AudioAttributes audioAttributes = new AudioAttributes.Builder()
                     .setUsage(AudioAttributes.USAGE_GAME)
@@ -89,7 +89,7 @@ public class db {
         }
     }
 
-    public static void releaseSounds() {
+    public static synchronized void releaseSounds() {
         if (soundPool != null) {
             soundPool.release();
             soundPool = null;
@@ -98,7 +98,7 @@ public class db {
     }
 
 
-    public static void resetGame() {
+    public static synchronized void resetGame() {
         resetRound();
         teamsRoundNum = new int[24];
         scores = new int[24];
@@ -111,7 +111,7 @@ public class db {
     }
 
 
-    public static void resetRound() {
+    public static synchronized void resetRound() {
         for (int i = 0; i < 24 ; i++) {
             defs.addAll(teamsNotes[i]);
             teamsNotes[i].clear();
@@ -119,17 +119,21 @@ public class db {
         resetTemp();
     }
 
-    public static void resetTemp() {
+    public static synchronized void resetTemp() {
         defs.addAll(temp);
         temp.clear();
     }
 
-    public static void defTransfer(String source, String currentDef) {
+    public static synchronized void defTransfer(String source, String currentDef) {
         if (source.equals("next")) {
-            defs.remove(0);
+            if (!defs.isEmpty()) {
+                defs.remove(0);
+            }
             temp.add(currentDef);
         } else if (source.equals("success")) {
-            defs.remove(0);
+            if (!defs.isEmpty()) {
+                defs.remove(0);
+            }
             teamsNotes[currentPlaying].add(currentDef);
         }
     }
@@ -152,15 +156,15 @@ public class db {
         }
     }
 
-    public static void increaseRoundNum() {
+    public static synchronized void increaseRoundNum() {
         teamsRoundNum[currentPlaying]++;
     }
 
-    public static void increaseScore() {
+    public static synchronized void increaseScore() {
         scores[currentPlaying]++;
     }
 
-    public static int totalNoteAmount() {
+    public static synchronized int totalNoteAmount() {
         int ans = defs.size() + temp.size();
         for (int i = 0; i < 24; i++) {
             ans += teamsNotes[i].size();
@@ -169,7 +173,7 @@ public class db {
         return ans;
     }
 
-    public static ArrayList<String> allNotes() {
+    public static synchronized ArrayList<String> allNotes() {
         ArrayList<String> ans = new ArrayList<String>();
         for (int i = 0; i < 24; i++) {
             ans.addAll(teamsNotes[i]);
@@ -179,15 +183,15 @@ public class db {
         return ans;
     }
 
-    public static boolean noteExists(String note){
+    public static synchronized boolean noteExists(String note){
         return allNotes().contains(note);
     }
 
-    public static int roundNoteAmount() {
+    public static synchronized int roundNoteAmount() {
         return defs.size() + temp.size();
     }
 
-    public static void makeSound(Context context, int resid) {
+    public static synchronized void makeSound(Context context, int resid) {
         if (!db.soundCheckBox) return;
         if (soundPool != null && soundMap != null && soundMap.containsKey(resid)) {
             Integer soundId = soundMap.get(resid);

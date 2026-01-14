@@ -512,14 +512,14 @@ public class Settings extends AppCompatActivity {
         //save autoBalanceCheckBox to shared preferences
         db.autoBalanceCheckBox = checked;
         spEditor.putBoolean("autoBalanceCheckBoxBackup", checked);
-        spEditor.commit();
+        spEditor.apply();
     }
 
     void onSoundChecked(boolean checked) {
         db.soundCheckBox = checked;
         //save soundCheckBox to shared preferences
         spEditor.putBoolean("soundCheckBoxBackup", checked);
-        spEditor.commit();
+        spEditor.apply();
     }
 
     public void explanationBalanceDialog(View view) {
@@ -532,7 +532,7 @@ public class Settings extends AppCompatActivity {
         db.timePerRound++;
         mRoundTimeValue.setText(String.valueOf(db.timePerRound));
         spEditor.putInt("timePerRoundBackup", db.timePerRound);
-        spEditor.commit();
+        spEditor.apply();
 
         // Update button states
         mDecreaseRoundTime.setEnabled(true);
@@ -544,7 +544,7 @@ public class Settings extends AppCompatActivity {
         db.timePerRound--;
         mRoundTimeValue.setText(String.valueOf(db.timePerRound));
         spEditor.putInt("timePerRoundBackup", db.timePerRound);
-        spEditor.commit();
+        spEditor.apply();
 
         // Update button states
         mIncreaseRoundTime.setEnabled(true);
@@ -556,7 +556,7 @@ public class Settings extends AppCompatActivity {
         db.timeDownOnNext++;
         mPassTimeValue.setText(String.valueOf(db.timeDownOnNext));
         spEditor.putInt("timeDownOnNextBackup", db.timeDownOnNext);
-        spEditor.commit();
+        spEditor.apply();
 
         // Update button states
         mDecreasePassTime.setEnabled(true);
@@ -568,7 +568,7 @@ public class Settings extends AppCompatActivity {
         db.timeDownOnNext--;
         mPassTimeValue.setText(String.valueOf(db.timeDownOnNext));
         spEditor.putInt("timeDownOnNextBackup", db.timeDownOnNext);
-        spEditor.commit();
+        spEditor.apply();
 
         // Update button states
         mIncreasePassTime.setEnabled(true);
@@ -586,7 +586,7 @@ public class Settings extends AppCompatActivity {
                 spEditor.putBoolean("soundCheckBoxBackup", true);
                 spEditor.putInt("timePerRoundBackup", 60);
                 spEditor.putInt("timeDownOnNextBackup", 5);
-                spEditor.commit();
+                spEditor.apply();
 
                 mAutoBalaceCheckBox.setChecked(true);
                 mSoundCheckBox.setChecked(true);
@@ -613,7 +613,7 @@ public class Settings extends AppCompatActivity {
         if(db.amountOfTeams == 24) mIncrease1.setEnabled(false);
         mDecrease1.setEnabled(true);
         spEditor.putInt("amountOfTeams", db.amountOfTeams);
-        spEditor.commit();
+        spEditor.apply();
         createGroupSpinner();
         mAmountOfTeams.setText(String.valueOf(db.amountOfTeams));
     }
@@ -626,7 +626,7 @@ public class Settings extends AppCompatActivity {
         db.scores[selectedSpinner]++;
         mDecrease2.setEnabled(true);
         spEditor.putInt("team" + selectedSpinner + "Score", db.scores[selectedSpinner]);
-        spEditor.commit();
+        spEditor.apply();
         mTeamEditableScore.setText(String.valueOf(db.scores[selectedSpinner]));
     }
 
@@ -640,7 +640,7 @@ public class Settings extends AppCompatActivity {
         if(db.amountOfTeams == 2) mDecrease1.setEnabled(false);
         mIncrease1.setEnabled(true);
         spEditor.putInt("amountOfTeams", db.amountOfTeams);
-        spEditor.commit();
+        spEditor.apply();
         createGroupSpinner();
         mAmountOfTeams.setText(String.valueOf(db.amountOfTeams));
     }
@@ -653,8 +653,8 @@ public class Settings extends AppCompatActivity {
         }
         db.scores[selectedSpinner]--;
         if (db.scores[selectedSpinner] == 0) mDecrease2.setEnabled(false);
-        spEditor.putInt("team" + selectedSpinner + "score", db.scores[selectedSpinner]);
-        spEditor.commit();
+        spEditor.putInt("team" + selectedSpinner + "Score", db.scores[selectedSpinner]);
+        spEditor.apply();
         mTeamEditableScore.setText(String.valueOf(db.scores[selectedSpinner]));
     }
 
@@ -675,7 +675,7 @@ public class Settings extends AppCompatActivity {
                 }
                 db.timePerRound = value;
                 spEditor.putInt("timePerRoundBackup", value);
-                spEditor.commit();
+                spEditor.apply();
                 mRoundTimeValue.setText(String.valueOf(value));
 
                 // Update button states
@@ -704,7 +704,7 @@ public class Settings extends AppCompatActivity {
                 }
                 db.timeDownOnNext = value;
                 spEditor.putInt("timeDownOnNextBackup", value);
-                spEditor.commit();
+                spEditor.apply();
                 mPassTimeValue.setText(String.valueOf(value));
 
                 // Update button states
@@ -739,7 +739,7 @@ public class Settings extends AppCompatActivity {
                 }
                 db.amountOfTeams = value;
                 spEditor.putInt("amountOfTeams", value);
-                spEditor.commit();
+                spEditor.apply();
                 mAmountOfTeams.setText(String.valueOf(value));
                 createGroupSpinner();
 

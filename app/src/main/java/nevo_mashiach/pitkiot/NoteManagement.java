@@ -201,7 +201,7 @@ public class NoteManagement extends AppCompatActivity {
         //save notes to shared preferences
         Set<String> set = new HashSet<String>(db.defs);
         spEditor.putStringSet("defs", set);
-        spEditor.commit();
+        spEditor.apply();
     }
 
 

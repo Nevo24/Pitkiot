@@ -123,7 +123,7 @@ public class NoteList extends AppCompatActivity {
                         spEditor.putLong("mMillisUntilFinished", db.timePerRound * 1000L);
                         spEditor.putBoolean("summaryIsPaused", false);
                         spEditor.putBoolean("gamePlayIsPaused", false);
-                        spEditor.commit();
+                        spEditor.apply();
 
                         Toast.makeText(context, getString(R.string.toast_game_reset), Toast.LENGTH_SHORT).show();
                     }
@@ -236,7 +236,7 @@ public class NoteList extends AppCompatActivity {
             }
         }
 
-        spEditor.commit();
+        spEditor.apply();
     }
 
     public void deleteAllNotes() {
@@ -251,7 +251,7 @@ public class NoteList extends AppCompatActivity {
         for (int i = 0; i < 24; i++) {
             spEditor.putStringSet("team" + i + "Notes", set);
         }
-        spEditor.commit();
+        spEditor.apply();
     }
 
     public void reloadActivityWithoutAnimation(){

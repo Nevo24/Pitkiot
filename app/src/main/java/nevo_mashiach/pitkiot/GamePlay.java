@@ -219,7 +219,11 @@ public class GamePlay extends AppCompatActivity {
             mTeamNum.setText(getString(R.string.game_team_label) + (db.currentPlaying + 1));
             mRoundModeGame.setText(db.getRoundMode(context));
             mTotalNotes.setText(getString(R.string.game_notes_remaining, db.roundNoteAmount()));
-            if(db.defs.isEmpty() || !mCurrentDef.getText().equals(db.defs.get(0))) setDef();
+            if(db.defs.isEmpty()) {
+                setDef();
+            } else if(!db.defs.isEmpty() && !mCurrentDef.getText().equals(db.defs.get(0))) {
+                setDef();
+            }
         }
         timeGenerate("regular");
         mCurrentSuccess.setText(getString(R.string.game_successes_this_round) + db.currentSuccessNum);
@@ -259,6 +263,10 @@ public class GamePlay extends AppCompatActivity {
         } else fixedMillisUntilFinished = db.mMillisUntilFinished;
         db.timer = new CountDownTimer(fixedMillisUntilFinished, 100) {
             public void onTick(long millisUntilFinished) {
+                if (isFinishing() || isDestroyed()) {
+                    cancel();
+                    return;
+                }
                 oldMillis = db.mMillisUntilFinished;
                 db.mMillisUntilFinished = millisUntilFinished;
                 if (millisUntilFinished / 1000 == oldMillis / 1000) return;
@@ -269,6 +277,9 @@ public class GamePlay extends AppCompatActivity {
             }
 
             public void onFinish() {
+                if (isFinishing() || isDestroyed()) {
+                    return;
+                }
                 if (!db.defs.isEmpty()) {
                     mSuccess.setEnabled(false);
                     mNext.setEnabled(false);
@@ -316,7 +327,9 @@ public class GamePlay extends AppCompatActivity {
     public void vibrate() {
         Vibrator v = (Vibrator) this.context.getSystemService(Context.VIBRATOR_SERVICE);
         // Vibrate for 500 milliseconds
-        v.vibrate(500);
+        if (v != null && v.hasVibrator()) {
+            v.vibrate(500);
+        }
     }
 
 
