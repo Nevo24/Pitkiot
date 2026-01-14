@@ -166,6 +166,11 @@ public class Summary extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+
+        // Handle English layout adjustments
+        String language = prefs.getString("app_language", "he");
+        adjustLayoutForLanguage(language);
+
         if (!onCreate) return; //preventing round++ when minimizing the app
         mTotalNotes.setText(getString(R.string.game_notes_remaining, db.roundNoteAmount()));
         if (!db.summaryIsPaused) {
@@ -371,6 +376,51 @@ public class Summary extends AppCompatActivity {
         }
     }
 
+    private void adjustLayoutForLanguage(String language) {
+        android.widget.RelativeLayout.LayoutParams imageParams =
+            (android.widget.RelativeLayout.LayoutParams) mPressHereFigure.getLayoutParams();
+
+        if (language.equals("en")) {
+            // English: align all text to the left
+            mTeam1Headline.setGravity(android.view.Gravity.LEFT);
+            mTeam2Headline.setGravity(android.view.Gravity.LEFT);
+            mT1Total.setGravity(android.view.Gravity.LEFT);
+            mT2Total.setGravity(android.view.Gravity.LEFT);
+            mT1Round.setGravity(android.view.Gravity.LEFT);
+            mT2Round.setGravity(android.view.Gravity.LEFT);
+            mT1Plus.setGravity(android.view.Gravity.LEFT);
+            mT2Plus.setGravity(android.view.Gravity.LEFT);
+            mMultiTeamsPlus.setGravity(android.view.Gravity.LEFT);
+            mMultiTeamTotalScore.setGravity(android.view.Gravity.LEFT);
+            mMultiTeamRound.setGravity(android.view.Gravity.LEFT);
+
+            // Move image to the right and flip it horizontally
+            imageParams.removeRule(android.widget.RelativeLayout.ALIGN_PARENT_LEFT);
+            imageParams.addRule(android.widget.RelativeLayout.ALIGN_PARENT_RIGHT);
+            mPressHereFigure.setScaleX(-1f); // Flip horizontally
+        } else {
+            // Hebrew: align all text to the right (default)
+            mTeam1Headline.setGravity(android.view.Gravity.RIGHT);
+            mTeam2Headline.setGravity(android.view.Gravity.RIGHT);
+            mT1Total.setGravity(android.view.Gravity.RIGHT);
+            mT2Total.setGravity(android.view.Gravity.RIGHT);
+            mT1Round.setGravity(android.view.Gravity.RIGHT);
+            mT2Round.setGravity(android.view.Gravity.RIGHT);
+            mT1Plus.setGravity(android.view.Gravity.RIGHT);
+            mT2Plus.setGravity(android.view.Gravity.RIGHT);
+            mMultiTeamsPlus.setGravity(android.view.Gravity.RIGHT);
+            mMultiTeamTotalScore.setGravity(android.view.Gravity.RIGHT);
+            mMultiTeamRound.setGravity(android.view.Gravity.RIGHT);
+
+            // Move image to the left
+            imageParams.removeRule(android.widget.RelativeLayout.ALIGN_PARENT_RIGHT);
+            imageParams.addRule(android.widget.RelativeLayout.ALIGN_PARENT_LEFT);
+            mPressHereFigure.setScaleX(1f); // Normal orientation
+        }
+
+        mPressHereFigure.setLayoutParams(imageParams);
+    }
+
     @Override
     protected void onPause() {
         super.onPause();
@@ -444,6 +494,9 @@ public class Summary extends AppCompatActivity {
             items[i] = getString(R.string.game_team_label) + (i + 1);
         }
 
+        String language = prefs.getString("app_language", "he");
+        int textGravity = language.equals("en") ? android.view.Gravity.LEFT : android.view.Gravity.RIGHT;
+
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item, items) {
 
@@ -453,7 +506,7 @@ public class Summary extends AppCompatActivity {
                 ((TextView) v).setTypeface(externalFont);
                 ((TextView) v).setTextColor(0x88000000);
                 ((TextView) v).setTextSize(25);
-                ((TextView) v).setGravity(android.view.Gravity.RIGHT);
+                ((TextView) v).setGravity(textGravity);
                 return v;
             }
 
