@@ -130,7 +130,7 @@
 
     <!-- Game play strings -->
     <string name="game_team_label">"Team "</string>
-    <string name="game_notes_remaining">"Notes remaining in round: %d"</string>
+    <string name="game_notes_remaining">"Notes remaining this round: %d"</string>
     <string name="game_successes_this_round">"Successes this round: "</string>
     <string name="game_notes_finished">Notes finished!</string>
     <string name="game_continue_team_turn">"Continue! Team "</string>
