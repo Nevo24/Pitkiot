@@ -184,7 +184,7 @@ public class DialogBag {
         dialog = dialog.setNegativeButton(context.getString(nevo_mashiach.pitkiot.R.string.dialog_exit), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                MainActivity.appExit();
+                MainActivity.appExit(context);
             }
         });
         dialog.show(fragmentManager, "ExitTheGame"); //The second one is just a string tag that we can use to refer to it.

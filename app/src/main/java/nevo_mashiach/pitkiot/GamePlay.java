@@ -167,7 +167,9 @@ public class GamePlay extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        db.timer.cancel();
+        if (db.timer != null) {
+            db.timer.cancel();
+        }
         happyAanim.stop();
         sadAanim.stop();
 
@@ -227,7 +229,9 @@ public class GamePlay extends AppCompatActivity {
     public void setDef() {
         mTotalNotes.setText(getString(R.string.game_notes_remaining, db.roundNoteAmount()));
         if (db.roundNoteAmount() == 0) {
-            db.timer.cancel();
+            if (db.timer != null) {
+                db.timer.cancel();
+            }
             db.increaseRoundMode();
             summaryDisplay(getString(R.string.game_notes_finished), getString(R.string.game_continue_team_turn) + (db.currentPlaying + 1));
             return;
@@ -243,9 +247,13 @@ public class GamePlay extends AppCompatActivity {
     private synchronized void timeGenerate(String str) {
         if (str.equals("next")) {
             fixedMillisUntilFinished = Math.max(0, db.mMillisUntilFinished - db.timeDownOnNext * 1000L);
-            db.timer.cancel();
+            if (db.timer != null) {
+                db.timer.cancel();
+            }
             if(fixedMillisUntilFinished == 0){
-                db.timer.onFinish();
+                if (db.timer != null) {
+                    db.timer.onFinish();
+                }
                 return;
             }
         } else fixedMillisUntilFinished = db.mMillisUntilFinished;

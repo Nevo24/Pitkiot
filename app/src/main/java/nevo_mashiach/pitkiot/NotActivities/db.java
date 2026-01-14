@@ -147,8 +147,9 @@ public class db {
                 return context.getString(R.string.mode_explain_one_word);
             case 2:
                 return context.getString(R.string.mode_pantomime);
+            default:
+                return context.getString(R.string.mode_explain_without_word);
         }
-        return null;
     }
 
     public static void increaseRoundNum() {

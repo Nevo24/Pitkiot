@@ -49,7 +49,6 @@ public class MainActivity extends AppCompatActivity {
     TextView mSettingsIcon;
     TextView mLanguageToggle;
 
-    static AppCompatActivity thisActivity;
     AnimationDrawable happyAanim;
     CountDownTimer animationTimer;
 
@@ -85,7 +84,6 @@ public class MainActivity extends AppCompatActivity {
         mLanguageToggle = binding.languageToggle;
 
         dialogBag = new DialogBag(getSupportFragmentManager(), this);
-        thisActivity = this;
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
@@ -370,15 +368,26 @@ public class MainActivity extends AppCompatActivity {
         return super.onKeyDown(keyCode, event);
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (happyAanim != null) {
+            happyAanim.stop();
+        }
+        if (animationTimer != null) {
+            animationTimer.cancel();
+        }
+    }
+
     public void settings() {
         Intent intent = new Intent(context, Settings.class);
         startActivity(intent);
     }
 
-    public static void appExit() {
-        Intent intent = new Intent(thisActivity, ExitActivity.class);
+    public static void appExit(Context context) {
+        Intent intent = new Intent(context, ExitActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-        thisActivity.startActivity(intent);
+        context.startActivity(intent);
         //int pid = android.os.Process.myPid();
         //android.os.Process.killProcess(pid);
     }

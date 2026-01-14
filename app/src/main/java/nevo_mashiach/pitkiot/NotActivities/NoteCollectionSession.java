@@ -117,6 +117,7 @@ public class NoteCollectionSession {
                 .addSnapshotListener((snapshots, error) -> {
                     if (error != null) {
                         Log.e(TAG, "Listen failed: " + error.getMessage());
+                        stopListening();
                         if (noteReceivedListener != null) {
                             noteReceivedListener.onError(error.getMessage());
                         }
