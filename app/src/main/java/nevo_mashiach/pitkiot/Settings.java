@@ -233,7 +233,7 @@ public class Settings extends AppCompatActivity {
         androidx.percentlayout.widget.PercentRelativeLayout.LayoutParams buttonParams =
             (androidx.percentlayout.widget.PercentRelativeLayout.LayoutParams) mBalanceExplanation.getLayoutParams();
 
-        // Get layout params for plus-minus controls and constraints
+        // Get layout params for controls and constraints
         View roundTimeControls = findViewById(R.id.roundTimeControls);
         View passTimeControls = findViewById(R.id.passTimeControls);
         View team1Controls = findViewById(R.id.team1Controls);
@@ -242,21 +242,25 @@ public class Settings extends AppCompatActivity {
         View topLayout = findViewById(R.id.topLayout);
         View bottomLayout = findViewById(R.id.bottomLayout);
 
-        androidx.percentlayout.widget.PercentRelativeLayout.LayoutParams roundTimeControlsParams =
-            (androidx.percentlayout.widget.PercentRelativeLayout.LayoutParams) roundTimeControls.getLayoutParams();
-        androidx.percentlayout.widget.PercentRelativeLayout.LayoutParams passTimeControlsParams =
-            (androidx.percentlayout.widget.PercentRelativeLayout.LayoutParams) passTimeControls.getLayoutParams();
+        // Elements inside middleContentContainer LinearLayout use LinearLayout.LayoutParams
+        android.widget.LinearLayout.LayoutParams roundTimeControlsParams =
+            (android.widget.LinearLayout.LayoutParams) roundTimeControls.getLayoutParams();
+        android.widget.LinearLayout.LayoutParams passTimeControlsParams =
+            (android.widget.LinearLayout.LayoutParams) passTimeControls.getLayoutParams();
+        android.widget.LinearLayout.LayoutParams roundTimeConstraintParams =
+            (android.widget.LinearLayout.LayoutParams) mRoundTimeConstraint.getLayoutParams();
+        android.widget.LinearLayout.LayoutParams passTimeConstraintParams =
+            (android.widget.LinearLayout.LayoutParams) mPassTimeConstraint.getLayoutParams();
+
+        // Elements inside topLayout PercentRelativeLayout use PercentRelativeLayout.LayoutParams
         androidx.percentlayout.widget.PercentRelativeLayout.LayoutParams team1ControlsParams =
             (androidx.percentlayout.widget.PercentRelativeLayout.LayoutParams) team1Controls.getLayoutParams();
-        androidx.percentlayout.widget.PercentRelativeLayout.LayoutParams team2ControlsParams =
-            (androidx.percentlayout.widget.PercentRelativeLayout.LayoutParams) team2Controls.getLayoutParams();
-
-        androidx.percentlayout.widget.PercentRelativeLayout.LayoutParams roundTimeConstraintParams =
-            (androidx.percentlayout.widget.PercentRelativeLayout.LayoutParams) mRoundTimeConstraint.getLayoutParams();
-        androidx.percentlayout.widget.PercentRelativeLayout.LayoutParams passTimeConstraintParams =
-            (androidx.percentlayout.widget.PercentRelativeLayout.LayoutParams) mPassTimeConstraint.getLayoutParams();
         androidx.percentlayout.widget.PercentRelativeLayout.LayoutParams teamsConstraintParams =
             (androidx.percentlayout.widget.PercentRelativeLayout.LayoutParams) mTeamsConstraint.getLayoutParams();
+
+        // Elements inside bottomLayout PercentRelativeLayout use PercentRelativeLayout.LayoutParams
+        androidx.percentlayout.widget.PercentRelativeLayout.LayoutParams team2ControlsParams =
+            (androidx.percentlayout.widget.PercentRelativeLayout.LayoutParams) team2Controls.getLayoutParams();
         androidx.percentlayout.widget.PercentRelativeLayout.LayoutParams spinnerParams =
             (androidx.percentlayout.widget.PercentRelativeLayout.LayoutParams) settingsSpinner.getLayoutParams();
 
@@ -281,19 +285,18 @@ public class Settings extends AppCompatActivity {
             mSoundCheckBox.setCompoundDrawablesWithIntrinsicBounds(null, null, checkboxDrawable2, null);
 
             // Hebrew: align all plus-minus controls and constraints to the right
-            roundTimeControlsParams.addRule(androidx.percentlayout.widget.PercentRelativeLayout.ALIGN_PARENT_END);
-            roundTimeControlsParams.removeRule(androidx.percentlayout.widget.PercentRelativeLayout.ALIGN_PARENT_START);
-            passTimeControlsParams.addRule(androidx.percentlayout.widget.PercentRelativeLayout.ALIGN_PARENT_END);
-            passTimeControlsParams.removeRule(androidx.percentlayout.widget.PercentRelativeLayout.ALIGN_PARENT_START);
+            // For LinearLayout children, use gravity instead of rules
+            roundTimeControlsParams.gravity = android.view.Gravity.END;
+            passTimeControlsParams.gravity = android.view.Gravity.END;
+            roundTimeConstraintParams.gravity = android.view.Gravity.END;
+            passTimeConstraintParams.gravity = android.view.Gravity.END;
+
+            // For RelativeLayout children, use rules
             team1ControlsParams.addRule(androidx.percentlayout.widget.PercentRelativeLayout.ALIGN_PARENT_END);
             team1ControlsParams.removeRule(androidx.percentlayout.widget.PercentRelativeLayout.ALIGN_PARENT_START);
             team2ControlsParams.addRule(androidx.percentlayout.widget.PercentRelativeLayout.ALIGN_PARENT_END);
             team2ControlsParams.removeRule(androidx.percentlayout.widget.PercentRelativeLayout.ALIGN_PARENT_START);
 
-            roundTimeConstraintParams.addRule(androidx.percentlayout.widget.PercentRelativeLayout.ALIGN_PARENT_END);
-            roundTimeConstraintParams.removeRule(androidx.percentlayout.widget.PercentRelativeLayout.ALIGN_PARENT_START);
-            passTimeConstraintParams.addRule(androidx.percentlayout.widget.PercentRelativeLayout.ALIGN_PARENT_END);
-            passTimeConstraintParams.removeRule(androidx.percentlayout.widget.PercentRelativeLayout.ALIGN_PARENT_START);
             teamsConstraintParams.addRule(androidx.percentlayout.widget.PercentRelativeLayout.ALIGN_PARENT_END);
             teamsConstraintParams.removeRule(androidx.percentlayout.widget.PercentRelativeLayout.ALIGN_PARENT_START);
 
@@ -340,19 +343,18 @@ public class Settings extends AppCompatActivity {
             mSoundCheckBox.setCompoundDrawablesWithIntrinsicBounds(checkboxDrawable2, null, null, null);
 
             // English: align all plus-minus controls and constraints to the left
-            roundTimeControlsParams.addRule(androidx.percentlayout.widget.PercentRelativeLayout.ALIGN_PARENT_START);
-            roundTimeControlsParams.removeRule(androidx.percentlayout.widget.PercentRelativeLayout.ALIGN_PARENT_END);
-            passTimeControlsParams.addRule(androidx.percentlayout.widget.PercentRelativeLayout.ALIGN_PARENT_START);
-            passTimeControlsParams.removeRule(androidx.percentlayout.widget.PercentRelativeLayout.ALIGN_PARENT_END);
+            // For LinearLayout children, use gravity instead of rules
+            roundTimeControlsParams.gravity = android.view.Gravity.START;
+            passTimeControlsParams.gravity = android.view.Gravity.START;
+            roundTimeConstraintParams.gravity = android.view.Gravity.START;
+            passTimeConstraintParams.gravity = android.view.Gravity.START;
+
+            // For RelativeLayout children, use rules
             team1ControlsParams.addRule(androidx.percentlayout.widget.PercentRelativeLayout.ALIGN_PARENT_START);
             team1ControlsParams.removeRule(androidx.percentlayout.widget.PercentRelativeLayout.ALIGN_PARENT_END);
             team2ControlsParams.addRule(androidx.percentlayout.widget.PercentRelativeLayout.ALIGN_PARENT_START);
             team2ControlsParams.removeRule(androidx.percentlayout.widget.PercentRelativeLayout.ALIGN_PARENT_END);
 
-            roundTimeConstraintParams.addRule(androidx.percentlayout.widget.PercentRelativeLayout.ALIGN_PARENT_START);
-            roundTimeConstraintParams.removeRule(androidx.percentlayout.widget.PercentRelativeLayout.ALIGN_PARENT_END);
-            passTimeConstraintParams.addRule(androidx.percentlayout.widget.PercentRelativeLayout.ALIGN_PARENT_START);
-            passTimeConstraintParams.removeRule(androidx.percentlayout.widget.PercentRelativeLayout.ALIGN_PARENT_END);
             teamsConstraintParams.addRule(androidx.percentlayout.widget.PercentRelativeLayout.ALIGN_PARENT_START);
             teamsConstraintParams.removeRule(androidx.percentlayout.widget.PercentRelativeLayout.ALIGN_PARENT_END);
 
