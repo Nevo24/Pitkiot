@@ -63,7 +63,9 @@
         android:includeFontPadding="false"
         android:paddingTop="4dp"
         android:layout_alignTop="@+id/autoBalaceCheckBox"
-        android:layout_alignParentLeft="true"/>
+        android:layout_toLeftOf="@+id/autoBalaceCheckBox"
+        android:layout_toStartOf="@+id/autoBalaceCheckBox"
+        android:layout_marginTop="-8dp"/>
 
     <nevo_mashiach.pitkiot.NotActivities.MyTextView
         android:layout_width="wrap_content"
