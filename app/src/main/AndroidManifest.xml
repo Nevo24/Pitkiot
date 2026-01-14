@@ -20,26 +20,33 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".MainActivity"
-            android:exported="true">
+            android:exported="true"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".GamePlay">
+        <activity android:name=".GamePlay"
+            android:screenOrientation="portrait">
         </activity>
-        <activity android:name=".NoteManagement">
+        <activity android:name=".NoteManagement"
+            android:screenOrientation="portrait">
         </activity>
-        <activity android:name=".Summary">
+        <activity android:name=".Summary"
+            android:screenOrientation="portrait">
         </activity>
         <activity
             android:name=".Settings"
-            android:windowSoftInputMode="adjustPan">
+            android:windowSoftInputMode="adjustPan"
+            android:screenOrientation="portrait">
         </activity>
-        <activity android:name=".NotActivities.ExitActivity">
+        <activity android:name=".NotActivities.ExitActivity"
+            android:screenOrientation="portrait">
         </activity>
-        <activity android:name=".NoteList">
+        <activity android:name=".NoteList"
+            android:screenOrientation="portrait">
         </activity>
     </application>
 
