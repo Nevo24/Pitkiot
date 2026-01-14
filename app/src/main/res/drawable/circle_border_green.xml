@@ -3,12 +3,12 @@
     android:shape="oval">
     <stroke
         android:width="3dp"
-        android:color="#51894C"/>
+        android:color="#00E5FF"/>
     <solid
         android:color="@android:color/transparent"/>
     <padding
         android:left="12dp"
-        android:top="8dp"
-        android:right="12dp"
+        android:top="13dp"
+        android:right="17dp"
         android:bottom="8dp"/>
 </shape>
