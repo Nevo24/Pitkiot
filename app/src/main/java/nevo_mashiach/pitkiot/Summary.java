@@ -206,7 +206,8 @@ public class Summary extends AppCompatActivity {
                 updateInfoFromSharedPreferences();
             }
 
-            if (mSummaryHeadline.getText().equals(getString(R.string.game_time_up))) { //If we are here because of time out
+            // Use flag instead of UI text comparison for reliable logic
+            if (db.wasTimeUp) { //If we are here because of time out
                 if(db.amountOfTeams == 2){
                     if (db.currentPlaying == 0) {
                         mT1Plus.setText(String.format(Locale.US, "+%d", db.currentSuccessNum));
@@ -500,6 +501,7 @@ public class Summary extends AppCompatActivity {
         spEditor.putLong("mMillisUntilFinished", db.mMillisUntilFinished);
         if(!db.gameOverDialogActivated) spEditor.putBoolean("summaryIsPaused", true);
         spEditor.putBoolean("gamePlayIsPaused", false);
+        spEditor.putBoolean("wasTimeUp", db.wasTimeUp);
         spEditor.putLong("team2AverageAnswersPerSecond", Double.doubleToRawLongBits(db.team2AverageAnswersPerSecond));
         spEditor.putInt("teamThatJustPlayed", teamThatJustPlayed);
         spEditor.putInt("successCountForTeamThatJustPlayed", successCountForTeamThatJustPlayed);
@@ -613,10 +615,13 @@ public class Summary extends AppCompatActivity {
 
     //*********************** ON CLICKS ********************************
     public void backToGamePlay() {
-        if (mSummaryHeadline.getText().equals(getString(R.string.game_time_up))) {
+        // Use flag instead of UI text comparison for reliable logic
+        if (db.wasTimeUp) {
             db.mMillisUntilFinished = db.timePerRound * 1000L;
             db.currentPlaying = (db.currentPlaying + 1)%db.amountOfTeams;
-        } else db.resetRound();
+        } else {
+            db.resetRound();
+        }
         // Clear indicator tracking since we're starting a new turn
         teamThatJustPlayed = -1;
         successCountForTeamThatJustPlayed = 0;

@@ -49,6 +49,9 @@ public class db {
     public static boolean gamePlayIsPaused = false;
     public static boolean summaryIsPaused = false;
 
+    //summary state:
+    public static boolean wasTimeUp = false; // true if Summary shown due to time up, false if notes finished
+
 
     @SuppressWarnings("unchecked")
     private db() {
@@ -107,6 +110,7 @@ public class db {
         mMillisUntilFinished = db.timePerRound * 1000L;
         gamePlayIsPaused = false;
         summaryIsPaused = false;
+        wasTimeUp = false;
         totalRoundNumber = 0;
     }
 

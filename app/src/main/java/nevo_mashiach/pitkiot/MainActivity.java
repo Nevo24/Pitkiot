@@ -241,6 +241,10 @@ public class MainActivity extends AppCompatActivity {
             db.summaryIsPaused = prefs.getBoolean("summaryIsPaused", false);
         } catch (Exception ignored) {
         }
+        try {
+            db.wasTimeUp = prefs.getBoolean("wasTimeUp", false);
+        } catch (Exception ignored) {
+        }
     }
 
 

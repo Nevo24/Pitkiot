@@ -194,6 +194,7 @@ public class GamePlay extends AppCompatActivity {
         spEditor.putLong("mMillisUntilFinished", db.mMillisUntilFinished);
         spEditor.putBoolean("summaryIsPaused", false);
         spEditor.putBoolean("gamePlayIsPaused", true);
+        spEditor.putBoolean("wasTimeUp", db.wasTimeUp);
 
         //Save non-localized game state only (localized strings will be regenerated on resume)
         spEditor.putString("currentDef", currentDef);  // The actual note content (not a localizable string)
@@ -237,6 +238,7 @@ public class GamePlay extends AppCompatActivity {
                 db.timer.cancel();
             }
             db.increaseRoundMode();
+            db.wasTimeUp = false; // Set flag for Summary to know notes finished (not time up)
             summaryDisplay(getString(R.string.game_notes_finished), getString(R.string.game_continue_team_turn) + (db.currentPlaying + 1));
             return;
         }
@@ -287,6 +289,7 @@ public class GamePlay extends AppCompatActivity {
                     db.makeSound(context, R.raw.time_is_up_sound);
                     vibrate();
                     int turn = ((db.currentPlaying + 1) % db.amountOfTeams) + 1;
+                    db.wasTimeUp = true; // Set flag for Summary to know it's time up
                     summaryDisplay(getString(R.string.game_time_up), getString(R.string.game_start_team_turn) + turn);
                 }
             }
