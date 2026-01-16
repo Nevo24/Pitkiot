@@ -584,8 +584,7 @@ public class Summary extends AppCompatActivity {
                 textView.setTypeface(externalFont);
                 textView.setTextColor(0x88000000);
                 textView.setTextSize(25);
-                textView.setGravity(android.view.Gravity.START | android.view.Gravity.CENTER_VERTICAL);
-                textView.setPadding(0, 0, 0, 0);
+                textView.setGravity(android.view.Gravity.CENTER);
 
                 // Set layout direction based on language
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN_MR1) {
@@ -598,12 +597,8 @@ public class Summary extends AppCompatActivity {
                     }
                 }
 
-                // Calculate space width for natural spacing
-                android.graphics.Paint paint = textView.getPaint();
-                float spaceWidth = paint.measureText(" ");
-
-                // Add dropdown arrow with space-width padding at END position
-                textView.setCompoundDrawablePadding((int) spaceWidth);
+                // Add dropdown arrow with padding
+                textView.setCompoundDrawablePadding(8);
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN_MR1) {
                     textView.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, android.R.drawable.arrow_down_float, 0);
                 } else {
@@ -615,21 +610,54 @@ public class Summary extends AppCompatActivity {
             @NonNull
             @Override
             public View getDropDownView(int position, View convertView, @NonNull ViewGroup parent) {
-                View v = super.getDropDownView(position, convertView, parent);
+                TextView textView;
+                if (convertView == null) {
+                    textView = new TextView(Summary.this);
+                    float scale = getResources().getDisplayMetrics().density;
+                    textView.setLayoutParams(new ViewGroup.LayoutParams(
+                            ViewGroup.LayoutParams.MATCH_PARENT,
+                            ViewGroup.LayoutParams.WRAP_CONTENT));
+                    textView.setPadding((int) (24 * scale), (int) (16 * scale), (int) (24 * scale), (int) (16 * scale));
+                } else {
+                    textView = (TextView) convertView;
+                }
 
                 Typeface externalFont = Typeface.createFromAsset(getAssets(), "gan.ttf");
-                ((TextView) v).setTypeface(externalFont);
-                ((TextView) v).setTextColor(0x88000000);
-                ((TextView) v).setTextSize(25);
-                return v;
+                textView.setTypeface(externalFont);
+                textView.setTextColor(0x88000000);
+                textView.setTextSize(25);
+                textView.setGravity(android.view.Gravity.CENTER);
+                textView.setText(getItem(position));
+
+                return textView;
             }
         };
 
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         Spinner spinner = findViewById(R.id.summarySpinner);
         spinner.setAdapter(adapter);
+
+        // Calculate dropdown width based on text content
+        android.graphics.Paint paint = new android.graphics.Paint();
+        Typeface externalFont = Typeface.createFromAsset(getAssets(), "gan.ttf");
+        paint.setTypeface(externalFont);
+        paint.setTextSize(25 * getResources().getDisplayMetrics().scaledDensity);
+
+        float maxWidth = 0;
+        for (String item : items) {
+            float textWidth = paint.measureText(item);
+            if (textWidth > maxWidth) {
+                maxWidth = textWidth;
+            }
+        }
+
+        // Add padding to the width
+        float scale = getResources().getDisplayMetrics().density;
+        int dropdownWidth = (int) (maxWidth + 48 * scale);
+        spinner.setDropDownWidth(dropdownWidth);
+
         // Remove all spinner padding to minimize gap
         spinner.setPadding(0, 0, 0, 0);
+
         // Ensure currentPlaying is within valid range
         int selection = (db.currentPlaying >= 0 && db.currentPlaying < db.amountOfTeams) ? db.currentPlaying : 0;
         spinner.setSelection(selection);
@@ -644,6 +672,97 @@ public class Summary extends AppCompatActivity {
                 spinner.setLayoutDirection(android.view.View.LAYOUT_DIRECTION_LTR);
             }
         }
+
+        // Override spinner click to manually control popup position
+        spinner.setOnTouchListener(new View.OnTouchListener() {
+            private android.widget.ListPopupWindow customPopup;
+
+            @Override
+            public boolean onTouch(View v, android.view.MotionEvent event) {
+                if (event.getAction() == android.view.MotionEvent.ACTION_UP) {
+                    if (customPopup != null && customPopup.isShowing()) {
+                        customPopup.dismiss();
+                        return true;
+                    }
+
+                    // Create custom popup
+                    customPopup = new android.widget.ListPopupWindow(Summary.this);
+
+                    // Create simple adapter without checkmarks, with custom styling
+                    android.widget.ArrayAdapter<String> simpleAdapter = new android.widget.ArrayAdapter<String>(
+                        Summary.this,
+                        android.R.layout.simple_list_item_1,
+                        android.R.id.text1,
+                        items
+                    ) {
+                        @NonNull
+                        @Override
+                        public View getView(int position, View convertView, @NonNull ViewGroup parent) {
+                            View v = super.getView(position, convertView, parent);
+                            Typeface externalFont = Typeface.createFromAsset(getAssets(), "gan.ttf");
+                            TextView textView = (TextView) v;
+                            textView.setTypeface(externalFont);
+                            textView.setTextColor(0x88000000);
+                            textView.setTextSize(25);
+                            return v;
+                        }
+                    };
+                    customPopup.setAdapter(simpleAdapter);
+                    customPopup.setAnchorView(spinner);
+
+                    // Get positions for manual calculation
+                    int[] spinnerLocation = new int[2];
+                    spinner.getLocationInWindow(spinnerLocation);
+                    int spinnerY = spinnerLocation[1];
+                    int spinnerHeight = spinner.getHeight();
+
+                    int[] belowLocation = new int[2];
+                    mMultiTeamTotalScore.getLocationInWindow(belowLocation);
+                    int belowY = belowLocation[1];
+
+                    // Calculate offset - dropdown should start at the element below (belowY position)
+                    // verticalOffset is relative to the bottom of the anchor view (spinner)
+                    int offsetFromSpinnerBottom = belowY - (spinnerY + spinnerHeight);
+                    int screenHeight = getResources().getDisplayMetrics().heightPixels;
+                    int dropdownY = belowY;
+                    int availableHeight = screenHeight - dropdownY - 50;
+
+                    customPopup.setWidth(spinner.getWidth());
+                    customPopup.setHeight(Math.max(availableHeight, 100));
+                    customPopup.setVerticalOffset(offsetFromSpinnerBottom);
+                    customPopup.setModal(true);
+
+                    // Access underlying PopupWindow to force position
+                    try {
+                        java.lang.reflect.Field popupField = android.widget.ListPopupWindow.class.getDeclaredField("mPopup");
+                        popupField.setAccessible(true);
+                        Object popupObj = popupField.get(customPopup);
+
+                        if (popupObj instanceof android.widget.PopupWindow) {
+                            android.widget.PopupWindow popupWindow = (android.widget.PopupWindow) popupObj;
+                            popupWindow.setClippingEnabled(false);
+                            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+                                popupWindow.setOverlapAnchor(false);
+                            }
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                    customPopup.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                            spinner.setSelection(position);
+                            customPopup.dismiss();
+                        }
+                    });
+
+                    customPopup.show();
+                    return true;
+                }
+                return false;
+            }
+        });
 
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override

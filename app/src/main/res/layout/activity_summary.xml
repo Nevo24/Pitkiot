@@ -215,6 +215,7 @@
         android:textSize="28sp"
         android:gravity="right"
         android:spinnerMode="dropdown"
+        android:dropDownHeight="wrap_content"
         android:background="@null"
         android:layout_below="@+id/multiTeamsPlus"
         android:layout_alignParentLeft="true"
