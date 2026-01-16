@@ -337,9 +337,9 @@ public class Settings extends AppCompatActivity {
             spinnerParams.addRule(androidx.percentlayout.widget.PercentRelativeLayout.ALIGN_PARENT_END);
             spinnerParams.removeRule(androidx.percentlayout.widget.PercentRelativeLayout.ALIGN_PARENT_START);
 
-            // Hebrew: set spinner layout direction to LTR (arrow on the right)
+            // Hebrew: set spinner layout direction to RTL (arrow on the left - end of RTL reading)
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN_MR1) {
-                settingsSpinner.setLayoutDirection(android.view.View.LAYOUT_DIRECTION_LTR);
+                settingsSpinner.setLayoutDirection(android.view.View.LAYOUT_DIRECTION_RTL);
             }
 
             // Hebrew: align layout contents to the right
@@ -409,9 +409,9 @@ public class Settings extends AppCompatActivity {
             spinnerParams.addRule(androidx.percentlayout.widget.PercentRelativeLayout.ALIGN_PARENT_START);
             spinnerParams.removeRule(androidx.percentlayout.widget.PercentRelativeLayout.ALIGN_PARENT_END);
 
-            // English: set spinner layout direction to RTL (arrow on the right)
+            // English: set spinner layout direction to LTR (arrow on the right - end of LTR reading)
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN_MR1) {
-                settingsSpinner.setLayoutDirection(android.view.View.LAYOUT_DIRECTION_RTL);
+                settingsSpinner.setLayoutDirection(android.view.View.LAYOUT_DIRECTION_LTR);
             }
 
             // English: align layout contents to the left

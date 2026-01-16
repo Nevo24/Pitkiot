@@ -590,11 +590,11 @@ public class Summary extends AppCompatActivity {
         // Set spinner layout direction to show arrow on correct side
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN_MR1) {
             if (language.equals("he")) {
-                // Hebrew: set spinner layout direction to LTR (arrow on the right)
-                spinner.setLayoutDirection(android.view.View.LAYOUT_DIRECTION_LTR);
-            } else {
-                // English: set spinner layout direction to RTL (arrow on the left)
+                // Hebrew: set spinner layout direction to RTL (arrow on the left - end of RTL reading)
                 spinner.setLayoutDirection(android.view.View.LAYOUT_DIRECTION_RTL);
+            } else {
+                // English: set spinner layout direction to LTR (arrow on the right - end of LTR reading)
+                spinner.setLayoutDirection(android.view.View.LAYOUT_DIRECTION_LTR);
             }
         }
 
