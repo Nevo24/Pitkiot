@@ -124,16 +124,12 @@
         android:id="@+id/t2Plus"
         tools:text="+7"
         android:textSize="34sp"
-        android:textColor="#00E5FF"
-        android:shadowColor="#FFFFFF"
-        android:shadowRadius="8"
-        android:shadowDx="0"
-        android:shadowDy="0"
+        android:textColor="#F0E6D2"
         android:gravity="center"
         android:textDirection="ltr"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:background="@drawable/circle_border_green"
+        android:background="@drawable/circle_border_cream_glow"
         android:visibility="invisible"/>
 
     <nevo_mashiach.pitkiot.NotActivities.MyButton
@@ -176,13 +172,13 @@
         android:id="@+id/t1Plus"
         tools:text="+8"
         android:textSize="34sp"
-        android:textColor="#00E5FF"
+        android:textColor="#F0E6D2"
         android:gravity="center"
         android:textDirection="ltr"
         android:layout_below="@+id/ready"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:background="@drawable/circle_border_green"
+        android:background="@drawable/circle_border_cream_glow"
         android:visibility="invisible"/>
 
     <!--Summary for more than 2 teams-->
@@ -193,13 +189,13 @@
         android:id="@+id/multiTeamsPlus"
         tools:text="+X"
         android:textSize="34sp"
-        android:textColor="#00E5FF"
+        android:textColor="#F0E6D2"
         android:gravity="center"
         android:textDirection="ltr"
         android:layout_below="@+id/ready"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:background="@drawable/circle_border_green"
+        android:background="@drawable/circle_border_cream_glow"
         android:visibility="invisible"/>
 
     <Spinner
