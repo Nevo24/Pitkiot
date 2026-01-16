@@ -234,8 +234,9 @@ public class Summary extends AppCompatActivity {
                     mPressHereFigure.setVisibility(View.INVISIBLE);
                     db.increaseRoundNum();
                     //db.currentPlaying = (db.currentPlaying + 1)%db.amountOfTeams; -- Maybe consider adding it
-                    if (db.autoBalanceCheckBox) autoBalance();  //If auto balance is checked
-                    gameOverDialogCall();
+                    boolean autoBalanceApplied = db.autoBalanceCheckBox;
+                    if (autoBalanceApplied) autoBalance();  //If auto balance is checked
+                    gameOverDialogCall(autoBalanceApplied);
                 } else {
                     // Notes finished mid-round - still show the indicator!
                     if(db.amountOfTeams == 2){
@@ -381,16 +382,16 @@ public class Summary extends AppCompatActivity {
         successCountForTeamThatJustPlayed = prefs.getInt("successCountForTeamThatJustPlayed", 0);
     }
 
-        public void gameOverDialogCall() {
+    public void gameOverDialogCall(boolean autoBalanceApplied) {
         if (db.amountOfTeams == 2) {
-            if (db.scores[0] == db.scores[1]) dialogBag.drawGameOver(db.scores[0]);
+            if (db.scores[0] == db.scores[1]) dialogBag.drawGameOver(db.scores[0], autoBalanceApplied);
             else {
                 if (db.scores[0] >  db.scores[1])
-                    dialogBag.normalGameOver(1, db.scores[0], db.scores[1]);
-                else dialogBag.normalGameOver(2, db.scores[1], db.scores[0]);
+                    dialogBag.normalGameOver(1, db.scores[0], db.scores[1], autoBalanceApplied);
+                else dialogBag.normalGameOver(2, db.scores[1], db.scores[0], autoBalanceApplied);
             }
         } else {
-            dialogBag.multiGameOver(db.scores);
+            dialogBag.multiGameOver(db.scores, autoBalanceApplied);
         }
     }
 

@@ -3,7 +3,7 @@
 
     <!-- Main Screen -->
     <string name="title_note_management">ניהול פתקים</string>
-    <string name="reminder_text">* לא לשכוח שכולם צריכים להכיר את הדמויות</string>
+    <string name="reminder_text">* לא לשכוח שכולם צריכים להכיר\nאת הדמויות</string>
     <string name="button_online_collection">איסוף מקוון  🌐</string>
     <string name="button_delete_notes">מחיקת פתקים  🗑️</string>
     <string name="button_add">הוספה</string>
@@ -85,6 +85,7 @@
     <string name="dialog_game_over_title">נגמר המשחק!</string>
     <string name="dialog_team_won">קבוצה %1$d ניצחה %2$d : %3$d</string>
     <string name="dialog_draw">תיקו %1$d : %2$d</string>
+    <string name="dialog_auto_balance_applied">\n\n* הניקוד אוזן אוטומטית</string>
     <string name="dialog_view_final_score">צפייה בניקוד הסופי</string>
     <string name="dialog_final_score_title">ניקוד סופי</string>
     <string name="dialog_team_score">קבוצה %1$d: %2$d\n</string>

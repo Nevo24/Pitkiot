@@ -85,6 +85,7 @@
     <string name="dialog_game_over_title">Game Over!</string>
     <string name="dialog_team_won">Team %1$d won %2$d : %3$d</string>
     <string name="dialog_draw">Draw %1$d : %2$d</string>
+    <string name="dialog_auto_balance_applied">\n\n* Score was auto-balanced</string>
     <string name="dialog_view_final_score">View Final Score</string>
     <string name="dialog_final_score_title">Final Score</string>
     <string name="dialog_team_score">Team %1$d: %2$d\n</string>
