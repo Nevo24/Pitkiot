@@ -330,6 +330,7 @@
                 android:gravity="center"
                 android:textAlignment="center"
                 android:spinnerMode="dropdown"
+                android:background="@null"
                 android:textSize="24sp"/>
 
             <LinearLayout

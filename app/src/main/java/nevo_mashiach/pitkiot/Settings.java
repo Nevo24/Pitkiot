@@ -504,7 +504,7 @@ public class Settings extends AppCompatActivity {
         }
 
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_item, items) {
+                R.layout.spinner_item_tight, items) {
 
             @NonNull
             @Override
@@ -512,10 +512,38 @@ public class Settings extends AppCompatActivity {
                 View v = super.getView(position, convertView, parent);
 
                 Typeface externalFont=Typeface.createFromAsset(getAssets(), "gan.ttf");
-                ((TextView) v).setTypeface(externalFont);
-                ((TextView) v).setTextColor(0x88000000);
-                ((TextView) v).setTextSize(24);
-                ((TextView) v).setGravity(android.view.Gravity.CENTER);
+                TextView textView = (TextView) v;
+                textView.setTypeface(externalFont);
+                textView.setTextColor(0x88000000);
+                textView.setTextSize(24);
+                textView.setGravity(android.view.Gravity.START | android.view.Gravity.CENTER_VERTICAL);
+                textView.setPadding(0, 0, 0, 0);
+
+                // Get language to determine layout direction
+                String language = prefs.getString("app_language", "he");
+
+                // Set layout direction and arrow position
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                    if (language.equals("he")) {
+                        // Hebrew RTL: arrow on the left (end of RTL)
+                        textView.setLayoutDirection(android.view.View.LAYOUT_DIRECTION_RTL);
+                    } else {
+                        // English LTR: arrow on the right (end of LTR)
+                        textView.setLayoutDirection(android.view.View.LAYOUT_DIRECTION_LTR);
+                    }
+                }
+
+                // Calculate space width for natural spacing
+                android.graphics.Paint paint = textView.getPaint();
+                float spaceWidth = paint.measureText(" ");
+
+                // Add dropdown arrow with space-width padding at END position
+                textView.setCompoundDrawablePadding((int) spaceWidth);
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                    textView.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, android.R.drawable.arrow_down_float, 0);
+                } else {
+                    textView.setCompoundDrawablesWithIntrinsicBounds(0, 0, android.R.drawable.arrow_down_float, 0);
+                }
                 return v;
             }
 
@@ -536,6 +564,8 @@ public class Settings extends AppCompatActivity {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         Spinner spinner = findViewById(R.id.settingsSpinner);
         spinner.setAdapter(adapter);
+        // Remove all spinner padding to minimize gap
+        spinner.setPadding(0, 0, 0, 0);
 
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override

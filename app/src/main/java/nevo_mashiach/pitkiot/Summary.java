@@ -394,21 +394,42 @@ public class Summary extends AppCompatActivity {
         }
     }
 
+    /**
+     * Calculates the actual playing time in seconds for a given team.
+     * Takes into account whether the team completed all rounds or stopped mid-round.
+     *
+     * @param teamIndex The team index (0 for team 1, 1 for team 2, etc.)
+     * @return The total playing time in seconds
+     */
+    private double calculateTeamPlayingTime(int teamIndex) {
+        if (db.currentPlaying == teamIndex) {
+            // This team played last - the last round is partial
+            return (db.teamsRoundNum[teamIndex] - 1) * db.timePerRound
+                 + (db.timePerRound - db.mMillisUntilFinished / 1000.0);
+        } else {
+            // This team completed all its rounds
+            return db.teamsRoundNum[teamIndex] * db.timePerRound;
+        }
+    }
+
     public void autoBalance() {
+        // Step 1: Calculate how many seconds team 1 played
+        double team1PlayingTime = calculateTeamPlayingTime(0);
+
+        // Step 2: Balance all other teams against team 1
         for (int i = 1; i < db.amountOfTeams; i++) {
+            // Skip teams that didn't play at all
             if (db.teamsRoundNum[i] == 0) continue;
-            if (db.teamsRoundNum[0] != db.teamsRoundNum[i]) { //If the round amount is unequal
-                db.team2AverageAnswersPerSecond = (double) db.scores[i] / ((double) db.teamsRoundNum[i] * (double) db.timePerRound);
-                double timeToReduce = (db.currentPlaying == 0) ? (double) db.mMillisUntilFinished / 1000 : 0; //In case the first team was the lasst to play
-                db.scores[i] = (int) Math.round((double) db.scores[i] + ((double) db.timePerRound - timeToReduce) * db.team2AverageAnswersPerSecond);
-            } else {//If the round amount is equal
-                if(db.currentPlaying != i) continue; //If the last team to play is not the current selected
-                double totalPlayingTime = (((double) db.teamsRoundNum[i] - 1) * (double) db.timePerRound) + ((double) db.timePerRound - (double) db.mMillisUntilFinished / 1000);
-                // Prevent division by zero if team finished instantly
-                if (totalPlayingTime > 0) {
-                    db.team2AverageAnswersPerSecond = (double) db.scores[i] / totalPlayingTime;
-                    db.scores[i] = (int) Math.round((double) db.scores[i] + (double) db.mMillisUntilFinished / 1000 * db.team2AverageAnswersPerSecond);
-                }
+
+            // Calculate how many seconds this team played
+            double teamPlayingTime = calculateTeamPlayingTime(i);
+
+            // Add points only if this team played less time than team 1
+            if (teamPlayingTime < team1PlayingTime && teamPlayingTime > 0) {
+                double missingTime = team1PlayingTime - teamPlayingTime;
+                double averagePointsPerSecond = db.scores[i] / teamPlayingTime;
+                int pointsToAdd = (int) Math.round(missingTime * averagePointsPerSecond);
+                db.scores[i] += pointsToAdd;
             }
         }
     }
@@ -552,18 +573,42 @@ public class Summary extends AppCompatActivity {
         }
 
         String language = prefs.getString("app_language", "he");
-        int textGravity = language.equals("en") ? android.view.Gravity.LEFT : android.view.Gravity.RIGHT;
 
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_item, items) {
+                R.layout.spinner_item_tight, items) {
 
             public View getView(int position, View convertView, ViewGroup parent) {
                 View v = super.getView(position, convertView, parent);
                 Typeface externalFont = Typeface.createFromAsset(getAssets(), "gan.ttf");
-                ((TextView) v).setTypeface(externalFont);
-                ((TextView) v).setTextColor(0x88000000);
-                ((TextView) v).setTextSize(25);
-                ((TextView) v).setGravity(textGravity);
+                TextView textView = (TextView) v;
+                textView.setTypeface(externalFont);
+                textView.setTextColor(0x88000000);
+                textView.setTextSize(25);
+                textView.setGravity(android.view.Gravity.START | android.view.Gravity.CENTER_VERTICAL);
+                textView.setPadding(0, 0, 0, 0);
+
+                // Set layout direction based on language
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                    if (language.equals("he")) {
+                        // Hebrew RTL: arrow on the left (end of RTL)
+                        textView.setLayoutDirection(android.view.View.LAYOUT_DIRECTION_RTL);
+                    } else {
+                        // English LTR: arrow on the right (end of LTR)
+                        textView.setLayoutDirection(android.view.View.LAYOUT_DIRECTION_LTR);
+                    }
+                }
+
+                // Calculate space width for natural spacing
+                android.graphics.Paint paint = textView.getPaint();
+                float spaceWidth = paint.measureText(" ");
+
+                // Add dropdown arrow with space-width padding at END position
+                textView.setCompoundDrawablePadding((int) spaceWidth);
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                    textView.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, android.R.drawable.arrow_down_float, 0);
+                } else {
+                    textView.setCompoundDrawablesWithIntrinsicBounds(0, 0, android.R.drawable.arrow_down_float, 0);
+                }
                 return v;
             }
 
@@ -583,6 +628,8 @@ public class Summary extends AppCompatActivity {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         Spinner spinner = findViewById(R.id.summarySpinner);
         spinner.setAdapter(adapter);
+        // Remove all spinner padding to minimize gap
+        spinner.setPadding(0, 0, 0, 0);
         // Ensure currentPlaying is within valid range
         int selection = (db.currentPlaying >= 0 && db.currentPlaying < db.amountOfTeams) ? db.currentPlaying : 0;
         spinner.setSelection(selection);
