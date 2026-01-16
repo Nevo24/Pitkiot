@@ -7,7 +7,7 @@
     <string name="button_online_collection">איסוף מקוון  🌐</string>
     <string name="button_delete_notes">מחיקת פתקים  🗑️</string>
     <string name="button_add">הוספה</string>
-    <string name="hint_enter_character">הזן דמות</string>
+    <string name="hint_enter_character">דמות1, דמות2, דמות3...</string>
     <string name="note_count">מספר הפתקים: %d</string>
     <string name="note_count_database_single">במאגר: פתק אחד</string>
     <string name="note_count_database_plural">מספר פתקים במאגר: %d</string>

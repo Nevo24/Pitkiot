@@ -72,9 +72,28 @@
         android:layout_centerHorizontal="true"/>
 
 
+    <nevo_mashiach.pitkiot.NotActivities.MyEditText
+        android:id="@+id/typeDef"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="120dp"
+        android:background="@drawable/editable_field_background"
+        android:hint="@string/hint_enter_character"
+        android:inputType="textMultiLine"
+        android:textColor="#000000"
+        android:textColorHint="#88000000"
+        android:textSize="21sp"
+        android:gravity="top|start"
+        android:paddingLeft="12dp"
+        android:paddingRight="12dp"
+        android:paddingTop="12dp"
+        android:paddingBottom="12dp"
+        android:layout_marginTop="10dp"
+        android:layout_below="@+id/reminder"/>
+
     <nevo_mashiach.pitkiot.NotActivities.MyButton
         android:id="@+id/addDef"
-        app:layout_widthPercent="30%"
+        app:layout_widthPercent="33%"
         android:layout_height="wrap_content"
         android:minHeight="55dp"
         android:textColor="#ffffffff"
@@ -83,25 +102,8 @@
         android:textSize="21sp"
         android:paddingTop="5dp"
         android:layout_marginTop="10dp"
-        android:layout_below="@+id/reminder"
-        android:layout_alignParentRight="true"
-        android:layoutDirection="ltr"/>
-
-    <nevo_mashiach.pitkiot.NotActivities.MyEditText
-        android:id="@+id/typeDef"
-        android:background="@drawable/editable_field_background"
-        android:hint="@string/hint_enter_character"
-        android:inputType="textPersonName"
-        android:textColor="#000000"
-        android:textColorHint="#88000000"
-        android:textSize="21sp"
-        android:gravity="center_vertical"
-        android:paddingLeft="12dp"
-        android:paddingRight="12dp"
-        app:layout_widthPercent="67%"
-        android:layout_alignTop="@+id/addDef"
-        android:layout_alignBottom="@+id/addDef"
-        android:layout_alignParentLeft="true"/>
+        android:layout_below="@+id/typeDef"
+        android:layout_alignParentEnd="true"/>
 
     <nevo_mashiach.pitkiot.NotActivities.MyTextView
         android:textSize="20sp"
