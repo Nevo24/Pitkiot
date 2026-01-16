@@ -207,6 +207,16 @@ public class GamePlay extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+
+        // CRITICAL FIX: Check if Summary should be showing instead of GamePlay
+        // This can happen when Android restores the activity stack after the app was backgrounded
+        // If Summary was showing when the app was paused, navigate back to it immediately
+        if (db.summaryIsPaused) {
+            Intent intent = new Intent(context, Summary.class);
+            startActivity(intent);
+            return; // Exit immediately - don't run any game logic
+        }
+
         mSuccess.setEnabled(true);
         mNext.setEnabled(true);
         if (!db.gamePlayIsPaused) {
