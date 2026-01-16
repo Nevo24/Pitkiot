@@ -728,7 +728,18 @@ public class Summary extends AppCompatActivity {
                     int availableHeight = screenHeight - dropdownY - 50;
 
                     customPopup.setWidth(spinner.getWidth());
-                    customPopup.setHeight(Math.max(availableHeight, 100));
+
+                    // Calculate the actual height needed for the content
+                    // Measure actual item view height more accurately
+                    float scale = getResources().getDisplayMetrics().density;
+                    float textSizePx = 25 * getResources().getDisplayMetrics().scaledDensity;
+                    // Fine-tuned padding for tight but not too tight spacing
+                    int itemHeight = (int) (24 * scale + textSizePx * 0.96f);
+                    int contentHeight = items.length * itemHeight;
+
+                    // Use content height if it fits, otherwise use available height
+                    int dropdownHeight = Math.min(contentHeight, availableHeight);
+                    customPopup.setHeight(Math.max(dropdownHeight, 100));
                     customPopup.setVerticalOffset(offsetFromSpinnerBottom);
                     customPopup.setModal(true);
 

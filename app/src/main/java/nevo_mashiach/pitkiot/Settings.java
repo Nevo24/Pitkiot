@@ -610,8 +610,6 @@ public class Settings extends AppCompatActivity {
                             textView.setTextColor(0x88000000);
                             textView.setTextSize(25);
                             textView.setGravity(android.view.Gravity.CENTER);
-                            float scale = getResources().getDisplayMetrics().density;
-                            textView.setPadding((int) (24 * scale), (int) (16 * scale), (int) (24 * scale), (int) (16 * scale));
                             return v;
                         }
                     };
@@ -632,9 +630,13 @@ public class Settings extends AppCompatActivity {
                     // Calculate offset - dropdown should start at the element below (belowY position)
                     // verticalOffset is relative to the bottom of the anchor view (spinner)
                     int offsetFromSpinnerBottom = belowY - (spinnerY + spinnerHeight);
+
+                    // Calculate available height from dropdown position to bottom of screen
                     int screenHeight = getResources().getDisplayMetrics().heightPixels;
-                    int dropdownY = belowY;
-                    int availableHeight = screenHeight - dropdownY - 50;
+
+                    // Available height: from dropdown start position to screen bottom
+                    // The dropdown starts at belowY, so calculate remaining space
+                    int availableHeight = screenHeight - belowY;
 
                     // Calculate dropdown width based on text content
                     android.graphics.Paint paint = new android.graphics.Paint();
@@ -654,11 +656,21 @@ public class Settings extends AppCompatActivity {
                     float scale = getResources().getDisplayMetrics().density;
                     int dropdownWidth = (int) (maxWidth + 48 * scale);
                     customPopup.setWidth(dropdownWidth);
-                    customPopup.setHeight(Math.max(availableHeight, 100));
+
+                    // Calculate the actual height needed for the content
+                    // Use the same formula as Summary for consistency
+                    float textSizePx = 25 * getResources().getDisplayMetrics().scaledDensity;
+                    int itemHeight = (int) (24 * scale + textSizePx * 0.96f);
+                    int contentHeight = items.length * itemHeight;
+
+                    // Use content height if it fits, otherwise use available height
+                    // This ensures dropdown only extends as far as needed
+                    int dropdownHeight = Math.min(contentHeight, availableHeight);
+                    customPopup.setHeight(dropdownHeight);
                     customPopup.setVerticalOffset(offsetFromSpinnerBottom);
                     customPopup.setModal(true);
 
-                    // Access underlying PopupWindow to force position
+                    // Access underlying PopupWindow to configure expansion behavior
                     try {
                         java.lang.reflect.Field popupField = android.widget.ListPopupWindow.class.getDeclaredField("mPopup");
                         popupField.setAccessible(true);
@@ -666,10 +678,13 @@ public class Settings extends AppCompatActivity {
 
                         if (popupObj instanceof android.widget.PopupWindow) {
                             android.widget.PopupWindow popupWindow = (android.widget.PopupWindow) popupObj;
+                            // Disable clipping to allow expansion beyond default constraints
                             popupWindow.setClippingEnabled(false);
                             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
                                 popupWindow.setOverlapAnchor(false);
                             }
+                            // Ensure the popup window uses the calculated height (content or available, whichever is smaller)
+                            popupWindow.setHeight(dropdownHeight);
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
