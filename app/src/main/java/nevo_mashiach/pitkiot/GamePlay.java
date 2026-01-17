@@ -192,8 +192,19 @@ public class GamePlay extends AppCompatActivity {
         spEditor.putInt("currentSuccessNum", db.currentSuccessNum);
         spEditor.putInt("currentPlaying", db.currentPlaying);
         spEditor.putLong("mMillisUntilFinished", db.mMillisUntilFinished);
-        spEditor.putBoolean("summaryIsPaused", false);
-        spEditor.putBoolean("gamePlayIsPaused", true);
+
+        // CRITICAL FIX: Save the correct pause state based on current situation
+        // If transitioning to Summary, save summaryIsPaused=true
+        // Otherwise, this is a regular pause (backgrounding), save gamePlayIsPaused=true
+        if (db.isTransitioningToSummary) {
+            spEditor.putBoolean("summaryIsPaused", true);
+            spEditor.putBoolean("gamePlayIsPaused", false);
+            db.isTransitioningToSummary = false; // Clear flag after use
+        } else {
+            spEditor.putBoolean("summaryIsPaused", false);
+            spEditor.putBoolean("gamePlayIsPaused", true);
+        }
+
         spEditor.putBoolean("wasTimeUp", db.wasTimeUp);
 
         //Save non-localized game state only (localized strings will be regenerated on resume)
@@ -330,6 +341,11 @@ public class GamePlay extends AppCompatActivity {
     }
 
     public void summaryDisplay(String headline, String buttonText) {
+        // CRITICAL FIX: Set transition flag ONLY, don't modify summaryIsPaused
+        // summaryIsPaused must stay FALSE so Summary.onResume() runs the game logic
+        // The transition flag tells onPause() to save summaryIsPaused=true to SharedPreferences
+        db.isTransitioningToSummary = true;
+
         Intent intent = new Intent(context, Summary.class);
         intent.putExtra("summaryHeadline", headline);
         intent.putExtra("readyText", buttonText);

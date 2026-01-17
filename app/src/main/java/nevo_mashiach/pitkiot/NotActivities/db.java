@@ -52,6 +52,19 @@ public class db {
     //summary state:
     public static boolean wasTimeUp = false; // true if Summary shown due to time up, false if notes finished
 
+    //transition flags (prevent incorrect state saving during activity transitions):
+    public static boolean isTransitioningToSummary = false;
+    public static boolean isTransitioningToGamePlay = false;
+
+    //game over dialog state (for resuming after app is closed):
+    public static boolean shouldShowGameOverDialog = false;
+    public static String gameOverDialogType = ""; // "normal", "draw", "multi"
+    public static int gameOverWinningTeam = -1;
+    public static int gameOverWinningScore = 0;
+    public static int gameOverLosingScore = 0;
+    public static int[] gameOverAllScores = new int[24];
+    public static boolean gameOverAutoBalanceApplied = false;
+
 
     @SuppressWarnings("unchecked")
     private db() {
@@ -112,6 +125,13 @@ public class db {
         summaryIsPaused = false;
         wasTimeUp = false;
         totalRoundNumber = 0;
+        shouldShowGameOverDialog = false;
+        gameOverDialogType = "";
+        gameOverWinningTeam = -1;
+        gameOverWinningScore = 0;
+        gameOverLosingScore = 0;
+        gameOverAllScores = new int[24];
+        gameOverAutoBalanceApplied = false;
     }
 
 

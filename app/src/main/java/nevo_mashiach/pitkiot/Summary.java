@@ -171,6 +171,20 @@ public class Summary extends AppCompatActivity {
         String language = prefs.getString("app_language", "he");
         adjustLayoutForLanguage(language);
 
+        // CRITICAL FIX: Check if game over dialog should be shown (app was closed during dialog)
+        if (db.shouldShowGameOverDialog) {
+            // Show the appropriate game over dialog based on saved state
+            if (db.gameOverDialogType.equals("normal")) {
+                dialogBag.normalGameOver(db.gameOverWinningTeam, db.gameOverWinningScore,
+                    db.gameOverLosingScore, db.gameOverAutoBalanceApplied);
+            } else if (db.gameOverDialogType.equals("draw")) {
+                dialogBag.drawGameOver(db.gameOverWinningScore, db.gameOverAutoBalanceApplied);
+            } else if (db.gameOverDialogType.equals("multi")) {
+                dialogBag.multiGameOver(db.gameOverAllScores, db.gameOverAutoBalanceApplied);
+            }
+            // Don't return - continue with normal onResume to update UI
+        }
+
         if (!onCreate) return; //preventing round++ when minimizing the app
         mTotalNotes.setText(getString(R.string.game_notes_remaining, db.roundNoteAmount()));
         if (!db.summaryIsPaused) {
@@ -380,6 +394,18 @@ public class Summary extends AppCompatActivity {
         db.team2AverageAnswersPerSecond = Double.longBitsToDouble(prefs.getLong("team2AverageAnswersPerSecond", Double.doubleToLongBits(0)));
         teamThatJustPlayed = prefs.getInt("teamThatJustPlayed", -1);
         successCountForTeamThatJustPlayed = prefs.getInt("successCountForTeamThatJustPlayed", 0);
+
+        // Load game over dialog state
+        db.shouldShowGameOverDialog = prefs.getBoolean("shouldShowGameOverDialog", false);
+        db.gameOverDialogType = prefs.getString("gameOverDialogType", "");
+        db.gameOverWinningTeam = prefs.getInt("gameOverWinningTeam", -1);
+        db.gameOverWinningScore = prefs.getInt("gameOverWinningScore", 0);
+        db.gameOverLosingScore = prefs.getInt("gameOverLosingScore", 0);
+        db.gameOverAutoBalanceApplied = prefs.getBoolean("gameOverAutoBalanceApplied", false);
+        // Load all team scores for multi-team game over
+        for (int i = 0; i < db.amountOfTeams; i++) {
+            db.gameOverAllScores[i] = prefs.getInt("gameOverScore" + i, 0);
+        }
     }
 
     public void gameOverDialogCall(boolean autoBalanceApplied) {
@@ -521,8 +547,25 @@ public class Summary extends AppCompatActivity {
         spEditor.putInt("currentSuccessNum", db.currentSuccessNum);
         spEditor.putInt("currentPlaying", db.currentPlaying);
         spEditor.putLong("mMillisUntilFinished", db.mMillisUntilFinished);
-        if(!db.gameOverDialogActivated) spEditor.putBoolean("summaryIsPaused", true);
-        spEditor.putBoolean("gamePlayIsPaused", false);
+
+        // CRITICAL FIX: Save the correct pause state based on current situation
+        // If transitioning to GamePlay, save gamePlayIsPaused=true
+        // If game over dialog is active, don't mark as paused (user will resume to dialog)
+        // Otherwise, this is a regular pause (backgrounding), save summaryIsPaused=true
+        if (db.isTransitioningToGamePlay) {
+            spEditor.putBoolean("summaryIsPaused", false);
+            spEditor.putBoolean("gamePlayIsPaused", true);
+            db.isTransitioningToGamePlay = false; // Clear flag after use
+        } else if (db.shouldShowGameOverDialog) {
+            // Game over dialog is pending - keep summaryIsPaused true so we resume to Summary
+            // and show the dialog there
+            spEditor.putBoolean("summaryIsPaused", true);
+            spEditor.putBoolean("gamePlayIsPaused", false);
+        } else {
+            spEditor.putBoolean("summaryIsPaused", true);
+            spEditor.putBoolean("gamePlayIsPaused", false);
+        }
+
         spEditor.putBoolean("wasTimeUp", db.wasTimeUp);
         spEditor.putLong("team2AverageAnswersPerSecond", Double.doubleToRawLongBits(db.team2AverageAnswersPerSecond));
         spEditor.putInt("teamThatJustPlayed", teamThatJustPlayed);
@@ -531,7 +574,18 @@ public class Summary extends AppCompatActivity {
         //Save semantic state (not localized text) so it can be regenerated in any language
         spEditor.putString("summaryState", summaryState);
         spEditor.putInt("nextTeamForButton", nextTeamForButton);
-        // Note: Scores, rounds, and round mode are saved via db state and regenerated from there
+
+        // Save game over dialog state so it can be reshown after app is closed
+        spEditor.putBoolean("shouldShowGameOverDialog", db.shouldShowGameOverDialog);
+        spEditor.putString("gameOverDialogType", db.gameOverDialogType);
+        spEditor.putInt("gameOverWinningTeam", db.gameOverWinningTeam);
+        spEditor.putInt("gameOverWinningScore", db.gameOverWinningScore);
+        spEditor.putInt("gameOverLosingScore", db.gameOverLosingScore);
+        spEditor.putBoolean("gameOverAutoBalanceApplied", db.gameOverAutoBalanceApplied);
+        // Save all team scores for multi-team game over
+        for (int i = 0; i < db.amountOfTeams; i++) {
+            spEditor.putInt("gameOverScore" + i, db.gameOverAllScores[i]);
+        }
 
         spEditor.apply();
     }
@@ -814,8 +868,12 @@ public class Summary extends AppCompatActivity {
         // Clear indicator tracking since we're starting a new turn
         teamThatJustPlayed = -1;
         successCountForTeamThatJustPlayed = 0;
-        // Reset pause flag so next Summary will display results properly
-        db.summaryIsPaused = false;
+
+        // CRITICAL FIX: Set transition flag ONLY
+        // The transition flag tells onPause() to save gamePlayIsPaused=true to SharedPreferences
+        db.isTransitioningToGamePlay = true;
+        db.summaryIsPaused = false; // Clear this so we don't think we're paused
+
         Collections.shuffle(db.defs);
         Intent intent = new Intent(context, GamePlay.class);
         startActivity(intent);

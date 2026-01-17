@@ -65,14 +65,18 @@ public class DialogBag {
     public void normalGameOver(int winningTeam, int winningTotal, int loserTotal, boolean autoBalanceApplied) {
         db.gameOverDialogActivated = true;
 
-        // Save scores BEFORE resetting
-        final int[] scores = new int[2];
-        scores[0] = db.scores[0];
-        scores[1] = db.scores[1];
-        final int finalWinningTeam = winningTeam;
-
-        db.resetGame();
-        Toast.makeText(context, context.getString(nevo_mashiach.pitkiot.R.string.toast_game_reset), Toast.LENGTH_SHORT).show();
+        // CRITICAL FIX: Save game over state so dialog can be reshown after app closes
+        // Don't reset the game yet - wait until user clicks "Return to Main"
+        db.shouldShowGameOverDialog = true;
+        db.gameOverDialogType = "normal";
+        db.gameOverWinningTeam = winningTeam;
+        db.gameOverWinningScore = winningTotal;
+        db.gameOverLosingScore = loserTotal;
+        db.gameOverAutoBalanceApplied = autoBalanceApplied;
+        // Save current scores before they're reset
+        for (int i = 0; i < 2; i++) {
+            db.gameOverAllScores[i] = db.scores[i];
+        }
 
         MyDialogFragment dialog = new MyDialogFragment(
                 context.getString(nevo_mashiach.pitkiot.R.string.dialog_game_over_title),
@@ -81,7 +85,7 @@ public class DialogBag {
         dialog = dialog.setPositiveButton(context.getString(nevo_mashiach.pitkiot.R.string.dialog_view_final_score), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                normalGameOverFinalScore(finalWinningTeam, scores, autoBalanceApplied);
+                normalGameOverFinalScore(winningTeam, db.gameOverAllScores, autoBalanceApplied);
             }
         });
         dialog.show(fragmentManager, "NormalGameOver");
@@ -104,6 +108,9 @@ public class DialogBag {
         dialog = dialog.setPositiveButton(context.getString(nevo_mashiach.pitkiot.R.string.dialog_return_main), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                // CRITICAL FIX: Reset game only when user dismisses the final dialog
+                db.resetGame();
+                Toast.makeText(context, context.getString(nevo_mashiach.pitkiot.R.string.toast_game_reset), Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(context, MainActivity.class);
                 context.startActivity(intent);
                 db.gameOverDialogActivated = false;
@@ -115,13 +122,16 @@ public class DialogBag {
     public void drawGameOver(int score, boolean autoBalanceApplied) {
         db.gameOverDialogActivated = true;
 
-        // Save scores BEFORE resetting
-        final int[] scores = new int[2];
-        scores[0] = db.scores[0];
-        scores[1] = db.scores[1];
-
-        db.resetGame();
-        Toast.makeText(context, context.getString(nevo_mashiach.pitkiot.R.string.toast_game_reset), Toast.LENGTH_SHORT).show();
+        // CRITICAL FIX: Save game over state so dialog can be reshown after app closes
+        // Don't reset the game yet - wait until user clicks "Return to Main"
+        db.shouldShowGameOverDialog = true;
+        db.gameOverDialogType = "draw";
+        db.gameOverWinningScore = score; // Both teams have this score
+        db.gameOverAutoBalanceApplied = autoBalanceApplied;
+        // Save current scores before they're reset
+        for (int i = 0; i < 2; i++) {
+            db.gameOverAllScores[i] = db.scores[i];
+        }
 
         MyDialogFragment dialog = new MyDialogFragment(
                 context.getString(nevo_mashiach.pitkiot.R.string.dialog_game_over_title),
@@ -130,7 +140,7 @@ public class DialogBag {
         dialog = dialog.setPositiveButton(context.getString(nevo_mashiach.pitkiot.R.string.dialog_view_final_score), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                drawGameOverFinalScore(scores, autoBalanceApplied);
+                drawGameOverFinalScore(db.gameOverAllScores, autoBalanceApplied);
             }
         });
         dialog.show(fragmentManager, "DrawGameOver");
@@ -153,6 +163,9 @@ public class DialogBag {
         dialog = dialog.setPositiveButton(context.getString(nevo_mashiach.pitkiot.R.string.dialog_return_main), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                // CRITICAL FIX: Reset game only when user dismisses the final dialog
+                db.resetGame();
+                Toast.makeText(context, context.getString(nevo_mashiach.pitkiot.R.string.toast_game_reset), Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(context, MainActivity.class);
                 context.startActivity(intent);
                 db.gameOverDialogActivated = false;
@@ -163,8 +176,16 @@ public class DialogBag {
 
     public void multiGameOver(final int[] scores, final boolean autoBalanceApplied) {
         db.gameOverDialogActivated = true;
-        db.resetGame();
-        Toast.makeText(context, context.getString(nevo_mashiach.pitkiot.R.string.toast_game_reset), Toast.LENGTH_SHORT).show();
+
+        // CRITICAL FIX: Save game over state so dialog can be reshown after app closes
+        // Don't reset the game yet - wait until user clicks "Return to Main"
+        db.shouldShowGameOverDialog = true;
+        db.gameOverDialogType = "multi";
+        db.gameOverAutoBalanceApplied = autoBalanceApplied;
+        // Save all team scores before they're reset
+        for (int i = 0; i < scores.length; i++) {
+            db.gameOverAllScores[i] = scores[i];
+        }
 
         MyDialogFragment dialog = new MyDialogFragment(
                 context.getString(nevo_mashiach.pitkiot.R.string.dialog_game_over_title),
@@ -173,18 +194,21 @@ public class DialogBag {
         dialog = dialog.setPositiveButton(context.getString(nevo_mashiach.pitkiot.R.string.dialog_view_final_score), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                multiGameOverFinalScore(scores, autoBalanceApplied);
+                multiGameOverFinalScore(db.gameOverAllScores, autoBalanceApplied);
             }
         });
         dialog.show(fragmentManager, "MultiGameOver");
     }
 
     private void multiGameOverFinalScore(int[] scores, boolean autoBalanceApplied) {
+        // CRITICAL FIX: Only consider teams that actually played (db.amountOfTeams)
+        int teamsToCheck = Math.min(db.amountOfTeams, scores.length);
+
         // Find the highest score and check if there's a tie
         int maxScore = scores[0];
         int winningTeam = 1;
 
-        for (int i = 1; i < scores.length; i++) {
+        for (int i = 1; i < teamsToCheck; i++) {
             if (scores[i] > maxScore) {
                 maxScore = scores[i];
                 winningTeam = i + 1;
@@ -193,7 +217,7 @@ public class DialogBag {
 
         // Count how many teams have the max score
         int teamsWithMaxScore = 0;
-        for (int i = 0; i < scores.length; i++) {
+        for (int i = 0; i < teamsToCheck; i++) {
             if (scores[i] == maxScore) {
                 teamsWithMaxScore++;
                 if (teamsWithMaxScore == 1) {
@@ -223,6 +247,9 @@ public class DialogBag {
         dialog = dialog.setPositiveButton(context.getString(nevo_mashiach.pitkiot.R.string.dialog_return_main), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                // CRITICAL FIX: Reset game only when user dismisses the final dialog
+                db.resetGame();
+                Toast.makeText(context, context.getString(nevo_mashiach.pitkiot.R.string.toast_game_reset), Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(context, MainActivity.class);
                 context.startActivity(intent);
                 db.gameOverDialogActivated = false;
@@ -274,7 +301,9 @@ public class DialogBag {
         StringBuilder scoreSummary = new StringBuilder();
         TreeMap<Integer, ArrayList<String>> treeMap = new TreeMap<>(Collections.reverseOrder());
 
-        for (int i = 0; i < scores.length; i++) {
+        // CRITICAL FIX: Only show teams that actually played (db.amountOfTeams), not all 24
+        int teamsToShow = Math.min(db.amountOfTeams, scores.length);
+        for (int i = 0; i < teamsToShow; i++) {
             if(!treeMap.containsKey(scores[i])){
                 treeMap.put(scores[i], new ArrayList<String>());
             }
@@ -308,8 +337,23 @@ public class DialogBag {
         dialog = dialog.setNegativeButton(context.getString(nevo_mashiach.pitkiot.R.string.dialog_return_main), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                if(currentActivity.equals("nevo_mashiach.pitkiot.GamePlay")) db.gamePlayIsPaused = true;
-                else if(currentActivity.equals("nevo_mashiach.pitkiot.Summary")) db.summaryIsPaused = true;
+                // CRITICAL FIX: Set pause flags in memory
+                if(currentActivity.equals("nevo_mashiach.pitkiot.GamePlay")) {
+                    db.gamePlayIsPaused = true;
+                    db.summaryIsPaused = false;
+                } else if(currentActivity.equals("nevo_mashiach.pitkiot.Summary")) {
+                    db.summaryIsPaused = true;
+                    db.gamePlayIsPaused = false;
+                }
+
+                // CRITICAL FIX: Save pause flags to SharedPreferences immediately
+                // Don't wait for onPause() - app could be killed before then
+                android.content.SharedPreferences prefs = androidx.preference.PreferenceManager.getDefaultSharedPreferences(context);
+                android.content.SharedPreferences.Editor editor = prefs.edit();
+                editor.putBoolean("gamePlayIsPaused", db.gamePlayIsPaused);
+                editor.putBoolean("summaryIsPaused", db.summaryIsPaused);
+                editor.apply();
+
                 Intent intent = new Intent(context, MainActivity.class);
                 context.startActivity(intent);
             }

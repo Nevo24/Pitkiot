@@ -272,6 +272,39 @@ public class MainActivity extends AppCompatActivity {
             db.wasTimeUp = prefs.getBoolean("wasTimeUp", false);
         } catch (Exception ignored) {
         }
+
+        // Load game over dialog state
+        try {
+            db.shouldShowGameOverDialog = prefs.getBoolean("shouldShowGameOverDialog", false);
+        } catch (Exception ignored) {
+        }
+        try {
+            db.gameOverDialogType = prefs.getString("gameOverDialogType", "");
+        } catch (Exception ignored) {
+        }
+        try {
+            db.gameOverWinningTeam = prefs.getInt("gameOverWinningTeam", -1);
+        } catch (Exception ignored) {
+        }
+        try {
+            db.gameOverWinningScore = prefs.getInt("gameOverWinningScore", 0);
+        } catch (Exception ignored) {
+        }
+        try {
+            db.gameOverLosingScore = prefs.getInt("gameOverLosingScore", 0);
+        } catch (Exception ignored) {
+        }
+        try {
+            db.gameOverAutoBalanceApplied = prefs.getBoolean("gameOverAutoBalanceApplied", false);
+        } catch (Exception ignored) {
+        }
+        // Load all team scores for multi-team game over
+        for (int i = 0; i < db.amountOfTeams; i++) {
+            try {
+                db.gameOverAllScores[i] = prefs.getInt("gameOverScore" + i, 0);
+            } catch (Exception ignored) {
+            }
+        }
     }
 
 
