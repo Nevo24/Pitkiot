@@ -43,10 +43,27 @@ public class NoteCollectionSession {
     }
 
     /**
+     * Constructor for restoring an existing session with a known session ID
+     * @param context Application context
+     * @param existingSessionId The full session ID (format: "deviceId_shortCode")
+     */
+    public NoteCollectionSession(Context context, String existingSessionId) {
+        this.context = context;
+        firestore = FirebaseFirestore.getInstance();
+        this.sessionId = existingSessionId;
+        // Extract device ID from session ID (format: "deviceId_shortCode")
+        if (existingSessionId != null && existingSessionId.contains("_")) {
+            this.deviceId = existingSessionId.split("_")[0];
+        } else {
+            this.deviceId = getDeviceId();
+        }
+    }
+
+    /**
      * Gets the device ID (Android ID) for this device
      * @return The device ID
      */
-    private String getDeviceId() {
+    public String getDeviceId() {
         String androidId = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
         // Use first 8 characters for brevity
         return androidId != null && androidId.length() >= 8 ? androidId.substring(0, 8) : "default";

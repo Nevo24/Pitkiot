@@ -74,6 +74,13 @@ public class NoteManagement extends AppCompatActivity {
     private final java.util.LinkedHashMap<String, java.util.Set<String>> submitterNoteCounts = new java.util.LinkedHashMap<>();
     private static final String FIREBASE_HOSTING_URL = "https://pitkiot-29650.web.app";
 
+    // SharedPreferences keys for persisting collection session state
+    private static final String PREF_COLLECTION_ACTIVE = "collectionSessionActive";
+    private static final String PREF_COLLECTION_SESSION_ID = "collectionSessionId";
+    private static final String PREF_COLLECTION_SHORT_CODE = "collectionShortCode";
+    private static final String PREF_COLLECTION_RECEIVED_COUNT = "collectionReceivedCount";
+    private static final String PREF_COLLECTION_SUBMITTER_DATA = "collectionSubmitterData";
+
     // Prevent double-launching activities
     private long lastActivityLaunchTime = 0;
     private static final long ACTIVITY_LAUNCH_COOLDOWN = 500; // milliseconds
@@ -193,15 +200,29 @@ public class NoteManagement extends AppCompatActivity {
             ? getString(R.string.note_count_database_single)
             : String.format(getString(R.string.note_count_database_plural), totalNotes);
         mNoteCount.setText(noteCountText);
+
+        // Restore collection session if one was active
+        restoreCollectionSession();
     }
 
 
     @Override
     protected void onPause() {
         super.onPause();
-        // Dismiss dialog to prevent leaks
-        if (collectionDialog != null && collectionDialog.isShowing()) {
-            collectionDialog.dismiss();
+        // Check if there's an active collection session
+        boolean isCollectionActive = prefs.getBoolean(PREF_COLLECTION_ACTIVE, false);
+
+        if (isCollectionActive) {
+            // Don't dismiss dialog - it will be restored in onResume()
+            // Just stop the Firebase listener to save resources
+            if (noteCollectionSession != null) {
+                noteCollectionSession.stopListening();
+            }
+        } else {
+            // No active collection - dismiss dialog to prevent leaks
+            if (collectionDialog != null && collectionDialog.isShowing()) {
+                collectionDialog.dismiss();
+            }
         }
     }
 
@@ -313,50 +334,14 @@ public class NoteManagement extends AppCompatActivity {
         String currentLang = prefs.getString("app_language", "he");
         String url = noteCollectionSession.getSubmissionUrl(FIREBASE_HOSTING_URL) + "&lang=" + currentLang;
 
+        // Save initial state to SharedPreferences
+        saveCollectionState();
+
         // Show the collection dialog
         showNoteCollectionDialog(shortCode, url);
 
         // Start listening for incoming notes
-        noteCollectionSession.startListening(new NoteCollectionSession.OnNoteReceivedListener() {
-            @Override
-            public void onNoteReceived(String submitterName, String noteContent) {
-                android.util.Log.d("NoteManagement", "Note received from " + submitterName + ": " + noteContent);
-                runOnUiThread(() -> {
-                    // Parse and add notes from submission
-                    List<String> notes = parseNotes(noteContent);
-                    android.util.Log.d("NoteManagement", "Parsed " + notes.size() + " notes");
-
-                    // Count unique notes in this submission (ignore duplicates within the message)
-                    java.util.Set<String> uniqueNotes = new java.util.HashSet<>(notes);
-                    int uniqueCount = uniqueNotes.size();
-
-                    // Add notes to database
-                    for (String note : notes) {
-                        add(note);
-                    }
-
-                    // Update the dialog UI
-                    receivedNotesCount += notes.size();
-                    android.util.Log.d("NoteManagement", "Total notes received: " + receivedNotesCount);
-                    updateCollectionDialogUI(submitterName, noteContent);
-
-                    // Show toast with unique note count from this submission
-                    if (uniqueCount > 0) {
-                        String message = uniqueCount == 1
-                            ? String.format(getString(R.string.toast_new_note_received_single), submitterName)
-                            : String.format(getString(R.string.toast_new_note_received_plural), uniqueCount, submitterName);
-                        showToast(message);
-                    }
-                });
-            }
-
-            @Override
-            public void onError(String error) {
-                runOnUiThread(() -> {
-                    showToast(String.format(getString(R.string.toast_error), error));
-                });
-            }
-        });
+        startCollectionListener();
     }
 
     private void showExistingNotesWarning(int existingNotesCount) {
@@ -489,6 +474,8 @@ public class NoteManagement extends AppCompatActivity {
                     collectionDialog.dismiss();
                     receivedNotesCount = 0;
                     submitterNoteCounts.clear();
+                    // Clear persisted state when intentionally closing via back button
+                    clearCollectionPersistence();
                 };
                 dialogBag.confirmCloseCollection(closeTask);
                 return true;
@@ -552,6 +539,8 @@ public class NoteManagement extends AppCompatActivity {
             showToast(message);
             receivedNotesCount = 0;
             submitterNoteCounts.clear();
+            // Clear persisted state when intentionally closing via "Finish and Save"
+            clearCollectionPersistence();
         });
         closeSessionButton.setOnTouchListener(touchListener);
 
@@ -847,5 +836,172 @@ public class NoteManagement extends AppCompatActivity {
             return navBarHeightDp < 20; // Only very thin bars (gesture)
         }
         return false;
+    }
+
+    /**
+     * Starts the Firebase listener for the current collection session
+     */
+    private void startCollectionListener() {
+        if (noteCollectionSession == null) {
+            return;
+        }
+
+        noteCollectionSession.startListening(new NoteCollectionSession.OnNoteReceivedListener() {
+            @Override
+            public void onNoteReceived(String submitterName, String noteContent) {
+                android.util.Log.d("NoteManagement", "Note received from " + submitterName + ": " + noteContent);
+                runOnUiThread(() -> {
+                    // Parse and add notes from submission
+                    List<String> notes = parseNotes(noteContent);
+                    android.util.Log.d("NoteManagement", "Parsed " + notes.size() + " notes");
+
+                    // Count unique notes in this submission
+                    java.util.Set<String> uniqueNotes = new java.util.HashSet<>(notes);
+                    int uniqueCount = uniqueNotes.size();
+
+                    // Add notes to database
+                    for (String note : notes) {
+                        add(note);
+                    }
+
+                    // Update the dialog UI and persist state
+                    receivedNotesCount += notes.size();
+                    android.util.Log.d("NoteManagement", "Total notes received: " + receivedNotesCount);
+                    updateCollectionDialogUI(submitterName, noteContent);
+                    saveCollectionState();
+
+                    // Show toast
+                    if (uniqueCount > 0) {
+                        String message = uniqueCount == 1
+                            ? String.format(getString(R.string.toast_new_note_received_single), submitterName)
+                            : String.format(getString(R.string.toast_new_note_received_plural), uniqueCount, submitterName);
+                        showToast(message);
+                    }
+                });
+            }
+
+            @Override
+            public void onError(String error) {
+                runOnUiThread(() -> {
+                    showToast(String.format(getString(R.string.toast_error), error));
+                    // Clear stale session data on error
+                    clearCollectionPersistence();
+                });
+            }
+        });
+    }
+
+    /**
+     * Clears all persisted collection session data from SharedPreferences
+     */
+    private void clearCollectionPersistence() {
+        spEditor.remove(PREF_COLLECTION_ACTIVE);
+        spEditor.remove(PREF_COLLECTION_SESSION_ID);
+        spEditor.remove(PREF_COLLECTION_SHORT_CODE);
+        spEditor.remove(PREF_COLLECTION_RECEIVED_COUNT);
+        spEditor.remove(PREF_COLLECTION_SUBMITTER_DATA);
+        spEditor.apply();
+        android.util.Log.d("NoteManagement", "Cleared collection persistence");
+    }
+
+    /**
+     * Restores a previously active collection session from SharedPreferences
+     */
+    private void restoreCollectionSession() {
+        // Check if there's an active session to restore
+        boolean isActive = prefs.getBoolean(PREF_COLLECTION_ACTIVE, false);
+        if (!isActive) {
+            return;
+        }
+
+        // If dialog is already showing, just restart the listener
+        if (collectionDialog != null && collectionDialog.isShowing()) {
+            android.util.Log.d("NoteManagement", "Dialog already showing, restarting listener");
+            if (noteCollectionSession != null) {
+                startCollectionListener();
+            }
+            return;
+        }
+
+        String sessionId = prefs.getString(PREF_COLLECTION_SESSION_ID, null);
+        String shortCode = prefs.getString(PREF_COLLECTION_SHORT_CODE, null);
+
+        if (sessionId == null || shortCode == null) {
+            android.util.Log.e("NoteManagement", "Invalid persisted session data, clearing");
+            clearCollectionPersistence();
+            return;
+        }
+
+        android.util.Log.d("NoteManagement", "Restoring collection session: " + sessionId);
+
+        // Restore counters and submitter data
+        receivedNotesCount = prefs.getInt(PREF_COLLECTION_RECEIVED_COUNT, 0);
+        submitterNoteCounts.clear();
+
+        Set<String> submitterData = prefs.getStringSet(PREF_COLLECTION_SUBMITTER_DATA, new HashSet<>());
+        for (String entry : submitterData) {
+            // Parse format: "submitterName||note1,,note2,,note3"
+            String[] parts = entry.split("\\|\\|", 2);
+            if (parts.length == 2) {
+                String name = parts[0];
+                String[] notes = parts[1].split(",,");
+                Set<String> noteSet = new HashSet<>();
+                for (String note : notes) {
+                    if (!note.isEmpty()) {
+                        noteSet.add(note);
+                    }
+                }
+                submitterNoteCounts.put(name, noteSet);
+            }
+        }
+
+        // Recreate session with existing session ID
+        noteCollectionSession = new NoteCollectionSession(context, sessionId);
+        String currentLang = prefs.getString("app_language", "he");
+        String url = noteCollectionSession.getSubmissionUrl(FIREBASE_HOSTING_URL) + "&lang=" + currentLang;
+
+        // Show the collection dialog with restored state
+        showNoteCollectionDialog(shortCode, url);
+
+        // Update dialog UI with restored submitter data
+        if (receivedNotesCount > 0 && !submitterNoteCounts.isEmpty()) {
+            // Get any submitter's first note to trigger UI rebuild
+            // This will rebuild the entire list from submitterNoteCounts map
+            String anyName = submitterNoteCounts.keySet().iterator().next();
+            Set<String> anyNotes = submitterNoteCounts.get(anyName);
+            if (anyNotes != null && !anyNotes.isEmpty()) {
+                String anyNote = anyNotes.iterator().next();
+                updateCollectionDialogUI(anyName, anyNote);
+            }
+        }
+
+        // Resume listening for new notes
+        startCollectionListener();
+    }
+
+    /**
+     * Saves the current collection session state to SharedPreferences
+     */
+    private void saveCollectionState() {
+        spEditor.putBoolean(PREF_COLLECTION_ACTIVE, true);
+
+        if (noteCollectionSession != null) {
+            spEditor.putString(PREF_COLLECTION_SESSION_ID, noteCollectionSession.getSessionId());
+            spEditor.putString(PREF_COLLECTION_SHORT_CODE, noteCollectionSession.getShortCode());
+        }
+
+        spEditor.putInt(PREF_COLLECTION_RECEIVED_COUNT, receivedNotesCount);
+
+        // Serialize submitterNoteCounts to StringSet format: "name||note1,,note2,,note3"
+        Set<String> serializedData = new HashSet<>();
+        for (java.util.Map.Entry<String, java.util.Set<String>> entry : submitterNoteCounts.entrySet()) {
+            String name = entry.getKey();
+            String notesJoined = String.join(",,", entry.getValue());
+            serializedData.add(name + "||" + notesJoined);
+        }
+        spEditor.putStringSet(PREF_COLLECTION_SUBMITTER_DATA, serializedData);
+
+        spEditor.apply();
+        android.util.Log.d("NoteManagement", "Saved collection state");
     }
 }
