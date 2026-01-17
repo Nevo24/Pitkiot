@@ -173,6 +173,13 @@ public class Summary extends AppCompatActivity {
 
         // CRITICAL FIX: Check if game over dialog should be shown (app was closed during dialog)
         if (db.shouldShowGameOverDialog) {
+            // Hide the ready button and round mode summary for game over state
+            mReady.setVisibility(View.INVISIBLE);
+            mRoundModeSummary.setVisibility(View.INVISIBLE);
+            // Set the summary headline to "Game is over"
+            mSummaryHeadline.setText(getString(R.string.dialog_game_over_title));
+            mPressHereFigure.setVisibility(View.INVISIBLE);
+
             // Show the appropriate game over dialog based on saved state
             if (db.gameOverDialogType.equals("normal")) {
                 dialogBag.normalGameOver(db.gameOverWinningTeam, db.gameOverWinningScore,
@@ -246,6 +253,11 @@ public class Summary extends AppCompatActivity {
             } else { //If the notes are out
                 if (db.totalRoundNumber == 0) { //If the game is over
                     mPressHereFigure.setVisibility(View.INVISIBLE);
+                    // Hide the ready button and round mode summary for game over state
+                    mReady.setVisibility(View.INVISIBLE);
+                    mRoundModeSummary.setVisibility(View.INVISIBLE);
+                    // Set the summary headline to "Game is over"
+                    mSummaryHeadline.setText(getString(R.string.dialog_game_over_title));
                     db.increaseRoundNum();
                     //db.currentPlaying = (db.currentPlaying + 1)%db.amountOfTeams; -- Maybe consider adding it
                     boolean autoBalanceApplied = db.autoBalanceCheckBox;
@@ -290,8 +302,21 @@ public class Summary extends AppCompatActivity {
             }
         } else {
             db.summaryIsPaused = false;
-            // Refresh localized strings in case language was changed
-            mRoundModeSummary.setText(db.getRoundMode(context));
+
+            // Check if game is over - if so, keep UI elements hidden
+            if (db.shouldShowGameOverDialog) {
+                mReady.setVisibility(View.INVISIBLE);
+                mRoundModeSummary.setVisibility(View.INVISIBLE);
+                mSummaryHeadline.setText(getString(R.string.dialog_game_over_title));
+                mPressHereFigure.setVisibility(View.INVISIBLE);
+            } else {
+                // Normal case - ensure views are visible
+                mReady.setVisibility(View.VISIBLE);
+                mRoundModeSummary.setVisibility(View.VISIBLE);
+                mPressHereFigure.setVisibility(View.VISIBLE);
+                // Refresh localized strings in case language was changed
+                mRoundModeSummary.setText(db.getRoundMode(context));
+            }
             // Restore indicator when returning from main menu
             if (db.amountOfTeams == 2) {
                 // Restore 2-team indicators from saved state
