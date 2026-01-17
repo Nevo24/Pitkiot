@@ -784,6 +784,10 @@ public class Summary extends AppCompatActivity {
                             textView.setTypeface(externalFont);
                             textView.setTextColor(0x88000000);
                             textView.setTextSize(25);
+                            textView.setGravity(android.view.Gravity.CENTER);
+                            // Add extra horizontal padding to prevent text cutoff
+                            float scale = getResources().getDisplayMetrics().density;
+                            textView.setPadding((int) (16 * scale), textView.getPaddingTop(), (int) (16 * scale), textView.getPaddingBottom());
                             return v;
                         }
                     };
