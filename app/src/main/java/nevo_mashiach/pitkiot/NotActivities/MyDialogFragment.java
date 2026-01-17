@@ -10,6 +10,8 @@ import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.text.SpannableString;
+import android.text.method.LinkMovementMethod;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -31,6 +33,8 @@ import androidx.fragment.app.DialogFragment;
 public class MyDialogFragment extends DialogFragment {
     String title;
     String message;
+    CharSequence messageCharSequence = null;
+    boolean isMessageClickable = false;
 
     String positiveButtonText = null;
     DialogInterface.OnClickListener positiveButtonListener = null;
@@ -44,6 +48,24 @@ public class MyDialogFragment extends DialogFragment {
     public MyDialogFragment(String _title, String _message){
         title = _title;
         message = _message;
+    }
+
+    public MyDialogFragment(String _title, CharSequence _messageCharSequence){
+        title = _title;
+        messageCharSequence = _messageCharSequence;
+        isMessageClickable = true;
+    }
+
+    public MyDialogFragment(String _title, CharSequence _messageCharSequence, String _positiveButtonText, DialogInterface.OnClickListener _positiveButtonListener, String _negativeButtonText, DialogInterface.OnClickListener _negativeButtonListener, String _naturalButtonText, DialogInterface.OnClickListener _naturalButtonListener){
+        title = _title;
+        messageCharSequence = _messageCharSequence;
+        isMessageClickable = true;
+        positiveButtonText = _positiveButtonText;
+        positiveButtonListener = _positiveButtonListener;
+        negativeButtonText = _negativeButtonText;
+        negativeButtonListener = _negativeButtonListener;
+        naturalButtonText = _naturalButtonText;
+        naturalButtonListener = _naturalButtonListener;
     }
 
     public MyDialogFragment(String _title, String _message, String _positiveButtonText, DialogInterface.OnClickListener _positiveButtonListener, String _negativeButtonText, DialogInterface.OnClickListener _negativeButtonListener, String _naturalButtonText, DialogInterface.OnClickListener _naturalButtonListener){
@@ -63,8 +85,14 @@ public class MyDialogFragment extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         Context context = getActivity();
         AlertDialog.Builder builder = new AlertDialog.Builder(context)
-                .setTitle(title)
-                .setMessage(message);
+                .setTitle(title);
+
+        if (isMessageClickable && messageCharSequence != null) {
+            builder.setMessage(messageCharSequence);
+        } else {
+            builder.setMessage(message);
+        }
+
         if(positiveButtonText != null) builder.setPositiveButton(positiveButtonText, positiveButtonListener);
         if(negativeButtonText != null) builder.setNegativeButton(negativeButtonText, negativeButtonListener);
         if(naturalButtonText != null) builder.setNeutralButton(naturalButtonText, naturalButtonListener);
@@ -105,6 +133,10 @@ public class MyDialogFragment extends DialogFragment {
                 TextView messageView = dialog.findViewById(android.R.id.message);
                 if (messageView != null) {
                     messageView.setGravity(textGravity);
+                    // Enable clickable links if message has them
+                    if (isMessageClickable) {
+                        messageView.setMovementMethod(LinkMovementMethod.getInstance());
+                    }
                 }
 
                 // Set button panel gravity using absolute positioning
@@ -173,14 +205,23 @@ public class MyDialogFragment extends DialogFragment {
     }
 
     public MyDialogFragment setPositiveButton (String text, DialogInterface.OnClickListener listener) {
+        if (isMessageClickable && messageCharSequence != null) {
+            return new MyDialogFragment(title, messageCharSequence, text, listener, negativeButtonText, negativeButtonListener, naturalButtonText, naturalButtonListener);
+        }
         return new MyDialogFragment(title, message, text, listener, negativeButtonText, negativeButtonListener, naturalButtonText, naturalButtonListener);
     }
 
     public MyDialogFragment setNegativeButton (String text, DialogInterface.OnClickListener listener) {
+        if (isMessageClickable && messageCharSequence != null) {
+            return new MyDialogFragment(title, messageCharSequence, positiveButtonText, positiveButtonListener, text, listener, naturalButtonText, naturalButtonListener);
+        }
         return new MyDialogFragment(title, message, positiveButtonText, positiveButtonListener, text, listener, naturalButtonText, naturalButtonListener);
     }
 
     public MyDialogFragment setNaturalButton (String text, DialogInterface.OnClickListener listener) {
+        if (isMessageClickable && messageCharSequence != null) {
+            return new MyDialogFragment(title, messageCharSequence, positiveButtonText, positiveButtonListener, negativeButtonText, negativeButtonListener, text, listener);
+        }
         return new MyDialogFragment(title, message, positiveButtonText, positiveButtonListener, negativeButtonText, negativeButtonListener, text, listener);
     }
 

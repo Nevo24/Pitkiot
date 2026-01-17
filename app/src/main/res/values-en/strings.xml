@@ -89,6 +89,11 @@
     <string name="dialog_view_final_score">View Final Score</string>
     <string name="dialog_final_score_title">Final Score</string>
     <string name="dialog_team_score">Team %1$d: %2$d\n</string>
+    <string name="dialog_team_wins">Team %d wins!</string>
+    <string name="dialog_team_score_with_points">Team %1$d: %2$d points\n</string>
+    <string name="dialog_draw_title">Draw!</string>
+    <string name="dialog_auto_balance_note">\n\n* Score was auto-balanced</string>
+    <string name="dialog_auto_balance_explanation_link">\n\t  Explanation</string>
     <string name="dialog_uneven_title">Option Explanation</string>
     <string name="dialog_uneven_msg">Sometimes the game ends with some teams playing one round less than others (or receiving less time in their final round). To avoid such unfairness, at the end of the game, this option will add points to the disadvantaged teams according to their performance.\nIn short, if you want a fair game, check this option.</string>
     <string name="dialog_invalid_input_title">Invalid Input!</string>

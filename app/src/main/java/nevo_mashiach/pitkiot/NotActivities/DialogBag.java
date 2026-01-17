@@ -3,8 +3,15 @@ package nevo_mashiach.pitkiot.NotActivities;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.style.ClickableSpan;
+import android.text.style.ForegroundColorSpan;
+import android.view.View;
 import android.widget.Toast;
 
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentManager;
 
 import java.util.ArrayList;
@@ -57,14 +64,41 @@ public class DialogBag {
 
     public void normalGameOver(int winningTeam, int winningTotal, int loserTotal, boolean autoBalanceApplied) {
         db.gameOverDialogActivated = true;
+
+        // Save scores BEFORE resetting
+        final int[] scores = new int[2];
+        scores[0] = db.scores[0];
+        scores[1] = db.scores[1];
+        final int finalWinningTeam = winningTeam;
+
         db.resetGame();
         Toast.makeText(context, context.getString(nevo_mashiach.pitkiot.R.string.toast_game_reset), Toast.LENGTH_SHORT).show();
-        String message = String.format(context.getString(nevo_mashiach.pitkiot.R.string.dialog_team_won), winningTeam, winningTotal, loserTotal);
-        if (autoBalanceApplied) {
-            message += context.getString(nevo_mashiach.pitkiot.R.string.dialog_auto_balance_applied);
-        }
+
         MyDialogFragment dialog = new MyDialogFragment(
                 context.getString(nevo_mashiach.pitkiot.R.string.dialog_game_over_title),
+                ""
+        );
+        dialog = dialog.setPositiveButton(context.getString(nevo_mashiach.pitkiot.R.string.dialog_view_final_score), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                normalGameOverFinalScore(finalWinningTeam, scores, autoBalanceApplied);
+            }
+        });
+        dialog.show(fragmentManager, "NormalGameOver");
+    }
+
+    private void normalGameOverFinalScore(int winningTeam, int[] scores, boolean autoBalanceApplied) {
+        // Build title: "Team X wins!"
+        String title = String.format(context.getString(nevo_mashiach.pitkiot.R.string.dialog_team_wins), winningTeam);
+
+        // Build scores list (sorted by score, highest first)
+        String scoresText = buildScoresList(scores);
+
+        // Build clickable message
+        CharSequence message = buildScoreMessageWithClickableHelp(scoresText, autoBalanceApplied);
+
+        MyDialogFragment dialog = new MyDialogFragment(
+                title,
                 message
         );
         dialog = dialog.setPositiveButton(context.getString(nevo_mashiach.pitkiot.R.string.dialog_return_main), new DialogInterface.OnClickListener() {
@@ -75,22 +109,48 @@ public class DialogBag {
                 db.gameOverDialogActivated = false;
             }
         });
-        dialog.show(fragmentManager, "NormalGameOver"); //The second one is just a string tag that we can use to refer to it.
+        dialog.show(fragmentManager, "NormalGameOverFinalScore");
     }
 
     public void drawGameOver(int score, boolean autoBalanceApplied) {
         db.gameOverDialogActivated = true;
+
+        // Save scores BEFORE resetting
+        final int[] scores = new int[2];
+        scores[0] = db.scores[0];
+        scores[1] = db.scores[1];
+
         db.resetGame();
         Toast.makeText(context, context.getString(nevo_mashiach.pitkiot.R.string.toast_game_reset), Toast.LENGTH_SHORT).show();
-        String message = String.format(context.getString(nevo_mashiach.pitkiot.R.string.dialog_draw), score, score);
-        if (autoBalanceApplied) {
-            message += context.getString(nevo_mashiach.pitkiot.R.string.dialog_auto_balance_applied);
-        }
+
         MyDialogFragment dialog = new MyDialogFragment(
                 context.getString(nevo_mashiach.pitkiot.R.string.dialog_game_over_title),
+                ""
+        );
+        dialog = dialog.setPositiveButton(context.getString(nevo_mashiach.pitkiot.R.string.dialog_view_final_score), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                drawGameOverFinalScore(scores, autoBalanceApplied);
+            }
+        });
+        dialog.show(fragmentManager, "DrawGameOver");
+    }
+
+    private void drawGameOverFinalScore(int[] scores, boolean autoBalanceApplied) {
+        // Build title: "Draw!"
+        String title = context.getString(nevo_mashiach.pitkiot.R.string.dialog_draw_title);
+
+        // Build scores list (sorted by score, highest first)
+        String scoresText = buildScoresList(scores);
+
+        // Build clickable message
+        CharSequence message = buildScoreMessageWithClickableHelp(scoresText, autoBalanceApplied);
+
+        MyDialogFragment dialog = new MyDialogFragment(
+                title,
                 message
         );
-        dialog = dialog.setNaturalButton(context.getString(nevo_mashiach.pitkiot.R.string.dialog_return_main), new DialogInterface.OnClickListener() {
+        dialog = dialog.setPositiveButton(context.getString(nevo_mashiach.pitkiot.R.string.dialog_return_main), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 Intent intent = new Intent(context, MainActivity.class);
@@ -98,13 +158,14 @@ public class DialogBag {
                 db.gameOverDialogActivated = false;
             }
         });
-        dialog.show(fragmentManager, "DrawGameOver"); //The second one is just a string tag that we can use to refer to it.
+        dialog.show(fragmentManager, "DrawGameOverFinalScore");
     }
 
     public void multiGameOver(final int[] scores, final boolean autoBalanceApplied) {
         db.gameOverDialogActivated = true;
         db.resetGame();
         Toast.makeText(context, context.getString(nevo_mashiach.pitkiot.R.string.toast_game_reset), Toast.LENGTH_SHORT).show();
+
         MyDialogFragment dialog = new MyDialogFragment(
                 context.getString(nevo_mashiach.pitkiot.R.string.dialog_game_over_title),
                 ""
@@ -115,29 +176,49 @@ public class DialogBag {
                 multiGameOverFinalScore(scores, autoBalanceApplied);
             }
         });
-        dialog.show(fragmentManager, "NormalGameOver"); //The second one is just a string tag that we can use to refer to it.
+        dialog.show(fragmentManager, "MultiGameOver");
     }
 
     private void multiGameOverFinalScore(int[] scores, boolean autoBalanceApplied) {
-        StringBuilder scoreSummary = new StringBuilder();
-        TreeMap<Integer, ArrayList<String>> treeMap = new TreeMap<>(Collections.reverseOrder());
-        for (int i = 0; i < db.amountOfTeams; i++) {
-            if(!treeMap.containsKey(scores[i])){
-                treeMap.put(scores[i], new ArrayList<String>());
-            }
-            treeMap.get(scores[i]).add(String.format(context.getString(nevo_mashiach.pitkiot.R.string.dialog_team_score), (i + 1), scores[i]));
-        }
-        for (Map.Entry<Integer, ArrayList<String>> entry : treeMap.entrySet()) {
-            for (String teamScore : entry.getValue()) {
-                scoreSummary.append(teamScore);
+        // Find the highest score and check if there's a tie
+        int maxScore = scores[0];
+        int winningTeam = 1;
+
+        for (int i = 1; i < scores.length; i++) {
+            if (scores[i] > maxScore) {
+                maxScore = scores[i];
+                winningTeam = i + 1;
             }
         }
-        if (autoBalanceApplied) {
-            scoreSummary.append(context.getString(nevo_mashiach.pitkiot.R.string.dialog_auto_balance_applied));
+
+        // Count how many teams have the max score
+        int teamsWithMaxScore = 0;
+        for (int i = 0; i < scores.length; i++) {
+            if (scores[i] == maxScore) {
+                teamsWithMaxScore++;
+                if (teamsWithMaxScore == 1) {
+                    winningTeam = i + 1;
+                }
+            }
         }
+
+        // Build title: "Team X wins!" or "Draw!" if multiple teams have the highest score
+        String title;
+        if (teamsWithMaxScore > 1) {
+            title = context.getString(nevo_mashiach.pitkiot.R.string.dialog_draw_title);
+        } else {
+            title = String.format(context.getString(nevo_mashiach.pitkiot.R.string.dialog_team_wins), winningTeam);
+        }
+
+        // Build scores list (sorted by score, highest first)
+        String scoresText = buildScoresList(scores);
+
+        // Build clickable message
+        CharSequence message = buildScoreMessageWithClickableHelp(scoresText, autoBalanceApplied);
+
         MyDialogFragment dialog = new MyDialogFragment(
-                context.getString(nevo_mashiach.pitkiot.R.string.dialog_final_score_title),
-                scoreSummary.toString()
+                title,
+                message
         );
         dialog = dialog.setPositiveButton(context.getString(nevo_mashiach.pitkiot.R.string.dialog_return_main), new DialogInterface.OnClickListener() {
             @Override
@@ -147,7 +228,7 @@ public class DialogBag {
                 db.gameOverDialogActivated = false;
             }
         });
-        dialog.show(fragmentManager, "NormalGameOver"); //The second one is just a string tag that we can use to refer to it.
+        dialog.show(fragmentManager, "MultiGameOverFinalScore");
     }
 
     public void unevenExplanation() {
@@ -157,6 +238,56 @@ public class DialogBag {
         );
         dialog = dialog.setNaturalButton(context.getString(nevo_mashiach.pitkiot.R.string.dialog_understood), null);
         dialog.show(fragmentManager, "UnevenExplanation"); //The second one is just a string tag that we can use to refer to it.
+    }
+
+    private CharSequence buildScoreMessageWithClickableHelp(String scoresText, boolean autoBalanceApplied) {
+        String fullMessage = scoresText;
+
+        if (autoBalanceApplied) {
+            fullMessage += context.getString(nevo_mashiach.pitkiot.R.string.dialog_auto_balance_note);
+            fullMessage += context.getString(nevo_mashiach.pitkiot.R.string.dialog_auto_balance_explanation_link);
+        }
+
+        SpannableString spannableString = new SpannableString(fullMessage);
+
+        if (autoBalanceApplied) {
+            String explanationLink = context.getString(nevo_mashiach.pitkiot.R.string.dialog_auto_balance_explanation_link).trim();
+            int start = fullMessage.lastIndexOf(explanationLink);
+            int end = start + explanationLink.length();
+
+            ClickableSpan clickableSpan = new ClickableSpan() {
+                @Override
+                public void onClick(View widget) {
+                    unevenExplanation();
+                }
+            };
+
+            int blueColor = ContextCompat.getColor(context, nevo_mashiach.pitkiot.R.color.colorPrimary);
+            spannableString.setSpan(clickableSpan, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            spannableString.setSpan(new ForegroundColorSpan(blueColor), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        }
+
+        return spannableString;
+    }
+
+    private String buildScoresList(int[] scores) {
+        StringBuilder scoreSummary = new StringBuilder();
+        TreeMap<Integer, ArrayList<String>> treeMap = new TreeMap<>(Collections.reverseOrder());
+
+        for (int i = 0; i < scores.length; i++) {
+            if(!treeMap.containsKey(scores[i])){
+                treeMap.put(scores[i], new ArrayList<String>());
+            }
+            treeMap.get(scores[i]).add(String.format(context.getString(nevo_mashiach.pitkiot.R.string.dialog_team_score_with_points), (i + 1), scores[i]));
+        }
+
+        for (Map.Entry<Integer, ArrayList<String>> entry : treeMap.entrySet()) {
+            for (String teamScore : entry.getValue()) {
+                scoreSummary.append(teamScore);
+            }
+        }
+
+        return scoreSummary.toString();
     }
 
     public void invalidInput() {
