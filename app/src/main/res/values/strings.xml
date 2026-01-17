@@ -22,7 +22,7 @@
 
     <!-- Collection Dialog -->
     <string name="dialog_title_collection">איסוף פתקים מהשחקנים</string>
-    <string name="dialog_subtitle_share">שתף את הקישור הזה עם השחקנים:</string>
+    <string name="dialog_subtitle_share">שתף את הקישור הזה\nעם השחקנים:</string>
     <string name="button_copy_link">העתק קישור</string>
     <string name="button_finish_save">סיים ושמור פתקים</string>
     <string name="section_received_notes">פתקים שהתקבלו:</string>
