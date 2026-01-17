@@ -258,6 +258,26 @@ public class Summary extends AppCompatActivity {
                     mRoundModeSummary.setVisibility(View.INVISIBLE);
                     // Set the summary headline to "Game is over"
                     mSummaryHeadline.setText(getString(R.string.dialog_game_over_title));
+                    // Show the "+x points" indicator for the team that just played
+                    if(db.amountOfTeams == 2){
+                        if (db.currentPlaying == 0) {
+                            mT1Plus.setText(String.format(Locale.US, "+%d", db.currentSuccessNum));
+                            mT1Plus.setVisibility(View.VISIBLE);
+                            mT2Plus.setVisibility(View.INVISIBLE);
+                        } else {
+                            mT2Plus.setText(String.format(Locale.US, "+%d", db.currentSuccessNum));
+                            mT2Plus.setVisibility(View.VISIBLE);
+                            mT1Plus.setVisibility(View.INVISIBLE);
+                        }
+                        teamThatJustPlayed = db.currentPlaying;
+                        successCountForTeamThatJustPlayed = db.currentSuccessNum;
+                    }
+                    else{
+                        mMultiTeamsPlus.setText(String.format(Locale.US, "+%d", db.currentSuccessNum));
+                        mMultiTeamsPlus.setVisibility(View.VISIBLE);
+                        teamThatJustPlayed = db.currentPlaying;
+                        successCountForTeamThatJustPlayed = db.currentSuccessNum;
+                    }
                     db.increaseRoundNum();
                     //db.currentPlaying = (db.currentPlaying + 1)%db.amountOfTeams; -- Maybe consider adding it
                     boolean autoBalanceApplied = db.autoBalanceCheckBox;
