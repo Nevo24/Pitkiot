@@ -116,33 +116,40 @@
 
             <nevo_mashiach.pitkiot.NotActivities.MyButton
                 android:id="@+id/decreaseRoundTime"
-                android:layout_height="wrap_content"
+                android:layout_height="50dp"
                 android:layout_width="60dp"
                 android:text="-"
-                android:textSize="24sp"/>
+                android:textSize="24sp"
+                android:background="@drawable/button_minus_left_rounded"/>
 
             <nevo_mashiach.pitkiot.NotActivities.MyEditText
                 android:id="@+id/roundTimeValue"
-                android:layout_height="wrap_content"
+                android:layout_height="50dp"
                 android:layout_width="80dp"
+                android:layout_marginStart="-1dp"
                 android:gravity="center"
                 android:textAlignment="center"
                 android:text="60"
                 android:textSize="32sp"
                 android:textStyle="bold"
                 android:inputType="number"
-                android:background="@android:color/transparent"
+                android:background="@drawable/editable_field_middle"
                 android:textColor="#88000000"
                 android:selectAllOnFocus="true"
                 android:maxLength="3"
-                android:paddingTop="6dp"/>
+                android:paddingStart="6dp"
+                android:paddingEnd="6dp"
+                android:paddingTop="7dp"
+                android:includeFontPadding="false"/>
 
             <nevo_mashiach.pitkiot.NotActivities.MyButton
                 android:id="@+id/increaseRoundTime"
-                android:layout_height="wrap_content"
+                android:layout_height="50dp"
                 android:layout_width="60dp"
+                android:layout_marginStart="-1dp"
                 android:text="+"
-                android:textSize="24sp"/>
+                android:textSize="24sp"
+                android:background="@drawable/button_plus_right_rounded"/>
         </LinearLayout>
 
         <nevo_mashiach.pitkiot.NotActivities.MyTextView
@@ -181,33 +188,40 @@
 
             <nevo_mashiach.pitkiot.NotActivities.MyButton
                 android:id="@+id/decreasePassTime"
-                android:layout_height="wrap_content"
+                android:layout_height="50dp"
                 android:layout_width="60dp"
                 android:text="-"
-                android:textSize="24sp"/>
+                android:textSize="24sp"
+                android:background="@drawable/button_minus_left_rounded"/>
 
             <nevo_mashiach.pitkiot.NotActivities.MyEditText
                 android:id="@+id/passTimeValue"
-                android:layout_height="wrap_content"
+                android:layout_height="50dp"
                 android:layout_width="80dp"
+                android:layout_marginStart="-1dp"
                 android:gravity="center"
                 android:textAlignment="center"
                 android:text="10"
                 android:textSize="32sp"
                 android:textStyle="bold"
                 android:inputType="number"
-                android:background="@android:color/transparent"
+                android:background="@drawable/editable_field_middle"
                 android:textColor="#88000000"
                 android:selectAllOnFocus="true"
                 android:maxLength="3"
-                android:paddingTop="6dp"/>
+                android:paddingStart="6dp"
+                android:paddingEnd="6dp"
+                android:paddingTop="7dp"
+                android:includeFontPadding="false"/>
 
             <nevo_mashiach.pitkiot.NotActivities.MyButton
                 android:id="@+id/increasePassTime"
-                android:layout_height="wrap_content"
+                android:layout_height="50dp"
                 android:layout_width="60dp"
+                android:layout_marginStart="-1dp"
                 android:text="+"
-                android:textSize="24sp"/>
+                android:textSize="24sp"
+                android:background="@drawable/button_plus_right_rounded"/>
         </LinearLayout>
 
         <nevo_mashiach.pitkiot.NotActivities.MyTextView
@@ -262,7 +276,8 @@
                     android:layout_height="wrap_content"
                     android:layout_width="60dp"
                     android:text="-"
-                    android:textSize="24sp"/>
+                    android:textSize="24sp"
+                    android:background="@drawable/button_rounded"/>
 
                 <nevo_mashiach.pitkiot.NotActivities.MyTextView
                     android:id="@+id/amoutOfTeams"
@@ -281,7 +296,8 @@
                     android:layout_height="wrap_content"
                     android:layout_width="60dp"
                     android:text="+"
-                    android:textSize="24sp"/>
+                    android:textSize="24sp"
+                    android:background="@drawable/button_rounded"/>
             </LinearLayout>
 
             <nevo_mashiach.pitkiot.NotActivities.MyTextView
@@ -351,7 +367,8 @@
                     android:layout_height="wrap_content"
                     android:layout_width="60dp"
                     android:text="-"
-                    android:textSize="24sp"/>
+                    android:textSize="24sp"
+                    android:background="@drawable/button_rounded"/>
 
                 <nevo_mashiach.pitkiot.NotActivities.MyTextView
                     android:id="@+id/teamEditableScore"
@@ -370,7 +387,8 @@
                     android:layout_height="wrap_content"
                     android:layout_width="60dp"
                     android:text="+"
-                    android:textSize="24sp"/>
+                    android:textSize="24sp"
+                    android:background="@drawable/button_rounded"/>
             </LinearLayout>
         </androidx.percentlayout.widget.PercentRelativeLayout>
 

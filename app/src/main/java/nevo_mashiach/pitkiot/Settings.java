@@ -744,7 +744,8 @@ public class Settings extends AppCompatActivity {
 
     public void increaseRoundTime(View view) {
         if (db.timePerRound >= 300) return;
-        db.timePerRound++;
+        db.timePerRound += 5;
+        if (db.timePerRound > 300) db.timePerRound = 300;
         mRoundTimeValue.setText(String.valueOf(db.timePerRound));
         spEditor.putInt("timePerRoundBackup", db.timePerRound);
         spEditor.apply();
@@ -756,7 +757,8 @@ public class Settings extends AppCompatActivity {
 
     public void decreaseRoundTime(View view) {
         if (db.timePerRound <= 1) return;
-        db.timePerRound--;
+        db.timePerRound -= 5;
+        if (db.timePerRound < 1) db.timePerRound = 1;
         mRoundTimeValue.setText(String.valueOf(db.timePerRound));
         spEditor.putInt("timePerRoundBackup", db.timePerRound);
         spEditor.apply();
@@ -768,7 +770,8 @@ public class Settings extends AppCompatActivity {
 
     public void increasePassTime(View view) {
         if (db.timeDownOnNext >= 300) return;
-        db.timeDownOnNext++;
+        db.timeDownOnNext += 5;
+        if (db.timeDownOnNext > 300) db.timeDownOnNext = 300;
         mPassTimeValue.setText(String.valueOf(db.timeDownOnNext));
         spEditor.putInt("timeDownOnNextBackup", db.timeDownOnNext);
         spEditor.apply();
@@ -780,7 +783,8 @@ public class Settings extends AppCompatActivity {
 
     public void decreasePassTime(View view) {
         if (db.timeDownOnNext <= 1) return;
-        db.timeDownOnNext--;
+        db.timeDownOnNext -= 5;
+        if (db.timeDownOnNext < 1) db.timeDownOnNext = 1;
         mPassTimeValue.setText(String.valueOf(db.timeDownOnNext));
         spEditor.putInt("timeDownOnNextBackup", db.timeDownOnNext);
         spEditor.apply();
