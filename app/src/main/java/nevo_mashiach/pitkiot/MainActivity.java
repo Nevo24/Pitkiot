@@ -36,6 +36,9 @@ import nevo_mashiach.pitkiot.databinding.ActivityMainBinding;
 @SuppressLint("SourceLockedOrientationActivity")
 public class MainActivity extends AppCompatActivity {
 
+    // Static is CORRECT: ensures loadDb() runs once per process lifetime
+    // Process death resets statics, so loadDb() will run again when process restarts
+    // This prevents overwriting current in-memory state with stale SharedPreferences data
     static boolean firstLaunch = true;
 
     public DialogBag dialogBag;
@@ -212,8 +215,21 @@ public class MainActivity extends AppCompatActivity {
         } catch (Exception ignored) {
         }
         try {
-            db.amountOfTeams = prefs.getInt("amountOfTeams", 2);
-        } catch (Exception ignored) {
+            int loadedTeamCount = prefs.getInt("amountOfTeams", 2);
+            // FIX: Validate bounds to prevent ArrayIndexOutOfBoundsException
+            // Arrays are sized to 24, so clamp value between 2 and 24
+            if (loadedTeamCount < 2) {
+                android.util.Log.w("MainActivity", "Invalid team count " + loadedTeamCount + " (too low), using 2");
+                db.amountOfTeams = 2;
+            } else if (loadedTeamCount > 24) {
+                android.util.Log.w("MainActivity", "Invalid team count " + loadedTeamCount + " (too high), using 24");
+                db.amountOfTeams = 24;
+            } else {
+                db.amountOfTeams = loadedTeamCount;
+            }
+        } catch (Exception e) {
+            android.util.Log.e("MainActivity", "Error loading team count: " + e.getMessage());
+            db.amountOfTeams = 2;
         }
 
         //Game state
@@ -407,7 +423,15 @@ public class MainActivity extends AppCompatActivity {
                     spEditor.putInt("gameOverScore" + i, 0);
                 }
 
-                spEditor.apply();
+                // FIX: Use commit() for user-initiated reset to ensure data is saved before showing confirmation
+                if (!spEditor.commit()) {
+                    android.util.Log.e("MainActivity", "Failed to save reset state!");
+                    // Show error in user's language (he/en)
+                    String language = prefs.getString("app_language", "he");
+                    String errorMsg = language.equals("he") ? "שגיאה בשמירת הנתונים" : "Error saving data";
+                    Toast.makeText(context, errorMsg, Toast.LENGTH_SHORT).show();
+                    return;
+                }
 
                 Toast.makeText(context, getString(R.string.toast_game_reset), Toast.LENGTH_SHORT).show();
             }
@@ -431,7 +455,15 @@ public class MainActivity extends AppCompatActivity {
                 for (int i = 0; i < 24; i++) {
                     spEditor.putStringSet("team" + i + "Notes", set);
                 }
-                spEditor.apply();
+                // FIX: Use commit() for user-initiated delete to ensure data is saved before showing confirmation
+                if (!spEditor.commit()) {
+                    android.util.Log.e("MainActivity", "Failed to delete notes!");
+                    // Show error in user's language (he/en)
+                    String language = prefs.getString("app_language", "he");
+                    String errorMsg = language.equals("he") ? "שגיאה במחיקת הפתקים" : "Error deleting notes";
+                    Toast.makeText(context, errorMsg, Toast.LENGTH_SHORT).show();
+                    return;
+                }
 
                 Toast.makeText(context, getString(R.string.toast_all_notes_deleted), Toast.LENGTH_SHORT).show();
 
@@ -641,7 +673,13 @@ public class MainActivity extends AppCompatActivity {
 
         // Save new language preference
         spEditor.putString("app_language", newLang);
-        spEditor.commit();
+        // FIX: Check commit() result for language change
+        if (!spEditor.commit()) {
+            android.util.Log.e("MainActivity", "Failed to save language preference!");
+            String errorMsg = currentLang.equals("he") ? "שגיאה בשמירת הגדרות" : "Error saving settings";
+            Toast.makeText(context, errorMsg, Toast.LENGTH_SHORT).show();
+            return;
+        }
 
         // Apply new language and recreate activity
         setLocale(newLang);

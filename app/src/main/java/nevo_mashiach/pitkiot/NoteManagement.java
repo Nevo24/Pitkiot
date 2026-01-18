@@ -328,7 +328,10 @@ public class NoteManagement extends AppCompatActivity {
     private void continueOnlineNoteCollection() {
         // Reset counters for new session
         receivedNotesCount = 0;
-        submitterNoteCounts.clear();
+        // FIX: Synchronize clear() to prevent concurrent modification
+        synchronized (submitterNoteCounts) {
+            submitterNoteCounts.clear();
+        }
 
         // Create a new collection session every time
         noteCollectionSession = new NoteCollectionSession(context);
@@ -475,7 +478,10 @@ public class NoteManagement extends AppCompatActivity {
                     }
                     collectionDialog.dismiss();
                     receivedNotesCount = 0;
-                    submitterNoteCounts.clear();
+                    // FIX: Synchronize clear() to prevent concurrent modification
+                    synchronized (submitterNoteCounts) {
+                        submitterNoteCounts.clear();
+                    }
                     // Clear persisted state when intentionally closing via back button
                     clearCollectionPersistence();
                 };
@@ -544,7 +550,10 @@ public class NoteManagement extends AppCompatActivity {
                 : String.format(getString(R.string.toast_notes_added_plural), totalUniqueNotes);
             showToast(message);
             receivedNotesCount = 0;
-            submitterNoteCounts.clear();
+            // FIX: Synchronize clear() to prevent concurrent modification
+            synchronized (submitterNoteCounts) {
+                submitterNoteCounts.clear();
+            }
             // Clear persisted state when intentionally closing via "Finish and Save"
             clearCollectionPersistence();
         });
@@ -980,24 +989,24 @@ public class NoteManagement extends AppCompatActivity {
                 }
 
                 // Parse format: "submitterName||note1,,note2,,note3"
-                // FIX: Use regex that handles escaped delimiters properly
-                // Look for || that is not preceded by \
+                // FIX CORRECTION: Use regex that handles escaped delimiters properly
+                // Split on || that is not preceded by backslash
                 String[] parts = entry.split("(?<!\\\\)\\|\\|", 2);
                 if (parts.length == 2) {
-                    // Unescape the name
-                    String name = parts[0].replace("\\|\\|", "||").replace("\\,\\,", ",,");
+                    // Unescape the name: reverse order (delimiters first, then backslashes)
+                    String name = parts[0].replace("\\||", "||").replace("\\,,", ",,").replace("\\\\", "\\");
                     // FIX: Validate name is not null or empty
                     if (name == null || name.trim().isEmpty()) {
                         android.util.Log.w("NoteManagement", "Skipping entry with empty name");
                         continue;
                     }
 
-                    // Split notes by ,, that is not preceded by \
+                    // Split notes by ,, that is not preceded by backslash
                     String[] notes = parts[1].split("(?<!\\\\),,");
                     Set<String> noteSet = new HashSet<>();
                     for (String note : notes) {
-                        // Unescape and add non-empty notes
-                        String unescapedNote = note.replace("\\|\\|", "||").replace("\\,\\,", ",,");
+                        // Unescape: reverse order (delimiters first, then backslashes)
+                        String unescapedNote = note.replace("\\||", "||").replace("\\,,", ",,").replace("\\\\", "\\");
                         if (unescapedNote != null && !unescapedNote.isEmpty()) {
                             noteSet.add(unescapedNote);
                         }
@@ -1053,19 +1062,20 @@ public class NoteManagement extends AppCompatActivity {
         spEditor.putInt(PREF_COLLECTION_RECEIVED_COUNT, receivedNotesCount);
 
         // Serialize submitterNoteCounts to StringSet format with escaping
-        // FIX: Escape delimiters to prevent parsing issues and synchronize access
+        // FIX CORRECTION: Proper escaping - escape backslashes first, then delimiters
         Set<String> serializedData = new HashSet<>();
         synchronized (submitterNoteCounts) {
             for (java.util.Map.Entry<String, java.util.Set<String>> entry : submitterNoteCounts.entrySet()) {
                 String name = entry.getKey();
-                // Escape || and ,, in names and notes to prevent parsing issues
-                String escapedName = name.replace("||", "\\|\\|").replace(",,", "\\,\\,");
+                // Proper escaping: backslash first, then delimiters
+                String escapedName = name.replace("\\", "\\\\").replace("||", "\\||").replace(",,", "\\,,");
 
                 // Escape notes as well
                 java.util.Set<String> escapedNotes = new java.util.HashSet<>();
                 for (String note : entry.getValue()) {
                     if (note != null && !note.isEmpty()) {
-                        escapedNotes.add(note.replace("||", "\\|\\|").replace(",,", "\\,\\,"));
+                        String escapedNote = note.replace("\\", "\\\\").replace("||", "\\||").replace(",,", "\\,,");
+                        escapedNotes.add(escapedNote);
                     }
                 }
 

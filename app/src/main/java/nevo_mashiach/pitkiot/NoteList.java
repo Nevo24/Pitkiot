@@ -123,7 +123,12 @@ public class NoteList extends AppCompatActivity {
                         spEditor.putLong("mMillisUntilFinished", db.timePerRound * 1000L);
                         spEditor.putBoolean("summaryIsPaused", false);
                         spEditor.putBoolean("gamePlayIsPaused", false);
-                        spEditor.apply();
+                        // FIX: Use commit() for user-initiated reset
+                        if (!spEditor.commit()) {
+                            android.util.Log.e("NoteList", "Failed to save reset state!");
+                            Toast.makeText(context, getString(R.string.toast_error), Toast.LENGTH_SHORT).show();
+                            return;
+                        }
 
                         Toast.makeText(context, getString(R.string.toast_game_reset), Toast.LENGTH_SHORT).show();
                     }
@@ -236,7 +241,10 @@ public class NoteList extends AppCompatActivity {
             }
         }
 
-        spEditor.apply();
+        // FIX: Use commit() for user-initiated note deletion
+        if (!spEditor.commit()) {
+            android.util.Log.e("NoteList", "Failed to delete note!");
+        }
     }
 
     public void deleteAllNotes() {
@@ -251,7 +259,10 @@ public class NoteList extends AppCompatActivity {
         for (int i = 0; i < 24; i++) {
             spEditor.putStringSet("team" + i + "Notes", set);
         }
-        spEditor.apply();
+        // FIX: Use commit() for user-initiated delete all operation
+        if (!spEditor.commit()) {
+            android.util.Log.e("NoteList", "Failed to delete all notes!");
+        }
     }
 
     public void reloadActivityWithoutAnimation(){

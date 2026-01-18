@@ -642,14 +642,16 @@ public class Summary extends AppCompatActivity {
 
         // FIX: Use commit() for critical game state to ensure synchronous write
         // This guarantees state is saved before the activity is destroyed
-        if (!spEditor.commit()) {
-            android.util.Log.e(TAG, "Failed to save game state!");
-        }
+        boolean commitSuccess = spEditor.commit();
 
-        // FIX: Clear transition flag AFTER commit succeeds to prevent race condition
-        // This ensures the flag is saved correctly before being cleared
+        // Always clear transition flag regardless of commit success
+        // The transition is already happening, flag must be cleared to avoid confusion
         if (isTransitioning) {
             db.isTransitioningToGamePlay = false;
+        }
+
+        if (!commitSuccess) {
+            android.util.Log.e(TAG, "Failed to save game state!");
         }
     }
 
