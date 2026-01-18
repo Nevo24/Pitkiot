@@ -139,19 +139,6 @@ public class MyDialogFragment extends DialogFragment {
                     }
                 }
 
-                // Set button panel gravity using absolute positioning
-                // Hebrew (RTL): want RIGHT, so use absolute RIGHT
-                // English (LTR): want LEFT, so use absolute LEFT
-                int buttonPanelId = context.getResources().getIdentifier("buttonPanel", "id", "android");
-                if (buttonPanelId > 0) {
-                    View buttonPanel = dialog.findViewById(buttonPanelId);
-                    if (buttonPanel != null && buttonPanel instanceof LinearLayout) {
-                        LinearLayout buttonPanelLayout = (LinearLayout) buttonPanel;
-                        int gravity = isRTL ? Gravity.RIGHT : Gravity.LEFT;
-                        buttonPanelLayout.setGravity(gravity);
-                    }
-                }
-
                 // Get the dark green color from colorAccent
                 int darkGreen = ContextCompat.getColor(context, nevo_mashiach.pitkiot.R.color.colorAccent);
 

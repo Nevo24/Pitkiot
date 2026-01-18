@@ -42,7 +42,7 @@ public class DialogBag {
                 context.getString(nevo_mashiach.pitkiot.R.string.dialog_mode_changed_title),
                 String.format(context.getString(nevo_mashiach.pitkiot.R.string.dialog_mode_changed_msg), db.getRoundMode(context))
         );
-        dialog = dialog.setNaturalButton(context.getString(nevo_mashiach.pitkiot.R.string.dialog_understood), null);
+        dialog = dialog.setPositiveButton(context.getString(nevo_mashiach.pitkiot.R.string.dialog_understood), null);
         dialog.show(fragmentManager, "ModeChanged");
     }
 
@@ -263,7 +263,7 @@ public class DialogBag {
                 context.getString(nevo_mashiach.pitkiot.R.string.dialog_uneven_title),
                 context.getString(nevo_mashiach.pitkiot.R.string.dialog_uneven_msg)
         );
-        dialog = dialog.setNaturalButton(context.getString(nevo_mashiach.pitkiot.R.string.dialog_understood), null);
+        dialog = dialog.setPositiveButton(context.getString(nevo_mashiach.pitkiot.R.string.dialog_understood), null);
         dialog.show(fragmentManager, "UnevenExplanation"); //The second one is just a string tag that we can use to refer to it.
     }
 
@@ -324,7 +324,7 @@ public class DialogBag {
                 context.getString(nevo_mashiach.pitkiot.R.string.dialog_invalid_input_title),
                 context.getString(nevo_mashiach.pitkiot.R.string.dialog_invalid_input_msg)
         );
-        dialog = dialog.setNaturalButton(context.getString(nevo_mashiach.pitkiot.R.string.dialog_ok), null);
+        dialog = dialog.setPositiveButton(context.getString(nevo_mashiach.pitkiot.R.string.dialog_ok), null);
         dialog.show(fragmentManager, "InvalidInput"); //The second one is just a string tag that we can use to refer to it.
     }
 
@@ -520,7 +520,7 @@ public class DialogBag {
                 context.getString(nevo_mashiach.pitkiot.R.string.dialog_cannot_edit_score_title),
                 context.getString(nevo_mashiach.pitkiot.R.string.dialog_cannot_edit_score_msg)
         );
-        dialog = dialog.setNaturalButton(context.getString(nevo_mashiach.pitkiot.R.string.dialog_understood), null);
+        dialog = dialog.setPositiveButton(context.getString(nevo_mashiach.pitkiot.R.string.dialog_understood), null);
         dialog.show(fragmentManager, "ClickAgainPlease"); //The second one is just a string tag that we can use to refer to it.
     }
 
@@ -529,7 +529,7 @@ public class DialogBag {
                 context.getString(nevo_mashiach.pitkiot.R.string.dialog_cannot_edit_teams_title),
                 context.getString(nevo_mashiach.pitkiot.R.string.dialog_cannot_edit_teams_msg)
         );
-        dialog = dialog.setNaturalButton(context.getString(nevo_mashiach.pitkiot.R.string.dialog_understood), null);
+        dialog = dialog.setPositiveButton(context.getString(nevo_mashiach.pitkiot.R.string.dialog_understood), null);
         dialog.show(fragmentManager, "ClickAgainPlease"); //The second one is just a string tag that we can use to refer to it.
     }
 
