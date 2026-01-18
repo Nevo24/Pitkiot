@@ -89,7 +89,7 @@
     <string name="dialog_view_final_score">צפייה בניקוד הסופי</string>
     <string name="dialog_final_score_title">ניקוד סופי</string>
     <string name="dialog_team_score">קבוצה %1$d: %2$d\n</string>
-    <string name="dialog_team_wins">קבוצה %d מנצחת!</string>
+    <string name="dialog_team_wins">קבוצה %d ניצחה!</string>
     <string name="dialog_team_score_with_points">קבוצה %1$d: %2$d נקודות\n</string>
     <string name="dialog_draw_title">תיקו!</string>
     <string name="dialog_auto_balance_note">\n\n* הניקוד אוזן אוטומטית</string>
