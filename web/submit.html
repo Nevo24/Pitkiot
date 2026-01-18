@@ -384,7 +384,9 @@
                 sending: 'שולח...',
                 success: 'הפתקים נשלחו בהצלחה! 🎉',
                 errorSubmit: 'שגיאה בשליחת הפתקים. אנא נסה שוב.',
-                sessionCode: 'מספר חדר: '
+                sessionCode: 'מספר חדר: ',
+                validationName: 'נא למלא שדה זה.',
+                validationNotes: 'נא למלא שדה זה.'
             },
             en: {
                 title: 'Pitkiot - Add Notes',
@@ -406,7 +408,9 @@
                 sending: 'Sending...',
                 success: 'Notes sent successfully! 🎉',
                 errorSubmit: 'Error sending notes. Please try again.',
-                sessionCode: 'Room Number: '
+                sessionCode: 'Room Number: ',
+                validationName: 'Please fill out this field.',
+                validationNotes: 'Please fill out this field.'
             }
         };
 
@@ -461,6 +465,30 @@
         document.querySelectorAll('.helper-text')[1].textContent = t.helperNotes;
         submitBtn.textContent = t.buttonSubmit;
         document.querySelector('#loadingScreen p').textContent = t.loading;
+
+        // Set custom validation messages for required fields
+        const noteNameInput = document.getElementById('noteName');
+        const noteContentInput = document.getElementById('noteContent');
+
+        noteNameInput.addEventListener('invalid', function() {
+            if (this.validity.valueMissing) {
+                this.setCustomValidity(t.validationName);
+            }
+        });
+
+        noteNameInput.addEventListener('input', function() {
+            this.setCustomValidity('');
+        });
+
+        noteContentInput.addEventListener('invalid', function() {
+            if (this.validity.valueMissing) {
+                this.setCustomValidity(t.validationNotes);
+            }
+        });
+
+        noteContentInput.addEventListener('input', function() {
+            this.setCustomValidity('');
+        });
 
         // Validate session ID
         if (!sessionId) {
