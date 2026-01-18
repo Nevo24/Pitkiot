@@ -220,28 +220,52 @@ public class MainActivity extends AppCompatActivity {
         Set<String> set;
         try {
             set = prefs.getStringSet("defs", null);
-            db.defs = new ArrayList<>(set);
-        } catch (Exception ignored) {
+            // FIX: Check for null before creating ArrayList
+            if (set != null) {
+                db.defs = new ArrayList<>(set);
+            } else {
+                db.defs = new ArrayList<>();
+            }
+        } catch (Exception e) {
+            db.defs = new ArrayList<>();
+            android.util.Log.e("MainActivity", "Error loading defs: " + e.getMessage());
         }
         try {
             set = prefs.getStringSet("temp", null);
-            db.temp = new ArrayList<>(set);
-        } catch (Exception ignored) {
+            // FIX: Check for null before creating ArrayList
+            if (set != null) {
+                db.temp = new ArrayList<>(set);
+            } else {
+                db.temp = new ArrayList<>();
+            }
+        } catch (Exception e) {
+            db.temp = new ArrayList<>();
+            android.util.Log.e("MainActivity", "Error loading temp: " + e.getMessage());
         }
         // Only load data for active teams to avoid using stale data
         for (int i = 0; i < db.amountOfTeams; i++) {
             try {
                 set = prefs.getStringSet("team" + i + "Notes", null);
-                db.teamsNotes[i] = new ArrayList<>(set);
-            } catch (Exception ignored) {
+                // FIX: Check for null before creating ArrayList to prevent NPE
+                if (set != null) {
+                    db.teamsNotes[i] = new ArrayList<>(set);
+                } else {
+                    db.teamsNotes[i] = new ArrayList<>();
+                    android.util.Log.w("MainActivity", "Team " + i + " notes are null, initializing empty list");
+                }
+            } catch (Exception e) {
+                db.teamsNotes[i] = new ArrayList<>();
+                android.util.Log.e("MainActivity", "Error loading team " + i + " notes: " + e.getMessage());
             }
             try {
                 db.teamsRoundNum[i] = prefs.getInt("team" + i + "RoundNum", 0);
             } catch (Exception e) {
+                android.util.Log.e("MainActivity", "Error loading team " + i + " round num: " + e.getMessage());
             }
             try {
                 db.scores[i] = prefs.getInt("team" + i + "Score", 0);
-            } catch (Exception ignored) {
+            } catch (Exception e) {
+                android.util.Log.e("MainActivity", "Error loading team " + i + " score: " + e.getMessage());
             }
         }
         try {
@@ -371,6 +395,18 @@ public class MainActivity extends AppCompatActivity {
                 spEditor.putLong("mMillisUntilFinished", db.timePerRound * 1000L);
                 spEditor.putBoolean("summaryIsPaused", false);
                 spEditor.putBoolean("gamePlayIsPaused", false);
+
+                // FIX: Clear game over dialog state when resetting game
+                spEditor.putBoolean("shouldShowGameOverDialog", false);
+                spEditor.putString("gameOverDialogType", "");
+                spEditor.putInt("gameOverWinningTeam", -1);
+                spEditor.putInt("gameOverWinningScore", 0);
+                spEditor.putInt("gameOverLosingScore", 0);
+                spEditor.putBoolean("gameOverAutoBalanceApplied", false);
+                for (int i = 0; i < 24; i++) {
+                    spEditor.putInt("gameOverScore" + i, 0);
+                }
+
                 spEditor.apply();
 
                 Toast.makeText(context, getString(R.string.toast_game_reset), Toast.LENGTH_SHORT).show();

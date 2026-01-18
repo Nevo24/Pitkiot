@@ -141,23 +141,30 @@ public class NoteCollectionSession {
                         return;
                     }
 
-                    if (snapshots != null) {
-                        // Process new submissions only (not initial data)
-                        for (DocumentChange dc : snapshots.getDocumentChanges()) {
-                            if (dc.getType() == DocumentChange.Type.ADDED) {
-                                DocumentSnapshot doc = dc.getDocument();
+                    // FIX: Handle null snapshots case properly
+                    if (snapshots == null) {
+                        Log.w(TAG, "Received null snapshot data - possible network issue or permission error");
+                        // Don't call onError for null snapshots during initial load
+                        // This can happen during first connection or temporary network issues
+                        // The listener will retry automatically
+                        return;
+                    }
 
-                                String submitterName = doc.getString("submitterName");
-                                String noteContent = doc.getString("noteContent");
+                    // Process new submissions only (not initial data)
+                    for (DocumentChange dc : snapshots.getDocumentChanges()) {
+                        if (dc.getType() == DocumentChange.Type.ADDED) {
+                            DocumentSnapshot doc = dc.getDocument();
 
-                                if (noteContent != null && !noteContent.trim().isEmpty()) {
-                                    Log.d(TAG, "New note from " + submitterName + ": " + noteContent);
-                                    if (noteReceivedListener != null) {
-                                        noteReceivedListener.onNoteReceived(
-                                                submitterName != null ? submitterName : context.getString(R.string.submitter_anonymous),
-                                                noteContent
-                                        );
-                                    }
+                            String submitterName = doc.getString("submitterName");
+                            String noteContent = doc.getString("noteContent");
+
+                            if (noteContent != null && !noteContent.trim().isEmpty()) {
+                                Log.d(TAG, "New note from " + submitterName + ": " + noteContent);
+                                if (noteReceivedListener != null) {
+                                    noteReceivedListener.onNoteReceived(
+                                            submitterName != null ? submitterName : context.getString(R.string.submitter_anonymous),
+                                            noteContent
+                                    );
                                 }
                             }
                         }

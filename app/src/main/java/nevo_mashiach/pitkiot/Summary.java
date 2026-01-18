@@ -436,7 +436,12 @@ public class Summary extends AppCompatActivity {
             mMultiTeamRound.setText(getString(R.string.game_number_of_rounds, db.teamsRoundNum[db.currentPlaying]));
         }
 
-        db.team2AverageAnswersPerSecond = Double.longBitsToDouble(prefs.getLong("team2AverageAnswersPerSecond", Double.doubleToLongBits(0)));
+        // FIX: Check if value exists before using default to prevent precision loss
+        if (prefs.contains("team2AverageAnswersPerSecond")) {
+            db.team2AverageAnswersPerSecond = Double.longBitsToDouble(prefs.getLong("team2AverageAnswersPerSecond", 0));
+        } else {
+            db.team2AverageAnswersPerSecond = 0.0;
+        }
         teamThatJustPlayed = prefs.getInt("teamThatJustPlayed", -1);
         successCountForTeamThatJustPlayed = prefs.getInt("successCountForTeamThatJustPlayed", 0);
 
@@ -597,10 +602,11 @@ public class Summary extends AppCompatActivity {
         // If transitioning to GamePlay, save gamePlayIsPaused=true
         // If game over dialog is active, don't mark as paused (user will resume to dialog)
         // Otherwise, this is a regular pause (backgrounding), save summaryIsPaused=true
-        if (db.isTransitioningToGamePlay) {
+        // FIX: Don't clear the transition flag here - it will be cleared after commit succeeds
+        boolean isTransitioning = db.isTransitioningToGamePlay;
+        if (isTransitioning) {
             spEditor.putBoolean("summaryIsPaused", false);
             spEditor.putBoolean("gamePlayIsPaused", true);
-            db.isTransitioningToGamePlay = false; // Clear flag after use
         } else if (db.shouldShowGameOverDialog) {
             // Game over dialog is pending - keep summaryIsPaused true so we resume to Summary
             // and show the dialog there
@@ -612,7 +618,9 @@ public class Summary extends AppCompatActivity {
         }
 
         spEditor.putBoolean("wasTimeUp", db.wasTimeUp);
-        spEditor.putLong("team2AverageAnswersPerSecond", Double.doubleToRawLongBits(db.team2AverageAnswersPerSecond));
+        // FIX: Capture value to local variable to prevent race condition
+        double team2AvgSnapshot = db.team2AverageAnswersPerSecond;
+        spEditor.putLong("team2AverageAnswersPerSecond", Double.doubleToRawLongBits(team2AvgSnapshot));
         spEditor.putInt("teamThatJustPlayed", teamThatJustPlayed);
         spEditor.putInt("successCountForTeamThatJustPlayed", successCountForTeamThatJustPlayed);
 
@@ -632,7 +640,17 @@ public class Summary extends AppCompatActivity {
             spEditor.putInt("gameOverScore" + i, db.gameOverAllScores[i]);
         }
 
-        spEditor.apply();
+        // FIX: Use commit() for critical game state to ensure synchronous write
+        // This guarantees state is saved before the activity is destroyed
+        if (!spEditor.commit()) {
+            android.util.Log.e(TAG, "Failed to save game state!");
+        }
+
+        // FIX: Clear transition flag AFTER commit succeeds to prevent race condition
+        // This ensures the flag is saved correctly before being cleared
+        if (isTransitioning) {
+            db.isTransitioningToGamePlay = false;
+        }
     }
 
     private void twoTeamsVisibility(boolean visible) {

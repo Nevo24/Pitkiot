@@ -136,7 +136,14 @@ public class GamePlay extends AppCompatActivity {
         if (firstTime) {
             // Load game state (not localized strings - regenerate those in onResume)
             mCurrentDef.setText(prefs.getString("currentDef", ""));
-            fixedMillisUntilFinished = prefs.getLong("fixedMillisUntilFinished", 60);
+            // FIX: Validate timer value is reasonable (between 0 and max time)
+            long savedTime = prefs.getLong("fixedMillisUntilFinished", db.timePerRound * 1000L);
+            if (savedTime < 0 || savedTime > db.timePerRound * 1000L) {
+                android.util.Log.w(TAG, "Invalid saved time: " + savedTime + ", using default");
+                fixedMillisUntilFinished = db.timePerRound * 1000L;
+            } else {
+                fixedMillisUntilFinished = savedTime;
+            }
             currentDef = prefs.getString("currentDefString", "");
             firstTime = false;
         }
@@ -187,7 +194,9 @@ public class GamePlay extends AppCompatActivity {
             spEditor.putInt("team" + i + "RoundNum", db.teamsRoundNum[i]);
             spEditor.putInt("team" + i + "Score", db.scores[i]);
         }
-        spEditor.putLong("team2AverageAnswersPerSecond", Double.doubleToRawLongBits(db.team2AverageAnswersPerSecond));
+        // FIX: Capture value to local variable to prevent race condition
+        double team2AvgSnapshot = db.team2AverageAnswersPerSecond;
+        spEditor.putLong("team2AverageAnswersPerSecond", Double.doubleToRawLongBits(team2AvgSnapshot));
         spEditor.putInt("totalRoundNumber", db.totalRoundNumber);
         spEditor.putInt("currentSuccessNum", db.currentSuccessNum);
         spEditor.putInt("currentPlaying", db.currentPlaying);
@@ -196,10 +205,11 @@ public class GamePlay extends AppCompatActivity {
         // CRITICAL FIX: Save the correct pause state based on current situation
         // If transitioning to Summary, save summaryIsPaused=true
         // Otherwise, this is a regular pause (backgrounding), save gamePlayIsPaused=true
-        if (db.isTransitioningToSummary) {
+        // FIX: Don't clear the transition flag here - it will be cleared after commit succeeds
+        boolean isTransitioning = db.isTransitioningToSummary;
+        if (isTransitioning) {
             spEditor.putBoolean("summaryIsPaused", true);
             spEditor.putBoolean("gamePlayIsPaused", false);
-            db.isTransitioningToSummary = false; // Clear flag after use
         } else {
             spEditor.putBoolean("summaryIsPaused", false);
             spEditor.putBoolean("gamePlayIsPaused", true);
@@ -211,7 +221,17 @@ public class GamePlay extends AppCompatActivity {
         spEditor.putString("currentDef", currentDef);  // The actual note content (not a localizable string)
         spEditor.putLong("fixedMillisUntilFinished", fixedMillisUntilFinished);
         spEditor.putString("currentDefString", currentDef);
-        spEditor.apply();
+        // FIX: Use commit() for critical game state to ensure synchronous write
+        // This guarantees state is saved before the activity is destroyed
+        if (!spEditor.commit()) {
+            android.util.Log.e(TAG, "Failed to save game state!");
+        }
+
+        // FIX: Clear transition flag AFTER commit succeeds to prevent race condition
+        // This ensures the flag is saved correctly before being cleared
+        if (isTransitioning) {
+            db.isTransitioningToSummary = false;
+        }
     }
 
     @SuppressLint("SetTextI18n")

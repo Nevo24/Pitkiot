@@ -71,7 +71,9 @@ public class NoteManagement extends AppCompatActivity {
     private NoteCollectionSession noteCollectionSession;
     private Dialog collectionDialog;
     private int receivedNotesCount = 0;
-    private final java.util.LinkedHashMap<String, java.util.Set<String>> submitterNoteCounts = new java.util.LinkedHashMap<>();
+    // FIX: Synchronize HashMap to prevent concurrent modification from UI thread and Firebase listener thread
+    private final java.util.Map<String, java.util.Set<String>> submitterNoteCounts =
+        java.util.Collections.synchronizedMap(new java.util.LinkedHashMap<>());
     private static final String FIREBASE_HOSTING_URL = "https://pitkiot-29650.web.app";
 
     // SharedPreferences keys for persisting collection session state
@@ -526,11 +528,15 @@ public class NoteManagement extends AppCompatActivity {
             }
 
             // Calculate total unique notes before clearing
-            java.util.Set<String> allUniqueNotes = new java.util.HashSet<>();
-            for (java.util.Set<String> submitterNotes : submitterNoteCounts.values()) {
-                allUniqueNotes.addAll(submitterNotes);
+            // FIX: Synchronize access to prevent concurrent modification
+            int totalUniqueNotes;
+            synchronized (submitterNoteCounts) {
+                java.util.Set<String> allUniqueNotes = new java.util.HashSet<>();
+                for (java.util.Set<String> submitterNotes : submitterNoteCounts.values()) {
+                    allUniqueNotes.addAll(submitterNotes);
+                }
+                totalUniqueNotes = allUniqueNotes.size();
             }
-            int totalUniqueNotes = allUniqueNotes.size();
 
             collectionDialog.dismiss();
             String message = totalUniqueNotes == 1
@@ -565,22 +571,27 @@ public class NoteManagement extends AppCompatActivity {
             int notesInSubmission = notes.size();
 
             // Update unique notes for this submitter
-            java.util.Set<String> currentNotes = submitterNoteCounts.get(submitterName);
-            if (currentNotes == null) {
-                currentNotes = new java.util.HashSet<>();
-            }
-            currentNotes.addAll(notes);
-            submitterNoteCounts.put(submitterName, currentNotes);
+            // FIX: Synchronize access to prevent concurrent modification
+            int totalPlayers;
+            int totalUniqueNotes;
+            synchronized (submitterNoteCounts) {
+                java.util.Set<String> currentNotes = submitterNoteCounts.get(submitterName);
+                if (currentNotes == null) {
+                    currentNotes = new java.util.HashSet<>();
+                }
+                currentNotes.addAll(notes);
+                submitterNoteCounts.put(submitterName, currentNotes);
 
-            // Update total count display (total unique notes and total players)
-            int totalPlayers = submitterNoteCounts.size();
+                // Update total count display (total unique notes and total players)
+                totalPlayers = submitterNoteCounts.size();
 
-            // Calculate total unique notes across all submitters
-            java.util.Set<String> allUniqueNotes = new java.util.HashSet<>();
-            for (java.util.Set<String> submitterNotes : submitterNoteCounts.values()) {
-                allUniqueNotes.addAll(submitterNotes);
+                // Calculate total unique notes across all submitters
+                java.util.Set<String> allUniqueNotes = new java.util.HashSet<>();
+                for (java.util.Set<String> submitterNotes : submitterNoteCounts.values()) {
+                    allUniqueNotes.addAll(submitterNotes);
+                }
+                totalUniqueNotes = allUniqueNotes.size();
             }
-            int totalUniqueNotes = allUniqueNotes.size();
 
             // Set the appropriate text based on count
             if (totalUniqueNotes == 0) {
@@ -603,7 +614,12 @@ public class NoteManagement extends AppCompatActivity {
                 notesList.removeAllViews();
 
                 // Add a horizontal layout for each submitter with BiDi-safe text arrangement
-                for (java.util.Map.Entry<String, java.util.Set<String>> entry : submitterNoteCounts.entrySet()) {
+                // FIX: Create a copy of entries to prevent concurrent modification during iteration
+                java.util.List<java.util.Map.Entry<String, java.util.Set<String>>> entriesCopy;
+                synchronized (submitterNoteCounts) {
+                    entriesCopy = new java.util.ArrayList<>(submitterNoteCounts.entrySet());
+                }
+                for (java.util.Map.Entry<String, java.util.Set<String>> entry : entriesCopy) {
                     String name = entry.getKey();
                     int count = entry.getValue().size();
 
@@ -842,7 +858,9 @@ public class NoteManagement extends AppCompatActivity {
      * Starts the Firebase listener for the current collection session
      */
     private void startCollectionListener() {
+        // FIX: Add defensive check and logging
         if (noteCollectionSession == null) {
+            android.util.Log.e("NoteManagement", "Cannot start listener: noteCollectionSession is null");
             return;
         }
 
@@ -917,8 +935,14 @@ public class NoteManagement extends AppCompatActivity {
         // If dialog is already showing, just restart the listener
         if (collectionDialog != null && collectionDialog.isShowing()) {
             android.util.Log.d("NoteManagement", "Dialog already showing, restarting listener");
+            // FIX: Ensure noteCollectionSession exists before starting listener
             if (noteCollectionSession != null) {
                 startCollectionListener();
+            } else {
+                android.util.Log.e("NoteManagement", "noteCollectionSession is null, cannot restart listener");
+                // Session is invalid, clear persistence and dismiss dialog
+                clearCollectionPersistence();
+                collectionDialog.dismiss();
             }
             return;
         }
@@ -936,22 +960,50 @@ public class NoteManagement extends AppCompatActivity {
 
         // Restore counters and submitter data
         receivedNotesCount = prefs.getInt(PREF_COLLECTION_RECEIVED_COUNT, 0);
-        submitterNoteCounts.clear();
 
-        Set<String> submitterData = prefs.getStringSet(PREF_COLLECTION_SUBMITTER_DATA, new HashSet<>());
-        for (String entry : submitterData) {
-            // Parse format: "submitterName||note1,,note2,,note3"
-            String[] parts = entry.split("\\|\\|", 2);
-            if (parts.length == 2) {
-                String name = parts[0];
-                String[] notes = parts[1].split(",,");
-                Set<String> noteSet = new HashSet<>();
-                for (String note : notes) {
-                    if (!note.isEmpty()) {
-                        noteSet.add(note);
-                    }
+        // FIX: Synchronize access and add validation for restored data
+        synchronized (submitterNoteCounts) {
+            submitterNoteCounts.clear();
+
+            Set<String> submitterData = prefs.getStringSet(PREF_COLLECTION_SUBMITTER_DATA, new HashSet<>());
+            // FIX: Check for null and empty strings
+            if (submitterData == null || submitterData.isEmpty()) {
+                android.util.Log.w("NoteManagement", "No submitter data to restore");
+                return;
+            }
+
+            for (String entry : submitterData) {
+                // FIX: Validate entry is not null or empty
+                if (entry == null || entry.trim().isEmpty()) {
+                    android.util.Log.w("NoteManagement", "Skipping null or empty entry");
+                    continue;
                 }
-                submitterNoteCounts.put(name, noteSet);
+
+                // Parse format: "submitterName||note1,,note2,,note3"
+                // FIX: Use regex that handles escaped delimiters properly
+                // Look for || that is not preceded by \
+                String[] parts = entry.split("(?<!\\\\)\\|\\|", 2);
+                if (parts.length == 2) {
+                    // Unescape the name
+                    String name = parts[0].replace("\\|\\|", "||").replace("\\,\\,", ",,");
+                    // FIX: Validate name is not null or empty
+                    if (name == null || name.trim().isEmpty()) {
+                        android.util.Log.w("NoteManagement", "Skipping entry with empty name");
+                        continue;
+                    }
+
+                    // Split notes by ,, that is not preceded by \
+                    String[] notes = parts[1].split("(?<!\\\\),,");
+                    Set<String> noteSet = new HashSet<>();
+                    for (String note : notes) {
+                        // Unescape and add non-empty notes
+                        String unescapedNote = note.replace("\\|\\|", "||").replace("\\,\\,", ",,");
+                        if (unescapedNote != null && !unescapedNote.isEmpty()) {
+                            noteSet.add(unescapedNote);
+                        }
+                    }
+                    submitterNoteCounts.put(name, noteSet);
+                }
             }
         }
 
@@ -964,14 +1016,22 @@ public class NoteManagement extends AppCompatActivity {
         showNoteCollectionDialog(shortCode, url);
 
         // Update dialog UI with restored submitter data
-        if (receivedNotesCount > 0 && !submitterNoteCounts.isEmpty()) {
-            // Get any submitter's first note to trigger UI rebuild
-            // This will rebuild the entire list from submitterNoteCounts map
-            String anyName = submitterNoteCounts.keySet().iterator().next();
-            Set<String> anyNotes = submitterNoteCounts.get(anyName);
-            if (anyNotes != null && !anyNotes.isEmpty()) {
-                String anyNote = anyNotes.iterator().next();
-                updateCollectionDialogUI(anyName, anyNote);
+        // FIX: Synchronize access and add null checks
+        synchronized (submitterNoteCounts) {
+            if (receivedNotesCount > 0 && !submitterNoteCounts.isEmpty()) {
+                // Get any submitter's first note to trigger UI rebuild
+                // This will rebuild the entire list from submitterNoteCounts map
+                java.util.Set<String> keys = submitterNoteCounts.keySet();
+                if (keys != null && !keys.isEmpty()) {
+                    String anyName = keys.iterator().next();
+                    Set<String> anyNotes = submitterNoteCounts.get(anyName);
+                    if (anyNotes != null && !anyNotes.isEmpty()) {
+                        String anyNote = anyNotes.iterator().next();
+                        if (anyNote != null) {
+                            updateCollectionDialogUI(anyName, anyNote);
+                        }
+                    }
+                }
             }
         }
 
@@ -992,12 +1052,26 @@ public class NoteManagement extends AppCompatActivity {
 
         spEditor.putInt(PREF_COLLECTION_RECEIVED_COUNT, receivedNotesCount);
 
-        // Serialize submitterNoteCounts to StringSet format: "name||note1,,note2,,note3"
+        // Serialize submitterNoteCounts to StringSet format with escaping
+        // FIX: Escape delimiters to prevent parsing issues and synchronize access
         Set<String> serializedData = new HashSet<>();
-        for (java.util.Map.Entry<String, java.util.Set<String>> entry : submitterNoteCounts.entrySet()) {
-            String name = entry.getKey();
-            String notesJoined = String.join(",,", entry.getValue());
-            serializedData.add(name + "||" + notesJoined);
+        synchronized (submitterNoteCounts) {
+            for (java.util.Map.Entry<String, java.util.Set<String>> entry : submitterNoteCounts.entrySet()) {
+                String name = entry.getKey();
+                // Escape || and ,, in names and notes to prevent parsing issues
+                String escapedName = name.replace("||", "\\|\\|").replace(",,", "\\,\\,");
+
+                // Escape notes as well
+                java.util.Set<String> escapedNotes = new java.util.HashSet<>();
+                for (String note : entry.getValue()) {
+                    if (note != null && !note.isEmpty()) {
+                        escapedNotes.add(note.replace("||", "\\|\\|").replace(",,", "\\,\\,"));
+                    }
+                }
+
+                String notesJoined = String.join(",,", escapedNotes);
+                serializedData.add(escapedName + "||" + notesJoined);
+            }
         }
         spEditor.putStringSet(PREF_COLLECTION_SUBMITTER_DATA, serializedData);
 
