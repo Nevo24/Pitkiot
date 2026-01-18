@@ -97,6 +97,24 @@
             border: 2px solid rgba(255, 255, 255, 0.5);
         }
 
+        .session-code-input {
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            font-family: 'gan', 'Courier New', monospace;
+            font-size: 18px;
+            font-weight: bold;
+            color: #11353D;
+            width: 160px;
+            text-align: center;
+            border-radius: 5px;
+            padding: 4px 8px;
+            margin: 0 5px;
+        }
+
+        .session-code-input:focus {
+            outline: 2px solid rgba(255, 255, 255, 0.8);
+        }
+
         .subtitle {
             color: #ffffff;
             margin-bottom: 0;
@@ -246,6 +264,13 @@
             direction: ltr;
         }
 
+        /* Override for session input - always centered and LTR */
+        [dir="rtl"] .session-code-input,
+        [dir="ltr"] .session-code-input {
+            text-align: center !important;
+            direction: ltr !important;
+        }
+
         [dir="rtl"] label,
         [dir="rtl"] .helper-text {
             text-align: right;
@@ -287,7 +312,10 @@
         <div class="header">
             <div class="logo">📝</div>
             <h1>Pitkiot - פתקיות</h1>
-            <div class="session-code" id="sessionDisplay"></div>
+            <div class="session-code">
+                <span id="sessionLabel"></span>
+                <input type="text" id="sessionInput" class="session-code-input" maxlength="20">
+            </div>
         </div>
 
         <div id="loadingScreen" class="loading">
@@ -356,7 +384,7 @@
                 sending: 'שולח...',
                 success: 'הפתקים נשלחו בהצלחה! 🎉',
                 errorSubmit: 'שגיאה בשליחת הפתקים. אנא נסה שוב.',
-                sessionCode: 'קוד: '
+                sessionCode: 'מספר חדר: '
             },
             en: {
                 title: 'Pitkiot - Add Notes',
@@ -378,7 +406,7 @@
                 sending: 'Sending...',
                 success: 'Notes sent successfully! 🎉',
                 errorSubmit: 'Error sending notes. Please try again.',
-                sessionCode: 'Code: '
+                sessionCode: 'Room Number: '
             }
         };
 
@@ -404,7 +432,7 @@
         const t = translations[lang] || translations.he;
 
         // Combine device ID and short code to create full session ID
-        const sessionId = deviceId && shortCode ? deviceId + '_' + shortCode : shortCode;
+        let sessionId = deviceId && shortCode ? deviceId + '_' + shortCode : shortCode;
 
         // Apply language settings
         document.documentElement.lang = lang;
@@ -415,7 +443,8 @@
         const loadingScreen = document.getElementById('loadingScreen');
         const mainContent = document.getElementById('mainContent');
         const errorScreen = document.getElementById('errorScreen');
-        const sessionDisplay = document.getElementById('sessionDisplay');
+        const sessionLabel = document.getElementById('sessionLabel');
+        const sessionInput = document.getElementById('sessionInput');
         const noteForm = document.getElementById('noteForm');
         const submitBtn = document.getElementById('submitBtn');
         const message = document.getElementById('message');
@@ -437,11 +466,63 @@
         if (!sessionId) {
             showError(t.errorNoSession);
         } else {
-            // Display only the short code to the user (4 digits)
-            sessionDisplay.textContent = t.sessionCode + shortCode;
+            // Display the room number label and input field with full session ID
+            sessionLabel.textContent = t.sessionCode;
+            sessionInput.value = sessionId;
             loadingScreen.style.display = 'none';
             mainContent.style.display = 'block';
         }
+
+        // Function to update URL and refresh page
+        function updateRoomNumberAndRefresh() {
+            const newRoomNumber = sessionInput.value.trim();
+
+            // Parse the room number to extract device ID and short code
+            let newDeviceId, newShortCode;
+
+            if (newRoomNumber.includes('_')) {
+                // Format: deviceId_shortCode
+                const parts = newRoomNumber.split('_');
+                newDeviceId = parts[0];
+                newShortCode = parts[1] || '';
+            } else if (newRoomNumber.length > 3) {
+                // Assume first 8 chars are device ID, rest is short code
+                newDeviceId = newRoomNumber.substring(0, 8);
+                newShortCode = newRoomNumber.substring(8);
+            } else {
+                // Just a short code, use existing device ID
+                newDeviceId = deviceId;
+                newShortCode = newRoomNumber;
+            }
+
+            if (newDeviceId && newShortCode) {
+                // Update URL with new device ID and short code, preserving language
+                const newUrl = new URL(window.location.href);
+                newUrl.searchParams.set('d', newDeviceId);
+                newUrl.searchParams.set('s', newShortCode);
+                // Language is preserved automatically as we're not removing it
+
+                // Refresh the page with the new URL
+                window.location.href = newUrl.toString();
+            }
+        }
+
+        // Add event listener for when user presses Enter
+        sessionInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                this.blur(); // Remove focus from input
+                updateRoomNumberAndRefresh();
+            }
+        });
+
+        // Add event listener for when user clicks away (blur event)
+        sessionInput.addEventListener('blur', function() {
+            const newRoomNumber = this.value.trim();
+            // Only refresh if the room number has changed
+            if (newRoomNumber !== sessionId && newRoomNumber !== '') {
+                updateRoomNumberAndRefresh();
+            }
+        });
 
         function showError(msg) {
             loadingScreen.style.display = 'none';
