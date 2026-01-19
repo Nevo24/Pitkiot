@@ -77,8 +77,8 @@
     <string name="dialog_mode_changed_title">Note! Game mode changing!</string>
     <string name="dialog_mode_changed_msg">From now on - %s</string>
     <string name="dialog_understood">Got it</string>
-    <string name="dialog_no_notes_title">Cannot Start Game</string>
-    <string name="dialog_no_notes_msg">Cannot start a game without notes in the database.\n\nTo add notes, go to the \"NOTES MANAGEMENT\" page.</string>
+    <string name="dialog_no_notes_title">No Notes!</string>
+    <string name="dialog_no_notes_msg">Cannot play without notes in the database.\n\nTo add notes, go to the \"NOTES MANAGEMENT\" page.</string>
     <string name="dialog_go_to_notes_management">Go to Notes Management</string>
     <string name="dialog_stay_here">Stay</string>
     <string name="dialog_return_main">Return to Main Menu</string>

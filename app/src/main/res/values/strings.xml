@@ -77,8 +77,8 @@
     <string name="dialog_mode_changed_title">שימו לב משנים מוד משחק!</string>
     <string name="dialog_mode_changed_msg">מעכשיו %s</string>
     <string name="dialog_understood">הבנתי</string>
-    <string name="dialog_no_notes_title">לא ניתן להתחיל משחק</string>
-    <string name="dialog_no_notes_msg">לא ניתן להתחיל משחק ללא פתקים במאגר.\n\nכדי להוסיף פתקים, עבור לעמוד \"ניהול פתקים\".</string>
+    <string name="dialog_no_notes_title">אין פתקים!</string>
+    <string name="dialog_no_notes_msg">אי אפשר לשחק ללא פתקים במאגר.\n\nכדי להוסיף פתקים, עבור לעמוד \"ניהול פתקים\".</string>
     <string name="dialog_go_to_notes_management">עבור לניהול פתקים</string>
     <string name="dialog_stay_here">הישאר</string>
     <string name="dialog_return_main">חזרה לתפריט הראשי</string>
