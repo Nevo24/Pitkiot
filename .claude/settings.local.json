@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(./gradlew assembleDebug:*)",
+      "Bash(./gradlew bundleRelease:*)",
+      "Bash(keytool -genkeypair:*)",
+      "Bash(keytool -export -rfc:*)",
+      "Bash(git rm:*)"
+    ]
+  }
+}

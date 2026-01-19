@@ -7,3 +7,10 @@
 /build
 /captures
 .externalNativeBuild
+
+# Keystore files
+*.jks
+*.keystore
+
+# Signing credentials
+gradle.properties

@@ -16,3 +16,9 @@ android.nonFinalResIds=false
 # This option should only be used with decoupled projects. More details, visit
 # http://www.gradle.org/docs/current/userguide/multi_project_builds.html#sec:decoupled_projects
 # org.gradle.parallel=true
+
+# Signing credentials - COPY THIS FILE TO gradle.properties AND FILL IN YOUR VALUES
+# RELEASE_STORE_FILE=/path/to/your/keystore.jks
+# RELEASE_STORE_PASSWORD=your_keystore_password
+# RELEASE_KEY_ALIAS=your_key_alias
+# RELEASE_KEY_PASSWORD=your_key_password
