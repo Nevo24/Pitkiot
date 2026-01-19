@@ -51,17 +51,14 @@
         android:layout_marginTop="24dp"/>
 
     <nevo_mashiach.pitkiot.NotActivities.MyButton
-        android:text=" ? "
-        android:textColor="@color/common_google_signin_btn_text_dark_default"
+        android:text="?"
+        android:textColor="#ffffffff"
         android:background="@drawable/button_blue"
         android:layout_width="45dp"
         android:layout_height="45dp"
-        android:textStyle="bold"
         android:id="@+id/balanceExplanation"
         android:textSize="24sp"
         android:gravity="center"
-        android:includeFontPadding="false"
-        android:paddingTop="4dp"
         android:layout_alignTop="@+id/autoBalaceCheckBox"
         android:layout_toLeftOf="@+id/autoBalaceCheckBox"
         android:layout_toStartOf="@+id/autoBalaceCheckBox"

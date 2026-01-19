@@ -9,7 +9,7 @@
     <string name="button_add">Add</string>
     <string name="hint_enter_character">Character1, Character2, Character3...</string>
     <string name="note_count">Number of notes: %d</string>
-    <string name="note_count_database_single">In database: one note</string>
+    <string name="note_count_database_single">Number of notes in database: 1</string>
     <string name="note_count_database_plural">Number of notes in database: %d</string>
 
     <!-- MainActivity buttons -->
