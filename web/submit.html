@@ -430,13 +430,25 @@
 
         // Get session ID and language from URL
         const urlParams = new URLSearchParams(window.location.search);
+        // Support both old format (d= and s=) and new format (room=)
+        const roomId = urlParams.get('room');
         const deviceId = urlParams.get('d');
         const shortCode = urlParams.get('session') || urlParams.get('s');
         const lang = urlParams.get('lang') || 'he'; // Default to Hebrew
         const t = translations[lang] || translations.he;
 
-        // Combine device ID and short code to create full session ID
-        let sessionId = deviceId && shortCode ? deviceId + '_' + shortCode : shortCode;
+        // Use new format if available, otherwise fall back to old format
+        let sessionId;
+        if (roomId) {
+            // New format: room parameter is the complete session ID (device ID)
+            sessionId = roomId;
+        } else if (deviceId && shortCode) {
+            // Old format: combine device ID and short code
+            sessionId = deviceId + '_' + shortCode;
+        } else if (shortCode) {
+            // Fallback: just short code
+            sessionId = shortCode;
+        }
 
         // Apply language settings
         document.documentElement.lang = lang;
@@ -502,32 +514,17 @@
         }
 
         // Function to update URL and refresh page
-        function updateRoomNumberAndRefresh() {
-            const newRoomNumber = sessionInput.value.trim();
+        function updateRoomIdAndRefresh() {
+            const newRoomId = sessionInput.value.trim();
 
-            // Parse the room number to extract device ID and short code
-            let newDeviceId, newShortCode;
-
-            if (newRoomNumber.includes('_')) {
-                // Format: deviceId_shortCode
-                const parts = newRoomNumber.split('_');
-                newDeviceId = parts[0];
-                newShortCode = parts[1] || '';
-            } else if (newRoomNumber.length > 3) {
-                // Assume first 8 chars are device ID, rest is short code
-                newDeviceId = newRoomNumber.substring(0, 8);
-                newShortCode = newRoomNumber.substring(8);
-            } else {
-                // Just a short code, use existing device ID
-                newDeviceId = deviceId;
-                newShortCode = newRoomNumber;
-            }
-
-            if (newDeviceId && newShortCode) {
-                // Update URL with new device ID and short code, preserving language
+            if (newRoomId) {
+                // Update URL with new room ID (new format), preserving language
                 const newUrl = new URL(window.location.href);
-                newUrl.searchParams.set('d', newDeviceId);
-                newUrl.searchParams.set('s', newShortCode);
+                newUrl.searchParams.set('room', newRoomId);
+                // Remove old format parameters if they exist
+                newUrl.searchParams.delete('d');
+                newUrl.searchParams.delete('s');
+                newUrl.searchParams.delete('session');
                 // Language is preserved automatically as we're not removing it
 
                 // Refresh the page with the new URL
@@ -539,16 +536,16 @@
         sessionInput.addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
                 this.blur(); // Remove focus from input
-                updateRoomNumberAndRefresh();
+                updateRoomIdAndRefresh();
             }
         });
 
         // Add event listener for when user clicks away (blur event)
         sessionInput.addEventListener('blur', function() {
-            const newRoomNumber = this.value.trim();
-            // Only refresh if the room number has changed
-            if (newRoomNumber !== sessionId && newRoomNumber !== '') {
-                updateRoomNumberAndRefresh();
+            const newRoomId = this.value.trim();
+            // Only refresh if the room ID has changed
+            if (newRoomId !== sessionId && newRoomId !== '') {
+                updateRoomIdAndRefresh();
             }
         });
 

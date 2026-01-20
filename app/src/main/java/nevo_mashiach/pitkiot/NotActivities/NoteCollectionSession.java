@@ -10,8 +10,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.Query;
 
-import java.util.Random;
-
 import nevo_mashiach.pitkiot.R;
 
 /**
@@ -45,18 +43,13 @@ public class NoteCollectionSession {
     /**
      * Constructor for restoring an existing session with a known session ID
      * @param context Application context
-     * @param existingSessionId The full session ID (format: "deviceId_shortCode")
+     * @param existingSessionId The session ID (device ID)
      */
     public NoteCollectionSession(Context context, String existingSessionId) {
         this.context = context;
         firestore = FirebaseFirestore.getInstance();
-        this.sessionId = existingSessionId;
-        // Extract device ID from session ID (format: "deviceId_shortCode")
-        if (existingSessionId != null && existingSessionId.contains("_")) {
-            this.deviceId = existingSessionId.split("_")[0];
-        } else {
-            this.deviceId = getDeviceId();
-        }
+        this.deviceId = existingSessionId != null ? existingSessionId : getDeviceId();
+        this.sessionId = this.deviceId;
     }
 
     /**
@@ -70,48 +63,40 @@ public class NoteCollectionSession {
     }
 
     /**
-     * Creates a new collection session with a unique 3-digit code combined with device ID
-     * @return The session ID (e.g., "123")
+     * Creates a new collection session using the device ID
+     * @return The session ID (device ID)
      */
     public String createSession() {
-        // Generate a 3-digit random session code
-        Random random = new Random();
-        String shortCode = String.format("%03d", random.nextInt(1000));
+        // Use device ID as the session ID (one permanent room per device)
+        sessionId = deviceId;
 
-        // Combine with device ID for uniqueness
-        sessionId = deviceId + "_" + shortCode;
-
-        Log.d(TAG, "Created session: " + sessionId + " (short code: " + shortCode + ")");
-        return shortCode; // Return only the short code for display purposes
+        Log.d(TAG, "Created/reusing session: " + sessionId);
+        return deviceId; // Return device ID for display
     }
 
     /**
-     * Gets the current full session ID (with device ID)
+     * Gets the current session ID (device ID)
      */
     public String getSessionId() {
         return sessionId;
     }
 
     /**
-     * Gets the short code (3 digits only) for display
+     * Gets the session code for display (same as device ID)
      */
     public String getShortCode() {
-        if (sessionId != null && sessionId.contains("_")) {
-            return sessionId.split("_")[1];
-        }
         return sessionId;
     }
 
     /**
      * Generates the web form URL for this session
-     * @param baseUrl Your Firebase Hosting URL (e.g., "<a href="https://pitkiot-app.web.app">...</a>")
+     * @param baseUrl Your Firebase Hosting URL (e.g., "https://pitkiot-app.web.app")
      */
     public String getSubmissionUrl(String baseUrl) {
         if (sessionId == null) {
             throw new IllegalStateException("Session not created. Call createSession() first.");
         }
-        String shortCode = getShortCode();
-        return baseUrl + "/submit?d=" + deviceId + "&s=" + shortCode;
+        return baseUrl + "/submit?room=" + sessionId;
     }
 
     /**
@@ -186,13 +171,38 @@ public class NoteCollectionSession {
     }
 
     /**
-     * Cleans up the session (call when done)
+     * Stops listening for submissions (session persists in Firestore)
      */
     public void endSession() {
         stopListening();
-        // Optionally delete the session from Firestore
-        // We'll let Firestore TTL policies handle cleanup, or you can delete manually:
-        // firestore.collection(COLLECTION_SESSIONS).document(sessionId).delete();
-        sessionId = null;
+    }
+
+    /**
+     * Clears all submissions from the current session (but keeps the session itself)
+     * Call this when the user finishes collecting and saves notes
+     */
+    public void clearSubmissions() {
+        if (sessionId == null) {
+            Log.w(TAG, "Cannot clear submissions: sessionId is null");
+            return;
+        }
+
+        Log.d(TAG, "Clearing submissions for session: " + sessionId);
+
+        // Delete all submissions from the session
+        firestore.collection(COLLECTION_SESSIONS)
+                .document(sessionId)
+                .collection(COLLECTION_SUBMISSIONS)
+                .get()
+                .addOnSuccessListener(querySnapshot -> {
+                    // Delete each submission document
+                    for (DocumentSnapshot doc : querySnapshot.getDocuments()) {
+                        doc.getReference().delete()
+                                .addOnSuccessListener(aVoid -> Log.d(TAG, "Deleted submission: " + doc.getId()))
+                                .addOnFailureListener(e -> Log.e(TAG, "Failed to delete submission: " + doc.getId(), e));
+                    }
+                    Log.d(TAG, "Successfully cleared submissions for session: " + sessionId);
+                })
+                .addOnFailureListener(e -> Log.e(TAG, "Failed to fetch submissions for deletion", e));
     }
 }

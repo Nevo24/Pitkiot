@@ -14,8 +14,8 @@ Your Pitkiot app now supports **online note collection** using Firebase! This al
 1. HOST (Your Android App)
    │
    ├─► Taps "איסוף מקוון" (Online Collection)
-   ├─► App creates Firebase session with 4-digit code
-   ├─► Shows QR code & link: https://pitkiot-xxx.web.app/submit?s=1234
+   ├─► App uses permanent room (device ID)
+   ├─► Shows QR code & link: https://pitkiot-xxx.web.app/submit?room=8d4778cf
    ├─► Host shares link via WhatsApp group
    └─► App listens for incoming notes in real-time
 
@@ -32,13 +32,14 @@ Your Pitkiot app now supports **online note collection** using Firebase! This al
    │
    ├─► Firebase Firestore receives submission
    ├─► Host app gets notification
-   ├─► Notes automatically added to game database
+   ├─► Notes automatically added to temporary storage
    └─► Host sees who submitted what
 
 4. HOST FINISHES
    │
    └─► Taps "סיים ושמור פתקים"
-       All notes saved to local database
+       ├─► Notes saved to local database
+       └─► Submissions cleared from Firebase (room persists for reuse)
 ```
 
 ## User Experience
@@ -48,12 +49,12 @@ Your Pitkiot app now supports **online note collection** using Firebase! This al
 1. Open app → "ניהול פתקים" (NOTES MANAGEMENT)
 2. Tap **"איסוף מקוון"** (green button)
 3. Dialog appears with:
-   - **4-digit code** (e.g., 5739)
+   - **Room ID** (your device ID - same every time)
    - **QR code** (for easy scanning)
    - **Full URL** (for copying)
    - **Live counter** showing how many notes received
    - **List of received notes** with submitter names
-4. Share via WhatsApp group
+4. Share via WhatsApp group (same link works every time!)
 5. Watch notes arrive in real-time!
 6. Close dialog when done → All notes added to game
 
@@ -104,7 +105,7 @@ Firestore Database:
 │
 └─ sessions/
    │
-   ├─ {sessionId: "1234"}
+   ├─ {sessionId: "8d4778cf"} (device ID - permanent room)
    │  └─ submissions/
    │     │
    │     ├─ {submissionId1}
@@ -116,14 +117,17 @@ Firestore Database:
    │        ├─ submitterName: "Sarah"
    │        ├─ noteContent: "elephant"
    │        └─ timestamp: 2026-01-06T10:31:00Z
+
+Note: Submissions are cleared automatically when starting a new collection
 ```
 
 ### Security:
 
-- Sessions use random 4-digit codes (10,000 combinations)
+- Sessions use device IDs (permanent room per device)
 - No authentication required (by design - it's a game!)
 - Firestore rules allow public read/write to `/sessions/`
-- Sessions are temporary (can add auto-cleanup)
+- Submissions are cleared between collections
+- Optional TTL for automatic cleanup
 - No personal data stored
 - SSL/HTTPS for all connections
 
@@ -219,14 +223,6 @@ implementation 'com.journeyapps:zxing-android-embedded:4.3.0'
 
 ## Customization
 
-### Change Session Code Length:
-
-In `NoteCollectionSession.java`:
-```java
-// Change from 4 to 6 digits:
-sessionId = String.format("%06d", random.nextInt(1000000));
-```
-
 ### Change Web Form Colors:
 
 In `web/submit.html`, update the CSS:
@@ -253,6 +249,47 @@ In `firebase.json`:
 ]
 ```
 
+## Automatic Cleanup
+
+### Why Cleanup Matters:
+
+Without automatic cleanup, your Firestore database can accumulate stale submissions from interrupted sessions.
+
+### How Cleanup Works:
+
+The Android app **automatically clears old submissions** when you start a new collection:
+
+```java
+// In NoteManagement.java - continueOnlineNoteCollection()
+noteCollectionSession.clearSubmissions(); // Clears old submissions
+```
+
+### When Submissions Are Cleared:
+
+✅ **Automatic cleanup happens when:**
+- Starting a new collection session
+- Pressing "Save and Finish"
+- Pressing back button and confirming
+
+This ensures a clean slate every time you collect notes.
+
+### What About Crashes?
+
+If the app crashes or is force-closed during collection, old submissions will remain in Firestore **until the next collection session starts**. This is acceptable because:
+- Storage is minimal (text only)
+- They'll be cleared automatically next time
+- Sessions are reused (same device ID)
+- Firestore free tier easily handles this
+
+### Manual Cleanup (If Needed):
+
+If you want to manually delete old submissions:
+
+1. Go to [Firebase Console](https://console.firebase.google.com)
+2. Select your project → **Firestore Database**
+3. Navigate to `sessions/[your-device-id]/submissions`
+4. Delete individual submissions or the entire collection
+
 ## Monitoring & Analytics
 
 ### View Sessions in Firebase Console:
@@ -276,7 +313,6 @@ logEvent(analytics, 'note_submitted', {
 ## Future Enhancements
 
 Possible improvements:
-- [ ] Auto-delete sessions after 24 hours
 - [ ] Add password protection for sessions
 - [ ] Allow host to reject inappropriate notes
 - [ ] Show live participant count
@@ -284,6 +320,7 @@ Possible improvements:
 - [ ] Export notes to CSV/Excel
 - [ ] Multi-language support
 - [ ] Progressive Web App (PWA) for offline support
+- [ ] Advanced TTL cleanup (if needed for high-volume usage)
 
 ## Troubleshooting
 

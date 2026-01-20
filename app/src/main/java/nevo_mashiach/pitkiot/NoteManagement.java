@@ -74,6 +74,9 @@ public class NoteManagement extends AppCompatActivity {
     // FIX: Synchronize HashMap to prevent concurrent modification from UI thread and Firebase listener thread
     private final java.util.Map<String, java.util.Set<String>> submitterNoteCounts =
         java.util.Collections.synchronizedMap(new java.util.LinkedHashMap<>());
+    // Temporary storage for notes received during online collection (not saved to DB until "Save and Finish")
+    private final java.util.Set<String> temporaryCollectedNotes =
+        java.util.Collections.synchronizedSet(new java.util.HashSet<>());
     private static final String FIREBASE_HOSTING_URL = "https://pitkiot-29650.web.app";
 
     // SharedPreferences keys for persisting collection session state
@@ -230,10 +233,11 @@ public class NoteManagement extends AppCompatActivity {
 
     public void onDestroy() {
         super.onDestroy();
-        // Clean up Firebase session
+        // Stop listening to save resources (session persists in Firestore)
         if (noteCollectionSession != null) {
-            noteCollectionSession.endSession();
+            noteCollectionSession.stopListening();
         }
+        // Note: temporary notes are kept in SharedPreferences for restoration
         if (collectionDialog != null && collectionDialog.isShowing()) {
             collectionDialog.dismiss();
         }
@@ -326,16 +330,24 @@ public class NoteManagement extends AppCompatActivity {
     }
 
     private void continueOnlineNoteCollection() {
-        // Reset counters for new session
+        // Reset counters for new collection
         receivedNotesCount = 0;
         // FIX: Synchronize clear() to prevent concurrent modification
         synchronized (submitterNoteCounts) {
             submitterNoteCounts.clear();
         }
+        // Clear temporary notes storage
+        synchronized (temporaryCollectedNotes) {
+            temporaryCollectedNotes.clear();
+        }
 
-        // Create a new collection session every time
+        // Get or create the permanent session for this device
         noteCollectionSession = new NoteCollectionSession(context);
-        String shortCode = noteCollectionSession.createSession();
+        String deviceId = noteCollectionSession.createSession();
+
+        // Clear any old submissions from previous sessions (ensures clean slate)
+        noteCollectionSession.clearSubmissions();
+
         String currentLang = prefs.getString("app_language", "he");
         String url = noteCollectionSession.getSubmissionUrl(FIREBASE_HOSTING_URL) + "&lang=" + currentLang;
 
@@ -343,7 +355,7 @@ public class NoteManagement extends AppCompatActivity {
         saveCollectionState();
 
         // Show the collection dialog
-        showNoteCollectionDialog(shortCode, url);
+        showNoteCollectionDialog(deviceId, url);
 
         // Start listening for incoming notes
         startCollectionListener();
@@ -473,8 +485,14 @@ public class NoteManagement extends AppCompatActivity {
         collectionDialog.setOnKeyListener((dialog, keyCode, event) -> {
             if (keyCode == android.view.KeyEvent.KEYCODE_BACK && event.getAction() == android.view.KeyEvent.ACTION_UP) {
                 Runnable closeTask = () -> {
+                    // Clear submissions from Firebase (session persists for reuse)
                     if (noteCollectionSession != null) {
-                        noteCollectionSession.endSession();
+                        noteCollectionSession.clearSubmissions();
+                        noteCollectionSession.stopListening();
+                    }
+                    // Discard temporary notes (don't save to local DB)
+                    synchronized (temporaryCollectedNotes) {
+                        temporaryCollectedNotes.clear();
                     }
                     collectionDialog.dismiss();
                     receivedNotesCount = 0;
@@ -527,10 +545,16 @@ public class NoteManagement extends AppCompatActivity {
         View.OnTouchListener touchListener = (v, motion) -> db.onTouch(context, v, motion);
         copyUrlButton.setOnTouchListener(touchListener);
 
-        // Close button
+        // Close button (Save and Finish)
         closeSessionButton.setOnClickListener(v -> {
-            if (noteCollectionSession != null) {
-                noteCollectionSession.endSession();
+            // Save temporary notes to local database
+            int savedCount = 0;
+            synchronized (temporaryCollectedNotes) {
+                for (String note : temporaryCollectedNotes) {
+                    if (add(note)) {
+                        savedCount++;
+                    }
+                }
             }
 
             // Calculate total unique notes before clearing
@@ -542,6 +566,17 @@ public class NoteManagement extends AppCompatActivity {
                     allUniqueNotes.addAll(submitterNotes);
                 }
                 totalUniqueNotes = allUniqueNotes.size();
+            }
+
+            // Clear submissions from Firebase AFTER saving notes (session persists for reuse)
+            if (noteCollectionSession != null) {
+                noteCollectionSession.clearSubmissions();
+                noteCollectionSession.stopListening();
+            }
+
+            // Clear temporary notes
+            synchronized (temporaryCollectedNotes) {
+                temporaryCollectedNotes.clear();
             }
 
             collectionDialog.dismiss();
@@ -878,7 +913,7 @@ public class NoteManagement extends AppCompatActivity {
             public void onNoteReceived(String submitterName, String noteContent) {
                 android.util.Log.d("NoteManagement", "Note received from " + submitterName + ": " + noteContent);
                 runOnUiThread(() -> {
-                    // Parse and add notes from submission
+                    // Parse notes from submission
                     List<String> notes = parseNotes(noteContent);
                     android.util.Log.d("NoteManagement", "Parsed " + notes.size() + " notes");
 
@@ -886,9 +921,9 @@ public class NoteManagement extends AppCompatActivity {
                     java.util.Set<String> uniqueNotes = new java.util.HashSet<>(notes);
                     int uniqueCount = uniqueNotes.size();
 
-                    // Add notes to database
-                    for (String note : notes) {
-                        add(note);
+                    // Store notes in temporary storage (don't save to local DB yet)
+                    synchronized (temporaryCollectedNotes) {
+                        temporaryCollectedNotes.addAll(notes);
                     }
 
                     // Update the dialog UI and persist state
@@ -1012,6 +1047,16 @@ public class NoteManagement extends AppCompatActivity {
                         }
                     }
                     submitterNoteCounts.put(name, noteSet);
+                }
+            }
+        }
+
+        // Restore all notes to temporary storage (not saved to local DB yet)
+        synchronized (temporaryCollectedNotes) {
+            temporaryCollectedNotes.clear();
+            synchronized (submitterNoteCounts) {
+                for (Set<String> noteSet : submitterNoteCounts.values()) {
+                    temporaryCollectedNotes.addAll(noteSet);
                 }
             }
         }
