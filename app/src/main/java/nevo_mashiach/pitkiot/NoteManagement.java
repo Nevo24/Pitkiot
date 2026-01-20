@@ -77,6 +77,11 @@ public class NoteManagement extends AppCompatActivity {
     // Temporary storage for notes received during online collection (not saved to DB until "Save and Finish")
     private final java.util.Set<String> temporaryCollectedNotes =
         java.util.Collections.synchronizedSet(new java.util.HashSet<>());
+    // Track which submission IDs we've already processed to avoid duplicate toasts on reconnect
+    private final java.util.Set<String> processedSubmissionIds =
+        java.util.Collections.synchronizedSet(new java.util.HashSet<>());
+    // Flag to indicate we're restoring a session (suppress toasts during restoration)
+    private boolean isRestoringSession = false;
     private static final String FIREBASE_HOSTING_URL = "https://pitkiot-29650.web.app";
 
     // SharedPreferences keys for persisting collection session state
@@ -340,6 +345,12 @@ public class NoteManagement extends AppCompatActivity {
         synchronized (temporaryCollectedNotes) {
             temporaryCollectedNotes.clear();
         }
+        // Clear processed submission IDs (start fresh)
+        synchronized (processedSubmissionIds) {
+            processedSubmissionIds.clear();
+        }
+        // Ensure restoration flag is false for new collections
+        isRestoringSession = false;
 
         // Get or create the permanent session for this device
         noteCollectionSession = new NoteCollectionSession(context);
@@ -494,6 +505,10 @@ public class NoteManagement extends AppCompatActivity {
                     synchronized (temporaryCollectedNotes) {
                         temporaryCollectedNotes.clear();
                     }
+                    // Clear processed submission IDs
+                    synchronized (processedSubmissionIds) {
+                        processedSubmissionIds.clear();
+                    }
                     collectionDialog.dismiss();
                     receivedNotesCount = 0;
                     // FIX: Synchronize clear() to prevent concurrent modification
@@ -577,6 +592,11 @@ public class NoteManagement extends AppCompatActivity {
             // Clear temporary notes
             synchronized (temporaryCollectedNotes) {
                 temporaryCollectedNotes.clear();
+            }
+
+            // Clear processed submission IDs
+            synchronized (processedSubmissionIds) {
+                processedSubmissionIds.clear();
             }
 
             collectionDialog.dismiss();
@@ -910,8 +930,15 @@ public class NoteManagement extends AppCompatActivity {
 
         noteCollectionSession.startListening(new NoteCollectionSession.OnNoteReceivedListener() {
             @Override
-            public void onNoteReceived(String submitterName, String noteContent) {
+            public void onNoteReceived(String submissionId, String submitterName, String noteContent) {
                 android.util.Log.d("NoteManagement", "Note received from " + submitterName + ": " + noteContent);
+
+                // Check if we've already processed this submission (avoid duplicate toasts on reconnect)
+                boolean isNewSubmission;
+                synchronized (processedSubmissionIds) {
+                    isNewSubmission = processedSubmissionIds.add(submissionId);
+                }
+
                 runOnUiThread(() -> {
                     // Parse notes from submission
                     List<String> notes = parseNotes(noteContent);
@@ -932,8 +959,8 @@ public class NoteManagement extends AppCompatActivity {
                     updateCollectionDialogUI(submitterName, noteContent);
                     saveCollectionState();
 
-                    // Show toast
-                    if (uniqueCount > 0) {
+                    // Show toast ONLY for new submissions (not when restoring from persistence)
+                    if (isNewSubmission && !isRestoringSession && uniqueCount > 0) {
                         String message = uniqueCount == 1
                             ? String.format(getString(R.string.toast_new_note_received_single), submitterName)
                             : String.format(getString(R.string.toast_new_note_received_plural), uniqueCount, submitterName);
@@ -981,7 +1008,14 @@ public class NoteManagement extends AppCompatActivity {
             android.util.Log.d("NoteManagement", "Dialog already showing, restarting listener");
             // FIX: Ensure noteCollectionSession exists before starting listener
             if (noteCollectionSession != null) {
+                // Set restoration flag to suppress toasts for existing submissions
+                isRestoringSession = true;
                 startCollectionListener();
+                // After a short delay, allow toasts for new submissions
+                new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(() -> {
+                    isRestoringSession = false;
+                    android.util.Log.d("NoteManagement", "Restoration complete - toasts enabled");
+                }, 1500);
             } else {
                 android.util.Log.e("NoteManagement", "noteCollectionSession is null, cannot restart listener");
                 // Session is invalid, clear persistence and dismiss dialog
@@ -1001,6 +1035,9 @@ public class NoteManagement extends AppCompatActivity {
         }
 
         android.util.Log.d("NoteManagement", "Restoring collection session: " + sessionId);
+
+        // Set restoration flag to suppress toasts for existing submissions
+        isRestoringSession = true;
 
         // Restore counters and submitter data
         receivedNotesCount = prefs.getInt(PREF_COLLECTION_RECEIVED_COUNT, 0);
@@ -1091,6 +1128,13 @@ public class NoteManagement extends AppCompatActivity {
 
         // Resume listening for new notes
         startCollectionListener();
+
+        // After a short delay, allow toasts for new submissions
+        // This gives time for Firestore to fire all existing submissions without showing toasts
+        new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(() -> {
+            isRestoringSession = false;
+            android.util.Log.d("NoteManagement", "Restoration complete - toasts enabled");
+        }, 1500); // 1.5 seconds should be enough for Firestore to send existing submissions
     }
 
     /**

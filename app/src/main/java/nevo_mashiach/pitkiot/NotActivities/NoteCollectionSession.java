@@ -30,7 +30,7 @@ public class NoteCollectionSession {
     private OnNoteReceivedListener noteReceivedListener;
 
     public interface OnNoteReceivedListener {
-        void onNoteReceived(String submitterName, String noteContent);
+        void onNoteReceived(String submissionId, String submitterName, String noteContent);
         void onError(String error);
     }
 
@@ -140,6 +140,7 @@ public class NoteCollectionSession {
                         if (dc.getType() == DocumentChange.Type.ADDED) {
                             DocumentSnapshot doc = dc.getDocument();
 
+                            String submissionId = doc.getId();
                             String submitterName = doc.getString("submitterName");
                             String noteContent = doc.getString("noteContent");
 
@@ -147,6 +148,7 @@ public class NoteCollectionSession {
                                 Log.d(TAG, "New note from " + submitterName + ": " + noteContent);
                                 if (noteReceivedListener != null) {
                                     noteReceivedListener.onNoteReceived(
+                                            submissionId,
                                             submitterName != null ? submitterName : context.getString(R.string.submitter_anonymous),
                                             noteContent
                                     );
