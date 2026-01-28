@@ -170,6 +170,12 @@ public class UpdateChecker {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int which) {
                         openPlayStore();
+                        // Close the app completely so user must update before using it again
+                        if (context instanceof android.app.Activity) {
+                            ((android.app.Activity) context).finishAffinity();
+                        }
+                        // Force exit the entire app process
+                        android.os.Process.killProcess(android.os.Process.myPid());
                     }
                 }
         );
