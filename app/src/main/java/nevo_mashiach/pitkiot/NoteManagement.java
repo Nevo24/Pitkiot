@@ -196,8 +196,28 @@ public class NoteManagement extends AppCompatActivity {
         // Prevent content from extending into display cutout (camera notch) on Android P+
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.P) {
             WindowManager.LayoutParams layoutParams = getWindow().getAttributes();
-            layoutParams.layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_NEVER;
+            layoutParams.layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
             getWindow().setAttributes(layoutParams);
+
+            // Add top padding to avoid cutout area while preserving side padding
+            final View rootView = findViewById(R.id.activity_note_addition);
+            if (rootView != null) {
+                rootView.setOnApplyWindowInsetsListener(new View.OnApplyWindowInsetsListener() {
+                    @Override
+                    public android.view.WindowInsets onApplyWindowInsets(View v, android.view.WindowInsets insets) {
+                        android.view.DisplayCutout cutout = insets.getDisplayCutout();
+                        if (cutout != null) {
+                            int currentPaddingLeft = v.getPaddingLeft();
+                            int currentPaddingRight = v.getPaddingRight();
+                            int currentPaddingBottom = v.getPaddingBottom();
+                            int topCutout = cutout.getSafeInsetTop();
+                            // Add cutout padding ONLY to top, preserve existing side/bottom padding
+                            v.setPadding(currentPaddingLeft, topCutout, currentPaddingRight, currentPaddingBottom);
+                        }
+                        return insets;
+                    }
+                });
+            }
         }
 
         // Apply navigation bar settings after view is attached and insets are available

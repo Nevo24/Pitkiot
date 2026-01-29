@@ -14,8 +14,7 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="nevo_mashiach.pitkiot.Settings"
     android:background="@drawable/cork_board"
-    android:layoutDirection="ltr"
-    android:fitsSystemWindows="true">
+    android:layoutDirection="ltr">
 
     <CheckBox
         android:layout_marginTop="11dp"

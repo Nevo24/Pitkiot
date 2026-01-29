@@ -11,8 +11,7 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="nevo_mashiach.pitkiot.Summary"
-    android:background="@drawable/cork_board"
-    android:fitsSystemWindows="true">
+    android:background="@drawable/cork_board">
 
     <nevo_mashiach.pitkiot.NotActivities.MyTextView
         android:textColor="@color/common_google_signin_btn_text_dark_default"
