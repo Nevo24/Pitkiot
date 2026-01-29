@@ -1,0 +1,17 @@
+<resources>
+
+    <!-- Base application theme for Android 9+ (API 28+) with display cutout handling -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <!-- Prevent content from extending into display cutouts (camera notch) -->
+        <item name="android:windowLayoutInDisplayCutoutMode">never</item>
+    </style>
+
+    <style name="MyCheckBox" parent="Theme.AppCompat.Light">
+        <item name="colorControlActivated">@color/colorGreen</item>
+    </style>
+
+</resources>
