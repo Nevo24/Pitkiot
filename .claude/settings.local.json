@@ -5,7 +5,8 @@
       "Bash(./gradlew bundleRelease:*)",
       "Bash(keytool -genkeypair:*)",
       "Bash(keytool -export -rfc:*)",
-      "Bash(git rm:*)"
+      "Bash(git rm:*)",
+      "Bash(./gradlew assembleRelease:*)"
     ]
   }
 }

@@ -117,27 +117,50 @@ public class MainActivity extends AppCompatActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-        // Prevent content from extending into display cutout (camera notch) on Android P+
+        // Handle window insets for system bars (status bar, navigation bar, cutouts)
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.P) {
             WindowManager.LayoutParams layoutParams = getWindow().getAttributes();
             layoutParams.layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
             getWindow().setAttributes(layoutParams);
 
-            // Add top padding to avoid cutout area while preserving side padding
+            // Apply window insets to root view
             final View rootView = findViewById(R.id.activity_main);
             if (rootView != null) {
+                // Store original padding values before any insets are applied
+                final int originalPaddingLeft = rootView.getPaddingLeft();
+                final int originalPaddingTop = rootView.getPaddingTop();
+                final int originalPaddingRight = rootView.getPaddingRight();
+                final int originalPaddingBottom = rootView.getPaddingBottom();
+
                 rootView.setOnApplyWindowInsetsListener(new View.OnApplyWindowInsetsListener() {
                     @Override
                     public android.view.WindowInsets onApplyWindowInsets(View v, android.view.WindowInsets insets) {
+                        int topInset = 0;
+                        int bottomInset = 0;
+
+                        // Handle display cutout (notch)
                         android.view.DisplayCutout cutout = insets.getDisplayCutout();
                         if (cutout != null) {
-                            int currentPaddingLeft = v.getPaddingLeft();
-                            int currentPaddingRight = v.getPaddingRight();
-                            int currentPaddingBottom = v.getPaddingBottom();
-                            int topCutout = cutout.getSafeInsetTop();
-                            // Add cutout padding ONLY to top, preserve existing side/bottom padding
-                            v.setPadding(currentPaddingLeft, topCutout, currentPaddingRight, currentPaddingBottom);
+                            topInset = cutout.getSafeInsetTop();
                         }
+
+                        // Handle navigation bar (bottom inset)
+                        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
+                            // Use the new WindowInsets API for Android 11+
+                            bottomInset = insets.getInsets(android.view.WindowInsets.Type.systemBars()).bottom;
+                        } else {
+                            // Fallback for Android 9-10
+                            bottomInset = insets.getSystemWindowInsetBottom();
+                        }
+
+                        // Apply padding: original padding + system insets
+                        v.setPadding(
+                            originalPaddingLeft,
+                            originalPaddingTop + topInset,
+                            originalPaddingRight,
+                            originalPaddingBottom + bottomInset
+                        );
+
                         return insets;
                     }
                 });
@@ -723,47 +746,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void applyNavigationBarSettings() {
-        // Check if we should extend content behind the navigation bar
-        if (shouldExtendBehindNavigationBar()) {
-            // For gesture navigation: set transparent and extend content behind
-            getWindow().setNavigationBarColor(android.graphics.Color.TRANSPARENT);
-            getWindow().getDecorView().setSystemUiVisibility(
-                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
-        } else {
-            // For 2-button & 3-button navigation: use system default color, content stops above
-            // Don't set color - let system handle it
-        }
-    }
-
-    private boolean shouldExtendBehindNavigationBar() {
-        // Use system gesture insets to distinguish between navigation modes:
-        // - Gesture navigation: has left/right gesture insets (edge back gesture) → EXTEND
-        // - 2-button navigation: no gesture insets, thin bar (~24-30dp) → DON'T EXTEND
-        // - 3-button navigation: no gesture insets, tall bar (~48dp) → DON'T EXTEND
-
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
-            android.view.WindowInsets insets = getWindow().getDecorView().getRootWindowInsets();
-            if (insets != null) {
-                // Get system gesture insets (for edge back gestures)
-                int gestureLeft = insets.getInsets(android.view.WindowInsets.Type.systemGestures()).left;
-                int gestureRight = insets.getInsets(android.view.WindowInsets.Type.systemGestures()).right;
-                boolean hasGestureInsets = gestureLeft > 0 || gestureRight > 0;
-
-                // Only extend behind bar for TRUE gesture navigation (has gesture insets)
-                return hasGestureInsets;
-            }
-        }
-
-        // Fallback for older Android versions
-        // Use height-based detection: only extend if very thin (< 20dp = likely gesture)
-        int resourceId = getResources().getIdentifier("navigation_bar_height", "dimen", "android");
-        if (resourceId > 0) {
-            int navBarHeight = getResources().getDimensionPixelSize(resourceId);
-            float density = getResources().getDisplayMetrics().density;
-            int navBarHeightDp = (int) (navBarHeight / density);
-            return navBarHeightDp < 20; // Only very thin bars (gesture)
-        }
-        return false;
+        // Always extend content behind the navigation bar and handle insets properly
+        // This allows the background to show through on all navigation modes
+        getWindow().setNavigationBarColor(android.graphics.Color.TRANSPARENT);
+        getWindow().getDecorView().setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
     }
 }
