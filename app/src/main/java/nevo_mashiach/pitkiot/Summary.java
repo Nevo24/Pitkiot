@@ -943,9 +943,8 @@ public class Summary extends AppCompatActivity {
                     });
 
                     customPopup.show();
-                    return true;
                 }
-                return false;
+                return true;
             }
         });
 

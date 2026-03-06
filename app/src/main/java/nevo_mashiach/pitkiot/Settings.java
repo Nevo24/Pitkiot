@@ -749,9 +749,8 @@ public class Settings extends AppCompatActivity {
                     });
 
                     customPopup.show();
-                    return true;
                 }
-                return false;
+                return true;
             }
         });
 
