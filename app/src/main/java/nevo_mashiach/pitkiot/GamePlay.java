@@ -230,6 +230,13 @@ public class GamePlay extends AppCompatActivity {
         happyAanim.stop();
         sadAanim.stop();
 
+        //Save pause timestamp for background time tracking (only for regular pauses, not transitions)
+        if (!db.isTransitioningToSummary) {
+            spEditor.putLong("pauseTimestamp", SystemClock.elapsedRealtime());
+        } else {
+            spEditor.remove("pauseTimestamp");
+        }
+
         //Save game state:
         Set<String> set = new HashSet<>(db.temp);
         spEditor.putStringSet("temp", set);
@@ -302,6 +309,20 @@ public class GamePlay extends AppCompatActivity {
 
         mSuccess.setEnabled(true);
         mNext.setEnabled(true);
+
+        // Account for real time elapsed while app was in background (screen off / minimized)
+        long pauseTimestamp = prefs.getLong("pauseTimestamp", 0);
+        if (pauseTimestamp > 0) {
+            long elapsedInBackground = SystemClock.elapsedRealtime() - pauseTimestamp;
+            // Guard against device reboot (elapsedRealtime resets to 0, making elapsed negative)
+            if (elapsedInBackground > 0) {
+                db.mMillisUntilFinished = Math.max(0, db.mMillisUntilFinished - elapsedInBackground);
+                fixedMillisUntilFinished = db.mMillisUntilFinished;
+            }
+            spEditor.remove("pauseTimestamp");
+            spEditor.apply();
+        }
+
         if (!db.gamePlayIsPaused) {
             mTeamNum.setText(getString(R.string.game_team_label) + (db.currentPlaying + 1));
             mRoundModeGame.setText(db.getRoundMode(context));
