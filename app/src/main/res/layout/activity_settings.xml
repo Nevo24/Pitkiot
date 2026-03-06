@@ -136,7 +136,6 @@
                 android:maxLength="3"
                 android:paddingStart="6dp"
                 android:paddingEnd="6dp"
-                android:paddingTop="7dp"
                 android:includeFontPadding="false"/>
 
             <nevo_mashiach.pitkiot.NotActivities.MyButton
@@ -208,7 +207,6 @@
                 android:maxLength="3"
                 android:paddingStart="6dp"
                 android:paddingEnd="6dp"
-                android:paddingTop="7dp"
                 android:includeFontPadding="false"/>
 
             <nevo_mashiach.pitkiot.NotActivities.MyButton
