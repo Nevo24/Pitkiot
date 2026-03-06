@@ -230,8 +230,9 @@ public class GamePlay extends AppCompatActivity {
         happyAanim.stop();
         sadAanim.stop();
 
-        //Save pause timestamp for background time tracking (only for regular pauses, not transitions)
-        if (!db.isTransitioningToSummary) {
+        //Save pause timestamp for background time tracking (only for screen lock/minimize,
+        //not for intentional navigation like back-to-menu or transition to Summary)
+        if (!db.isTransitioningToSummary && !db.gamePlayIsPaused) {
             spEditor.putLong("pauseTimestamp", SystemClock.elapsedRealtime());
         } else {
             spEditor.remove("pauseTimestamp");
