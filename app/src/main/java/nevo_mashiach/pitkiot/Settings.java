@@ -681,12 +681,11 @@ public class Settings extends AppCompatActivity {
                     // verticalOffset is relative to the bottom of the anchor view (spinner)
                     int offsetFromSpinnerBottom = belowY - (spinnerY + spinnerHeight);
 
-                    // Calculate available height from dropdown position to bottom of screen
-                    int screenHeight = getResources().getDisplayMetrics().heightPixels;
-
-                    // Available height: from dropdown start position to screen bottom
-                    // The dropdown starts at belowY, so calculate remaining space
-                    int availableHeight = screenHeight - belowY;
+                    // Calculate available height using visible display frame
+                    // (accounts for navigation bar, status bar, etc.)
+                    android.graphics.Rect displayFrame = new android.graphics.Rect();
+                    spinner.getWindowVisibleDisplayFrame(displayFrame);
+                    int availableHeight = displayFrame.bottom - belowY - 50;
 
                     // Calculate dropdown width based on text content
                     android.graphics.Paint paint = new android.graphics.Paint();
@@ -733,8 +732,6 @@ public class Settings extends AppCompatActivity {
                             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
                                 popupWindow.setOverlapAnchor(false);
                             }
-                            // Ensure the popup window uses the calculated height (content or available, whichever is smaller)
-                            popupWindow.setHeight(dropdownHeight);
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
