@@ -367,6 +367,10 @@ public class Settings extends AppCompatActivity {
             mAutoBalaceCheckBox.setCompoundDrawablesWithIntrinsicBounds(null, null, checkboxDrawable1, null);
             mSoundCheckBox.setCompoundDrawablesWithIntrinsicBounds(null, null, checkboxDrawable2, null);
 
+            // Hebrew: reset number field padding (no nudge needed)
+            mRoundTimeValue.setPadding(mRoundTimeValue.getPaddingLeft(), 0, mRoundTimeValue.getPaddingRight(), 0);
+            mPassTimeValue.setPadding(mPassTimeValue.getPaddingLeft(), 0, mPassTimeValue.getPaddingRight(), 0);
+
             // Hebrew: align all plus-minus controls and constraints to the right
             // For LinearLayout children, use gravity instead of rules
             roundTimeControlsParams.gravity = android.view.Gravity.END;
@@ -438,6 +442,11 @@ public class Settings extends AppCompatActivity {
             if (checkboxDrawable2 != null) checkboxDrawable2 = checkboxDrawable2.mutate();
             mAutoBalaceCheckBox.setCompoundDrawablesWithIntrinsicBounds(checkboxDrawable1, null, null, null);
             mSoundCheckBox.setCompoundDrawablesWithIntrinsicBounds(checkboxDrawable2, null, null, null);
+
+            // English: nudge number fields down to vertically center with the custom Hebrew font
+            int nudge = (int) (6 * context.getResources().getDisplayMetrics().density);
+            mRoundTimeValue.setPadding(mRoundTimeValue.getPaddingLeft(), nudge, mRoundTimeValue.getPaddingRight(), 0);
+            mPassTimeValue.setPadding(mPassTimeValue.getPaddingLeft(), nudge, mPassTimeValue.getPaddingRight(), 0);
 
             // English: align all plus-minus controls and constraints to the left
             // For LinearLayout children, use gravity instead of rules
