@@ -295,12 +295,12 @@ public class Settings extends AppCompatActivity {
         String language = prefs.getString("app_language", "he");
         boolean isHebrew = language.equals("he");
 
-        androidx.percentlayout.widget.PercentRelativeLayout.LayoutParams checkboxParams =
-            (androidx.percentlayout.widget.PercentRelativeLayout.LayoutParams) mAutoBalaceCheckBox.getLayoutParams();
-        androidx.percentlayout.widget.PercentRelativeLayout.LayoutParams soundParams =
-            (androidx.percentlayout.widget.PercentRelativeLayout.LayoutParams) mSoundCheckBox.getLayoutParams();
-        androidx.percentlayout.widget.PercentRelativeLayout.LayoutParams buttonParams =
-            (androidx.percentlayout.widget.PercentRelativeLayout.LayoutParams) mBalanceExplanation.getLayoutParams();
+        RelativeLayout.LayoutParams checkboxParams =
+            (RelativeLayout.LayoutParams) mAutoBalaceCheckBox.getLayoutParams();
+        RelativeLayout.LayoutParams soundParams =
+            (RelativeLayout.LayoutParams) mSoundCheckBox.getLayoutParams();
+        RelativeLayout.LayoutParams buttonParams =
+            (RelativeLayout.LayoutParams) mBalanceExplanation.getLayoutParams();
 
         // Get layout params for controls and constraints
         View roundTimeControls = findViewById(R.id.roundTimeControls);
@@ -335,18 +335,18 @@ public class Settings extends AppCompatActivity {
 
         if (isHebrew) {
             // Hebrew: checkboxes on right, button to the left of checkbox, checkbox icon on right of text
-            checkboxParams.addRule(androidx.percentlayout.widget.PercentRelativeLayout.ALIGN_PARENT_END);
-            checkboxParams.removeRule(androidx.percentlayout.widget.PercentRelativeLayout.ALIGN_PARENT_START);
-            soundParams.addRule(androidx.percentlayout.widget.PercentRelativeLayout.ALIGN_PARENT_END);
-            soundParams.removeRule(androidx.percentlayout.widget.PercentRelativeLayout.ALIGN_PARENT_START);
+            checkboxParams.addRule(RelativeLayout.ALIGN_PARENT_END);
+            checkboxParams.removeRule(RelativeLayout.ALIGN_PARENT_START);
+            soundParams.addRule(RelativeLayout.ALIGN_PARENT_END);
+            soundParams.removeRule(RelativeLayout.ALIGN_PARENT_START);
 
             // Button positioned to the left of the checkbox
             buttonParams.removeRule(RelativeLayout.RIGHT_OF);
             buttonParams.removeRule(RelativeLayout.END_OF);
             buttonParams.addRule(RelativeLayout.LEFT_OF, R.id.autoBalaceCheckBox);
             buttonParams.addRule(RelativeLayout.START_OF, R.id.autoBalaceCheckBox);
-            buttonParams.removeRule(androidx.percentlayout.widget.PercentRelativeLayout.ALIGN_PARENT_START);
-            buttonParams.removeRule(androidx.percentlayout.widget.PercentRelativeLayout.ALIGN_PARENT_END);
+            buttonParams.removeRule(RelativeLayout.ALIGN_PARENT_START);
+            buttonParams.removeRule(RelativeLayout.ALIGN_PARENT_END);
             // Set margins for Hebrew - right margin before checkbox
             buttonParams.setMargins(
                 0, // left
@@ -407,18 +407,18 @@ public class Settings extends AppCompatActivity {
             mTeam1Headline.setGravity(android.view.Gravity.RIGHT | android.view.Gravity.CENTER_VERTICAL);
         } else {
             // English: checkboxes on left, button to the right of checkbox, checkbox icon on left of text
-            checkboxParams.addRule(androidx.percentlayout.widget.PercentRelativeLayout.ALIGN_PARENT_START);
-            checkboxParams.removeRule(androidx.percentlayout.widget.PercentRelativeLayout.ALIGN_PARENT_END);
-            soundParams.addRule(androidx.percentlayout.widget.PercentRelativeLayout.ALIGN_PARENT_START);
-            soundParams.removeRule(androidx.percentlayout.widget.PercentRelativeLayout.ALIGN_PARENT_END);
+            checkboxParams.addRule(RelativeLayout.ALIGN_PARENT_START);
+            checkboxParams.removeRule(RelativeLayout.ALIGN_PARENT_END);
+            soundParams.addRule(RelativeLayout.ALIGN_PARENT_START);
+            soundParams.removeRule(RelativeLayout.ALIGN_PARENT_END);
 
             // Button positioned to the right of the checkbox
             buttonParams.removeRule(RelativeLayout.LEFT_OF);
             buttonParams.removeRule(RelativeLayout.START_OF);
             buttonParams.addRule(RelativeLayout.RIGHT_OF, R.id.autoBalaceCheckBox);
             buttonParams.addRule(RelativeLayout.END_OF, R.id.autoBalaceCheckBox);
-            buttonParams.removeRule(androidx.percentlayout.widget.PercentRelativeLayout.ALIGN_PARENT_START);
-            buttonParams.removeRule(androidx.percentlayout.widget.PercentRelativeLayout.ALIGN_PARENT_END);
+            buttonParams.removeRule(RelativeLayout.ALIGN_PARENT_START);
+            buttonParams.removeRule(RelativeLayout.ALIGN_PARENT_END);
             // Set margins for English - left margin after checkbox
             buttonParams.setMargins(
                 (int) (8 * context.getResources().getDisplayMetrics().density), // left

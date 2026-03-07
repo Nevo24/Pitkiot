@@ -14,55 +14,9 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="nevo_mashiach.pitkiot.Settings"
     android:background="@drawable/cork_board"
-    android:layoutDirection="ltr">
-
-    <CheckBox
-        android:layout_marginTop="11dp"
-        android:theme="@style/MyCheckBox"
-        android:textColor="@color/common_google_signin_btn_text_dark_default"
-        android:button="@null"
-        android:drawableLeft="?android:attr/listChoiceIndicatorMultiple"
-        android:text="@string/settings_auto_balance"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/autoBalaceCheckBox"
-        android:textSize="24sp"
-        android:checked="false"
-        android:textStyle="normal|bold"
-        android:gravity="start|center_vertical"
-        android:layout_below="@+id/headline"
-        android:layout_alignParentRight="true"/>
-
-    <CheckBox
-        android:theme="@style/MyCheckBox"
-        android:textColor="@color/common_google_signin_btn_text_dark_default"
-        android:button="@null"
-        android:drawableLeft="?android:attr/listChoiceIndicatorMultiple"
-        android:text="@string/settings_sound"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/soundCheckBox"
-        android:textSize="24sp"
-        android:checked="false"
-        android:textStyle="normal|bold"
-        android:gravity="start|center_vertical"
-        android:layout_below="@+id/autoBalaceCheckBox"
-        android:layout_alignParentRight="true"
-        android:layout_marginTop="24dp"/>
-
-    <nevo_mashiach.pitkiot.NotActivities.MyButton
-        android:text="?"
-        android:textColor="#ffffffff"
-        android:background="@drawable/button_blue"
-        android:layout_width="45dp"
-        android:layout_height="45dp"
-        android:id="@+id/balanceExplanation"
-        android:textSize="24sp"
-        android:gravity="center"
-        android:layout_alignTop="@+id/autoBalaceCheckBox"
-        android:layout_toLeftOf="@+id/autoBalaceCheckBox"
-        android:layout_toStartOf="@+id/autoBalaceCheckBox"
-        android:layout_marginTop="-8dp"/>
+    android:layoutDirection="ltr"
+    android:clipChildren="false"
+    android:clipToPadding="false">
 
     <nevo_mashiach.pitkiot.NotActivities.MyTextView
         android:layout_width="wrap_content"
@@ -76,16 +30,72 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"/>
 
-    <!-- Container for all middle content with dynamic spacing -->
+    <!-- Container for all content with dynamic spacing -->
     <LinearLayout
         android:id="@+id/middleContentContainer"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:orientation="vertical"
-        android:layout_below="@+id/soundCheckBox"
+        android:layout_below="@+id/headline"
         android:layout_above="@+id/resetSettings"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="16dp">
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:clipChildren="false"
+        android:clipToPadding="false">
+
+        <!-- Checkboxes section -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clipChildren="false"
+            android:clipToPadding="false">
+
+            <CheckBox
+                android:theme="@style/MyCheckBox"
+                android:textColor="@color/common_google_signin_btn_text_dark_default"
+                android:button="@null"
+                android:drawableLeft="?android:attr/listChoiceIndicatorMultiple"
+                android:text="@string/settings_auto_balance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/autoBalaceCheckBox"
+                android:textSize="24sp"
+                android:checked="false"
+                android:textStyle="normal|bold"
+                android:gravity="start|center_vertical"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentRight="true"/>
+
+            <nevo_mashiach.pitkiot.NotActivities.MyButton
+                android:text="?"
+                android:textColor="#ffffffff"
+                android:background="@drawable/button_blue"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:id="@+id/balanceExplanation"
+                android:textSize="24sp"
+                android:gravity="center"
+                android:layout_alignTop="@+id/autoBalaceCheckBox"
+                android:layout_toLeftOf="@+id/autoBalaceCheckBox"
+                android:layout_toStartOf="@+id/autoBalaceCheckBox"
+                android:layout_marginTop="-8dp"/>
+
+            <CheckBox
+                android:theme="@style/MyCheckBox"
+                android:textColor="@color/common_google_signin_btn_text_dark_default"
+                android:button="@null"
+                android:drawableLeft="?android:attr/listChoiceIndicatorMultiple"
+                android:text="@string/settings_sound"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/soundCheckBox"
+                android:textSize="24sp"
+                android:checked="false"
+                android:textStyle="normal|bold"
+                android:gravity="start|center_vertical"
+                android:layout_below="@+id/autoBalaceCheckBox"
+                android:layout_alignParentRight="true"/>
+        </RelativeLayout>
 
         <Space
             android:layout_width="match_parent"
