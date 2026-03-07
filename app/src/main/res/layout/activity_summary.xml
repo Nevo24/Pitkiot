@@ -144,7 +144,8 @@
         android:textColor="#ffffff"
         android:textSize="21sp"
         android:layout_below="@+id/roundModeSummary"
-        android:layout_centerHorizontal="true"/>
+        android:layout_centerHorizontal="true"
+        android:minWidth="300dp"/>
 
     <ImageView
         app:layout_widthPercent="45%"

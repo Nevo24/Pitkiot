@@ -414,5 +414,6 @@
         android:textSize="24sp"
         android:layout_marginBottom="0dp"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"/>
+        android:layout_centerHorizontal="true"
+        android:minWidth="300dp"/>
 </androidx.percentlayout.widget.PercentRelativeLayout>
